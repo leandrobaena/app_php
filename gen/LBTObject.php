@@ -8,15 +8,7 @@ namespace gen\entities;
  *
  * @author Leandro Baena Torres
  */
-abstract class LBOTobject {
-    //<editor-fold defaultstate="collapsed" desc="Constructores">
-    /**
-     * Crea una nueva instancia del objeto padre de la jerarquía de clases de
-     * las aplicaciones
-     */
-    public function __construct() {
-    }
-    //</editor-fold>
+abstract class LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Métodos">
     /**
@@ -24,6 +16,6 @@ abstract class LBOTobject {
      *
      * @return string Contenido del objeto en formato JSON
      */
-    public abstract function ToString();
+    public abstract function __toString();
     //</editor-fold>
 }
