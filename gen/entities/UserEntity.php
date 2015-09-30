@@ -2,7 +2,7 @@
 
 namespace gen\entities;
 
-require_once (dirname(__DIR__) . "/../utils/FormatterText.php");
+require_once (dirname(__DIR__) . "/../../utils/FormatterText.php");
 
 /**
  * Usuario que tiene acceso a las aplicaciones
