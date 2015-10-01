@@ -21,6 +21,28 @@ class ListJson {
     }
 
     //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Propiedades">
+    /**
+     * Trae un atributo
+     *
+     * @param string $field Atributo a traerle el valor
+     * @return mixed Valor del atributo
+     */
+    public function __get($field) {
+        return $this->$field;
+    }
+
+    /**
+     * Cambia el valor de un atributo
+     *
+     * @param string $field Atributo a cambiarle el valor
+     * @param mixed $value Nuevo valor del atributo
+     */
+    public function __set($field, $value) {
+        $this->$field = $value;
+    }
+
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Métodos">
     /**
      * Arreglo de registros en formato JSON
