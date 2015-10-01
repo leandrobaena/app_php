@@ -1,3 +1,4 @@
+//<editor-fold defaultstate="collapsed" desc="Models">
 ﻿Ext.define('susencargos.model.Application', {
     extend: 'Ext.data.Model',
     fields: [{
@@ -63,6 +64,33 @@ Ext.define('susencargos.model.User', {
             defaultValue: false
         }]
 });
+
+Ext.define('susencargos.model.Module', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idmodule',
+            type: 'int',
+            defaultValue: 0
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'idparent',
+            type: 'int',
+            allowNull: true
+        }, {
+            name: 'class',
+            type: 'string'
+        }, {
+            name: 'script',
+            type: 'string'
+        }, {
+            name: 'application',
+            reference: 'susencargos.model.Application'
+        }],
+    idProperty: 'idmodule'
+});
+//</editor-fold>
 
 Ext.define("susencargos.store.DeprisaStore", {
     extend: "Ext.data.Store",
@@ -2376,11 +2404,55 @@ Ext.application({
     requires: ['Ext.container.Viewport', 'Ext.chart.*', 'Ext.ux.form.TinyMCE'],
     name: 'susencargos',
     launch: function () {
+        //<editor-fold defaultstate="collapsed" desc="Stores">
         Ext.create('susencargos.store.DeprisaStore', {
             storeId: 'Application',
             model: 'susencargos.model.Application',
             object: 'apps'
         });
+
+        Ext.create('susencargos.store.DeprisaStore', {
+            storeId: 'Group',
+            model: 'susencargos.model.Group',
+            object: 'groups'
+        });
+
+        Ext.create('susencargos.store.DeprisaStore', {
+            storeId: 'Module',
+            model: 'susencargos.model.Module',
+            object: 'modules'
+        });
+
+        Ext.create('Ext.data.TreeStore', {
+            storeId: 'ModuleTree',
+            model: 'susencargos.model.Module',
+            nodeParam: 'module',
+            remoteSort: true,
+            proxy: {
+                type: 'ajax',
+                url: 'stores/module_tree.php',
+                extraParams: {
+                    idapplication: 0
+                },
+                reader: {
+                    type: 'json',
+                    root: 'module',
+                    successProperty: 'success'
+                },
+                listeners: {
+                    exception: function (p, r, o, op) {
+                        var d = Ext.JSON.decode(r.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.ERROR
+                        })
+                    }
+                }
+            }
+        });
+        //</editor-fold>
         /*
          
          Ext.create('susencargos.store.DeprisaStore', {
@@ -2393,12 +2465,6 @@ Ext.application({
          storeId: 'FieldTemplate',
          model: 'susencargos.model.FieldTemplate',
          object: 'fields'
-         });
-         
-         Ext.create('susencargos.store.DeprisaStore', {
-         storeId: 'Group',
-         model: 'susencargos.model.Group',
-         object: 'groups'
          });
          
          Ext.create('susencargos.store.DeprisaStore', {
@@ -2423,42 +2489,6 @@ Ext.application({
          storeId: 'LevelAccess',
          model: 'susencargos.model.LevelAccess',
          object: 'levelsAccess'
-         });
-         
-         Ext.create('susencargos.store.DeprisaStore', {
-         storeId: 'Module',
-         model: 'susencargos.model.Module',
-         object: 'modules'
-         });
-         
-         Ext.create('Ext.data.TreeStore', {
-         storeId: 'ModuleTree',
-         model: 'susencargos.model.Module',
-         nodeParam: 'module',
-         remoteSort: true,
-         proxy: {
-         type: 'ajax',
-         url: 'stores/module_tree.php',
-         extraParams: {
-         idapplication: 0
-         },
-         reader: {
-         type: 'json',
-         root: 'module',
-         successProperty: 'success'
-         },
-         listeners: {
-         exception: function (p, r, o, op) {
-         var d = Ext.JSON.decode(r.responseText);
-         Ext.MessageBox.show({
-         title: d.msg.title,
-         msg: d.msg.body,
-         buttons: Ext.Msg.OK,
-         icon: Ext.Msg.ERROR
-         })
-         }
-         }
-         }
          });
          
          Ext.create('susencargos.store.DeprisaStore', {
@@ -2507,79 +2537,6 @@ Ext.application({
          storeId: 'UsersGroup',
          model: 'susencargos.model.User',
          object: 'usersGroup'
-         });
-         
-         Ext.define('susencargos.view.DeprisaItemSelector', {
-         extend: 'Ext.window.Window',
-         maximizable: true,
-         modal: true,
-         width: Ext.getBody().getViewSize().width * 0.8,
-         height: 500,
-         autoShow: true,
-         layout: {
-         type: 'hbox',
-         align: 'stretch',
-         padding: 5
-         },
-         defaults: {
-         flex: 1
-         },
-         columns: [],
-         storeSource: '',
-         storeFinish: '',
-         items: [{
-         xtype: 'grid',
-         title: 'No asignados',
-         id: 'gridSource',
-         multiSelect: true,
-         plugins: {
-         ptype: 'gridfilters',
-         menuFilterText: 'Filtros'
-         },
-         bbar: {
-         xtype: 'pagingtoolbar',
-         pageSize: 25,
-         displayInfo: true
-         },
-         viewConfig: {
-         plugins: {
-         ptype: 'gridviewdragdrop',
-         dragGroup: 'source',
-         dropGroup: 'destination'
-         }
-         }
-         }, {
-         xtype: 'grid',
-         id: 'gridDestination',
-         multiSelect: true,
-         title: 'Asignados',
-         plugins: {
-         ptype: 'gridfilters',
-         menuFilterText: 'Filtros'
-         },
-         store: 'GroupsUser',
-         bbar: {
-         xtype: 'pagingtoolbar',
-         pageSize: 25,
-         displayInfo: true
-         },
-         viewConfig: {
-         plugins: {
-         ptype: 'gridviewdragdrop',
-         dragGroup: 'destination',
-         dropGroup: 'source'
-         }
-         }
-         }],
-         constructor: function (config) {
-         this.items[0].columns = this.columns;
-         this.items[0].store = this.storeSource;
-         this.items[0].bbar.store = this.storeSource;
-         this.items[1].columns = this.columns;
-         this.items[1].store = this.storeFinish;
-         this.items[1].bbar.store = this.storeFinish;
-         this.callParent(config)
-         }
          });
          
          Ext.define('susencargos.view.application.FormGroupModule', {
@@ -2760,81 +2717,6 @@ Ext.application({
          icon: 'css/remove.png',
          iconCls: 'remove'
          }]
-         });
-         
-         Ext.define('susencargos.view.application.Modules', {
-         extend: 'Ext.tree.Panel',
-         iconCls: 'module',
-         plugins: {
-         ptype: 'gridfilters',
-         menuFilterText: 'Filtros'
-         },
-         alias: 'widget.listModules',
-         title: 'Listado m\xf3dulos',
-         layout: 'fit',
-         store: 'ModuleTree',
-         closable: true,
-         displayField: 'name',
-         rootVisible: false,
-         useArrows: true,
-         autoScroll: true,
-         columns: [{
-         header: 'Nombre',
-         xtype: 'treecolumn',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Clase',
-         filter: 'string',
-         dataIndex: 'class',
-         flex: 2
-         }, {
-         header: 'Script/Acci\xf3n',
-         filter: 'string',
-         dataIndex: 'script',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'groups',
-         tooltip: 'Grupos',
-         icon: 'css/group.png',
-         stopSelection: false,
-         iconCls: 'group'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         stopSelection: false,
-         icon: 'css/remove.png',
-         iconCls: 'remove'
-         }],
-         bbar: {
-         xtype: 'toolbar',
-         items: [{
-         xtype: 'button',
-         text: 'Insertar',
-         iconCls: 'insert',
-         tooltip: 'Insertar',
-         action: 'insert'
-         }, '-', {
-         xtype: 'button',
-         icon: 'css/clean.png',
-         text: 'Limpiar filtros',
-         tooltip: 'Limpiar filtros',
-         action: 'clean'
-         }]
-         }
          });
          
          Ext.define("susencargos.view.country.FormCity", {
@@ -3108,113 +2990,6 @@ Ext.application({
          }],
          storeSource: 'NoUsersGroup',
          storeFinish: 'UsersGroup'
-         });
-         
-         Ext.define('susencargos.view.group.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
-         iconCls: 'group',
-         alias: 'widget.listGroups',
-         title: 'Listado grupos',
-         store: 'Group',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idgroup'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Activo',
-         dataIndex: 'active',
-         filter: 'boolean',
-         renderer: function (value) {
-         if (value) {
-         return "Si";
-         } else {
-         return "No";
-         }
-         },
-         flex: 1
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'countries',
-         tooltip: 'Paises',
-         icon: 'css/country.png',
-         stopSelection: false,
-         iconCls: 'country'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'applications',
-         tooltip: 'Aplicaciones',
-         icon: 'css/apps.png',
-         stopSelection: false,
-         iconCls: 'apps'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'users',
-         tooltip: 'Usuarios',
-         icon: 'css/user.png',
-         stopSelection: false,
-         iconCls: 'user'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         icon: 'css/remove.png',
-         stopSelection: false,
-         iconCls: 'remove'
-         }]
-         });
-         
-         Ext.define('susencargos.view.group.Form', {
-         extend: 'susencargos.view.DeprisaForm',
-         alias: 'widget.formGroup',
-         title: 'Editar grupo',
-         object: 'groups',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idgroup',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }, {
-         xtype: 'combo',
-         name: 'active',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Activo',
-         store: [[false, 'No'], [true, 'Si']],
-         queryMode: 'local',
-         forceSelection: true,
-         typeAHead: true
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
          });
          
          Ext.define('susencargos.view.group.Applications', {
@@ -3869,7 +3644,79 @@ Ext.application({
                 this.callParent()
             }
         });
-        
+
+        Ext.define('susencargos.view.DeprisaItemSelector', {
+            extend: 'Ext.window.Window',
+            maximizable: true,
+            modal: true,
+            width: Ext.getBody().getViewSize().width * 0.8,
+            height: 500,
+            autoShow: true,
+            layout: {
+                type: 'hbox',
+                align: 'stretch',
+                padding: 5
+            },
+            defaults: {
+                flex: 1
+            },
+            columns: [],
+            storeSource: '',
+            storeFinish: '',
+            items: [{
+                    xtype: 'grid',
+                    title: 'No asignados',
+                    id: 'gridSource',
+                    multiSelect: true,
+                    plugins: {
+                        ptype: 'gridfilters',
+                        menuFilterText: 'Filtros'
+                    },
+                    bbar: {
+                        xtype: 'pagingtoolbar',
+                        pageSize: 25,
+                        displayInfo: true
+                    },
+                    viewConfig: {
+                        plugins: {
+                            ptype: 'gridviewdragdrop',
+                            dragGroup: 'source',
+                            dropGroup: 'destination'
+                        }
+                    }
+                }, {
+                    xtype: 'grid',
+                    id: 'gridDestination',
+                    multiSelect: true,
+                    title: 'Asignados',
+                    plugins: {
+                        ptype: 'gridfilters',
+                        menuFilterText: 'Filtros'
+                    },
+                    store: 'GroupsUser',
+                    bbar: {
+                        xtype: 'pagingtoolbar',
+                        pageSize: 25,
+                        displayInfo: true
+                    },
+                    viewConfig: {
+                        plugins: {
+                            ptype: 'gridviewdragdrop',
+                            dragGroup: 'destination',
+                            dropGroup: 'source'
+                        }
+                    }
+                }],
+            constructor: function (config) {
+                this.items[0].columns = this.columns;
+                this.items[0].store = this.storeSource;
+                this.items[0].bbar.store = this.storeSource;
+                this.items[1].columns = this.columns;
+                this.items[1].store = this.storeFinish;
+                this.items[1].bbar.store = this.storeFinish;
+                this.callParent(config)
+            }
+        });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Aplicación">
         Ext.define('susencargos.view.application.Grid', {
@@ -3948,7 +3795,182 @@ Ext.application({
                 }]
         });
         //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Grupo">
+        Ext.define('susencargos.view.group.Grid', {
+            extend: 'susencargos.view.DeprisaGrid',
+            iconCls: 'group',
+            alias: 'widget.listGroups',
+            title: 'Listado grupos',
+            store: 'Group',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idgroup'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Activo',
+                    dataIndex: 'active',
+                    filter: 'boolean',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si";
+                        } else {
+                            return "No";
+                        }
+                    },
+                    flex: 1
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'applications',
+                    tooltip: 'Aplicaciones',
+                    icon: 'css/apps.png',
+                    stopSelection: false,
+                    iconCls: 'apps'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'users',
+                    tooltip: 'Usuarios',
+                    icon: 'css/user.png',
+                    stopSelection: false,
+                    iconCls: 'user'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
 
+        Ext.define('susencargos.view.group.Form', {
+            extend: 'susencargos.view.DeprisaForm',
+            alias: 'widget.formGroup',
+            title: 'Editar grupo',
+            object: 'groups',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idgroup',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'combo',
+                    name: 'active',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Activo',
+                    store: [[false, 'No'], [true, 'Si']],
+                    queryMode: 'local',
+                    forceSelection: true,
+                    typeAHead: true
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Módulo">
+        Ext.define('susencargos.view.application.Modules', {
+            extend: 'Ext.tree.Panel',
+            iconCls: 'module',
+            plugins: {
+                ptype: 'gridfilters',
+                menuFilterText: 'Filtros'
+            },
+            alias: 'widget.listModules',
+            title: 'Listado m\xf3dulos',
+            layout: 'fit',
+            store: 'ModuleTree',
+            closable: true,
+            displayField: 'name',
+            rootVisible: false,
+            useArrows: true,
+            autoScroll: true,
+            columns: [{
+                    header: 'Nombre',
+                    xtype: 'treecolumn',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Clase',
+                    filter: 'string',
+                    dataIndex: 'class',
+                    flex: 2
+                }, {
+                    header: 'Script/Acci\xf3n',
+                    filter: 'string',
+                    dataIndex: 'script',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'groups',
+                    tooltip: 'Grupos',
+                    icon: 'css/group.png',
+                    stopSelection: false,
+                    iconCls: 'group'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    stopSelection: false,
+                    icon: 'css/remove.png',
+                    iconCls: 'remove'
+                }],
+            bbar: {
+                xtype: 'toolbar',
+                items: [{
+                        xtype: 'button',
+                        text: 'Insertar',
+                        iconCls: 'insert',
+                        tooltip: 'Insertar',
+                        action: 'insert'
+                    }, '-', {
+                        xtype: 'button',
+                        icon: 'css/clean.png',
+                        text: 'Limpiar filtros',
+                        tooltip: 'Limpiar filtros',
+                        action: 'clean'
+                    }]
+            }
+        });
+        //</editor-fold>
         Ext.create('Ext.container.Viewport', {
             layout: 'border',
             items: [{

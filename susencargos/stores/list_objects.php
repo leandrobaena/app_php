@@ -2,6 +2,8 @@
 
 require_once (__DIR__ . "/../../gen/bl/User.php");
 require_once (__DIR__ . "/../../gen/bl/Application.php");
+require_once (__DIR__ . "/../../gen/bl/Group.php");
+require_once (__DIR__ . "/../../gen/bl/Module.php");
 
 $start = 0;
 $limit = 1000;
@@ -21,10 +23,18 @@ if (isset($_GET["object"])) {
 
 switch ($object) {
     case "apps":
-        $app = new \gen\bl\Application(0);
-        $apps = $app->readAll($filters, $sorters, $start, $limit);
+        $obj = new \gen\bl\Application(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
+        break;
+    case "groups":
+        $obj = new \gen\bl\Group(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
+        break;
+    case "modules":
+        $obj = new \gen\bl\Module(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
         break;
 }
 
-echo($apps);
+echo($list);
 ?>
