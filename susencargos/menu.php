@@ -31,8 +31,12 @@ foreach (EModule module in modules) {
 }
 */
 //Alineación a derecha
-$out .= "'->'";
-//$out .= ",'->'";
+
+$out .= "{text: 'Administración',iconCls:'app',menu:[";
+$out .= "{iconCls:'apps',text:'Aplicaciones',action:'apps'}";
+$out .= "]}";
+
+$out .= ",'->'";
 
 $out .= ",{text: '" . $_SESSION["user"]->name . "',iconCls:'app',menu:[";
 $out .= "{iconCls:'password',text:'Cambiar contrase\\xf1a',action:'changePass'},";

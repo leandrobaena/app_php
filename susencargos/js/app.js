@@ -257,7 +257,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idapplication'),
                         object: 'apps'
@@ -270,7 +270,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('Application').load()
+                                Ext.getStore('Application').load();
                             }
                         });
                     },
@@ -289,7 +289,7 @@ Ext.create('Ext.app.Controller', {
     insertGroup: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'update/save_object.aspx',
+                url: 'update/save_object.php',
                 params: {
                     idapplication: Ext.getStore('GroupsApplication').getProxy().extraParams.idapplication,
                     object: 'groupApplication',
@@ -320,7 +320,7 @@ Ext.create('Ext.app.Controller', {
     removeGroup: function (no, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'delete/delete_object.aspx',
+                url: 'delete/delete_object.php',
                 params: {
                     idapplication: Ext.getStore('GroupsApplication').getProxy().extraParams.idapplication,
                     object: 'groupApplication',
@@ -409,7 +409,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getSelectionModel().getLastSelected().get('idmodule'),
                         object: 'modules'
@@ -541,7 +541,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idgroupmodule'),
                         object: 'groupsModule'
@@ -679,7 +679,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idgroup'),
                         object: 'groups'
@@ -712,7 +712,7 @@ Ext.create('Ext.app.Controller', {
     insertUser: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'update/save_object.aspx',
+                url: 'update/save_object.php',
                 params: {
                     idgroup: Ext.getStore('UsersGroup').getProxy().extraParams.idgroup,
                     id: 0,
@@ -743,7 +743,7 @@ Ext.create('Ext.app.Controller', {
     removeUser: function (no, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'delete/delete_object.aspx',
+                url: 'delete/delete_object.php',
                 params: {
                     idgroup: Ext.getStore('UsersGroup').getProxy().extraParams.idgroup,
                     object: 'userGroup',
@@ -773,7 +773,7 @@ Ext.create('Ext.app.Controller', {
     insertApplication: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'update/save_object.aspx',
+                url: 'update/save_object.php',
                 params: {
                     idgroup: Ext.getStore('ApplicationsGroup').getProxy().extraParams.idgroup,
                     object: 'applicationGroup',
@@ -804,7 +804,7 @@ Ext.create('Ext.app.Controller', {
     removeApplication: function (no, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'delete/delete_object.aspx',
+                url: 'delete/delete_object.php',
                 params: {
                     idgroup: Ext.getStore('ApplicationsGroup').getProxy().extraParams.idgroup,
                     object: 'applicationGroup',
@@ -834,7 +834,7 @@ Ext.create('Ext.app.Controller', {
     insertCountry: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'update/save_object.aspx',
+                url: 'update/save_object.php',
                 params: {
                     idgroup: Ext.getStore('CountriesGroup').getProxy().extraParams.idgroup,
                     object: 'countryGroup',
@@ -865,7 +865,7 @@ Ext.create('Ext.app.Controller', {
     removeCountry: function (no, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
             Ext.Ajax.request({
-                url: 'delete/delete_object.aspx',
+                url: 'delete/delete_object.php',
                 params: {
                     idgroup: Ext.getStore('CountriesGroup').getProxy().extraParams.idgroup,
                     object: 'countryGroup',
@@ -961,7 +961,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idlevelaccess'),
                         object: 'levelsAccess'
@@ -999,60 +999,17 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=groups]': {click: 'groups'},
         'menu menuitem[action=apps]': {click: 'apps'},
         'menu menuitem[action=levelsAccess]': {click: 'levelsAccess'},
-        'menu menuitem[action=typesLocker]': {click: 'typesLocker'},
-        'menu menuitem[action=typesID]': {click: 'typesID'},
-        'menu menuitem[action=moneys]': {click: 'moneys'},
-        'menu menuitem[action=measuringsSystem]': {click: 'measuringsSystem'},
-        'menu menuitem[action=countries]': {click: 'countries'},
-        'menu menuitem[action=occupations]': {click: 'occupations'},
-        'menu menuitem[action=economySectors]': {click: 'economySectors'},
-        'menu menuitem[action=secretQuestions]': {click: 'secretQuestions'},
-        'menu menuitem[action=infoMethods]': {click: 'infoMethods'},
-        'menu menuitem[action=typesPackage]': {click: 'typesPackage'},
         'menu menuitem[action=templates]': {click: 'templates'},
-        'menu menuitem[action=lockers]': {click: 'lockers'},
-        'menu menuitem[action=rejectionReasons]': {click: 'rejectionReasons'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
-        'menu menuitem[action=groupsTracking]': {click: 'groupsTracking'},
-        'menu menuitem[action=deliveryCompanies]': {click: 'deliveryCompanies'},
-        'menu menuitem[action=wareHouses]': {click: 'wareHouses'},
-        'menu menuitem[action=products]': {click: 'products'},
-        'menu menuitem[action=listCustomers]': {click: 'listCustomers'},
-        'menu menuitem[action=provides]': {click: 'provides'},
-        'menu menuitem[action=typesUbication]': {click: 'typesUbication'},
-        'menu menuitem[action=payments]': {click: 'payments'},
-        'menu menuitem[action=printers]': {click: 'printers'},
         /*Operaciones*/
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
-        'menu menuitem[action=enteredPackages]': {click: 'enteredPackages'},
-        'menu menuitem[action=authorizedPackages]': {click: 'authorizedPackages'},
-        'menu menuitem[action=dispatchs]': {click: 'dispatchs'},
-        'menu menuitem[action=receivePackages]': {click: 'receivePackages'},
-        'menu menuitem[action=receivedPackages]': {click: 'receivedPackages'},
-        'menu menuitem[action=pendings]': {click: 'pendingPackages'},
-        'menu menuitem[action=prealerts]': {click: 'prealerts'},
-        'menu menuitem[action=requestsPending]': {click: 'requestsPending'},
-        'menu menuitem[action=dgPackages]': {click: 'dgPackages'},
-        'menu menuitem[action=missings]': {click: 'missings'},
-        'menu menuitem[action=admonPackages]': {click: 'admonPackages'},
         'menu menuitem[action=picking]': {click: 'listPackagesPicking'},
         /*Reportes*/
         'menu menuitem[action=miles]': {click: 'miles'},
-        'menu menuitem[action=rptAuthorized]': {click: 'rptAuthorized'},
-        'menu menuitem[action=rptAllPackage]': {click: 'rptAllPackage'},
-        'menu menuitem[action=rptProductivity]': {click: 'rptProductivity'},
-        'menu menuitem[action=rptLocker]': {click: 'rptLocker'},
-        'menu menuitem[action=rptBehavior]': {click: 'rptBehavior'},
-        'menu menuitem[action=storageAbandonment]': {click: 'storageAbandonment'},
-        'menu menuitem[action=rptReceivedPackages]': {click: 'rptReceivedPackages'},
-        'menu menuitem[action=rptPackageNoAuthorized]': {click: 'rptPackageNoAuthorized'},
         /*CMS*/
         'menu menuitem[action=typesResource]': {click: 'typesResource'},
-        'menu menuitem[action=resources]': {click: 'resources'},
-        'menu menuitem[action=pages]': {click: 'pages'},
         /*Aplicación*/
         'menu menuitem[action=changePass]': {click: 'changePass'},
-        'menu menuitem[action=printerUser]': {click: 'printerUser'},
         'menu menuitem[action=logout]': {click: 'logout'}
     },
     users: function () {
@@ -1146,7 +1103,7 @@ Ext.create('Ext.app.Controller', {
                             t = t.substr(8, t.length);
                         }
                         Ext.Ajax.request({
-                            url: 'stores/list_objects.aspx',
+                            url: 'stores/list_objects.php',
                             method: 'get',
                             params: {
                                 tracking: t,
@@ -1319,7 +1276,7 @@ Ext.create('Ext.app.Controller', {
             autoShow: true,
             items: [{
                     xtype: 'form',
-                    url: 'update/user_pass.aspx',
+                    url: 'update/user_pass.php',
                     defaults: {
                         labelAlign: 'right'
                     },
@@ -1400,7 +1357,7 @@ Ext.create('Ext.app.Controller', {
             callback: function () {
                 Ext.Ajax.request({
                     method: 'GET',
-                    url: "stores/list_objects.aspx",
+                    url: "stores/list_objects.php",
                     params: {
                         id: 0,
                         object: "printerUser"
@@ -1434,7 +1391,7 @@ Ext.create('Ext.app.Controller', {
         Ext.each(content.items.items, function (n, i, s) {
             if (n.alias == 'widget.' + grid) {
                 opened = true;
-                panel = n
+                panel = n;
             }
         });
         if (!opened) {
@@ -1454,7 +1411,7 @@ Ext.create('Ext.app.Controller', {
     },
     storageAbandonment: function () {
         Ext.Ajax.request({
-            url: 'stores/list_objects.aspx',
+            url: 'stores/list_objects.php',
             method: 'get',
             params: {
                 object: 'storageAbandonment'
@@ -1483,7 +1440,7 @@ Ext.create('Ext.app.Controller', {
     },
     rptPackageNoAuthorized: function () {
         Ext.Ajax.request({
-            url: 'stores/list_objects.aspx',
+            url: 'stores/list_objects.php',
             method: 'get',
             params: {
                 object: 'rptPackageNoAuthorized'
@@ -1596,7 +1553,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idstatetracking'),
                         object: 'statesTracking'
@@ -1722,7 +1679,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idtemplate'),
                         object: 'templates'
@@ -1808,7 +1765,7 @@ Ext.create('Ext.app.Controller', {
         Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
             if (o == 'yes') {
                 Ext.Ajax.request({
-                    url: 'delete/delete_object.aspx',
+                    url: 'delete/delete_object.php',
                     params: {
                         id: v.getStore().getAt(c).get('idfield'),
                         object: 'fields'
@@ -1879,7 +1836,7 @@ Ext.create("Ext.app.Controller", {
             callback: function () {
                 Ext.Ajax.request({
                     method: 'GET',
-                    url: "stores/list_objects.aspx",
+                    url: "stores/list_objects.php",
                     params: {
                         id: a.getStore().getAt(g).get("iduser"),
                         object: "printerUser"
@@ -1981,7 +1938,7 @@ Ext.create("Ext.app.Controller", {
         Ext.MessageBox.confirm("Eliminar registro", "¿Desea eliminar el registro?", function (c) {
             if (c == "yes") {
                 Ext.Ajax.request({
-                    url: "delete/delete_object.aspx",
+                    url: "delete/delete_object.php",
                     params: {
                         id: a.getStore().getAt(g).get("iduser"),
                         object: "users"
@@ -2022,7 +1979,7 @@ Ext.create("Ext.app.Controller", {
             autoShow: true,
             items: [{
                     xtype: "form",
-                    url: "update/user_pass.aspx",
+                    url: "update/user_pass.php",
                     defaults: {
                         labelAlign: "right"
                     },
@@ -2105,7 +2062,7 @@ Ext.create("Ext.app.Controller", {
     insertGroup: function (e, b, a, c) {
         Ext.each(b.records, function (g, d, f) {
             Ext.Ajax.request({
-                url: "update/save_object.aspx", params: {
+                url: "update/save_object.php", params: {
                     iduser: Ext.getStore("GroupsUser").getProxy().extraParams.iduser,
                     object: "groupUser",
                     idgroup: g.get("idgroup"),
@@ -2135,7 +2092,7 @@ Ext.create("Ext.app.Controller", {
     removeGroup: function (c, b, a, e) {
         Ext.each(b.records, function (g, d, f) {
             Ext.Ajax.request({
-                url: "delete/delete_object.aspx", params: {
+                url: "delete/delete_object.php", params: {
                     iduser: Ext.getStore("GroupsUser").getProxy().extraParams.iduser,
                     object: "groupUser",
                     idgroup: g.get("idgroup")
@@ -2212,7 +2169,7 @@ Ext.create("Ext.app.Controller", {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                window.location = "Paginas/Default.aspx"
+                                window.location = "Paginas/Default.php"
                             }
                         })
                     },
@@ -2239,7 +2196,7 @@ Ext.create("Ext.app.Controller", {
     blurID: function (a, b, c) {
         if (a.getValue() != "") {
             Ext.Ajax.request({
-                url: "ajax/validate_data_register.aspx",
+                url: "ajax/validate_data_register.php",
                 params: {
                     id: a.getValue(),
                     object: "id"
@@ -2261,7 +2218,7 @@ Ext.create("Ext.app.Controller", {
     blurEmail: function (a, b, c) {
         if (a.getValue() != "") {
             Ext.Ajax.request({
-                url: "ajax/validate_data_register.aspx",
+                url: "ajax/validate_data_register.php",
                 params: {
                     email: a.getValue(),
                     object: "email"
@@ -2296,7 +2253,7 @@ Ext.create("Ext.app.Controller", {
     blurEmailRecoveryPass: function (a, b, c) {
         if (a.getValue() != "") {
             Ext.Ajax.request({
-                url: "ajax/validate_data_register.aspx",
+                url: "ajax/validate_data_register.php",
                 params: {
                     email: a.getValue(),
                     object: "email"
@@ -2316,7 +2273,7 @@ Ext.create("Ext.app.Controller", {
                     } else {
                         Ext.getStore("FE_SecretQuestion").load();
                         Ext.Ajax.request({
-                            url: "ajax/validate_data_register.aspx",
+                            url: "ajax/validate_data_register.php",
                             params: {
                                 email: a.getValue(),
                                 object: "secretQuestion"
@@ -2354,7 +2311,7 @@ Ext.create("Ext.app.Controller", {
                         icon: Ext.Msg.INFO,
                         fn: function () {
                             if (a.up("form").getForm().findField("idrecoverymethod").getValue() == 1) {
-                                window.location = "change_pass.aspx?" + f.link
+                                window.location = "change_pass.php?" + f.link
                             }
                         }
                     })
@@ -2390,7 +2347,7 @@ Ext.create("Ext.app.Controller", {
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO,
                         fn: function () {
-                            window.location = "Ingresar.aspx"
+                            window.location = "Ingresar.php"
                         }
                     })
                 },
@@ -2419,11 +2376,12 @@ Ext.application({
     requires: ['Ext.container.Viewport', 'Ext.chart.*', 'Ext.ux.form.TinyMCE'],
     name: 'susencargos',
     launch: function () {
-        /*Ext.create('susencargos.store.DeprisaStore', {
-         storeId: 'Application',
-         model: 'susencargos.model.Application',
-         object: 'apps'
-         });
+        Ext.create('susencargos.store.DeprisaStore', {
+            storeId: 'Application',
+            model: 'susencargos.model.Application',
+            object: 'apps'
+        });
+        /*
          
          Ext.create('susencargos.store.DeprisaStore', {
          storeId: 'ApplicationsGroup',
@@ -2551,85 +2509,6 @@ Ext.application({
          object: 'usersGroup'
          });
          
-         Ext.define('susencargos.view.DeprisaGrid', {
-         extend: 'Ext.grid.Panel',
-         alias: '',
-         plugins: {
-         ptype: 'gridfilters',
-         menuFilterText: 'Filtros'
-         },
-         layout: 'fit',
-         closable: true,
-         autoScroll: true,
-         buttonsAds: [],
-         buttonsIni: ['-', {
-         xtype: 'button',
-         text: 'Insertar',
-         iconCls: 'insert',
-         tooltip: 'Insertar',
-         action: 'insert'
-         }, '-', {
-         xtype: 'button',
-         icon: 'css/clean.png',
-         text: 'Limpiar filtros',
-         tooltip: 'Limpiar filtros',
-         action: 'clean'
-         }],
-         bbar: {
-         xtype: 'pagingtoolbar',
-         pageSize: 25,
-         displayInfo: true,
-         items: []
-         },
-         viewConfig: {
-         enableTextSelection: true
-         },
-         constructor: function (config) {
-         this.bbar.store = this.store;
-         this.bbar.items = this.buttonsIni.concat(this.buttonsAds);
-         this.callParent(config)
-         }
-         });
-         
-         Ext.define('susencargos.view.DeprisaForm', {
-         extend: 'Ext.window.Window',
-         iconCls: 'edit',
-         width: 600,
-         maximizable: true,
-         object: '',
-         fields: [],
-         buttons: [],
-         modal: true,
-         layout: 'fit',
-         autoShow: true,
-         items: [{
-         xtype: 'form',
-         autoScroll: true,
-         url: 'update/save_object.php',
-         defaults: {
-         labelAlign: 'right'
-         }
-         }],
-         initComponent: function () {
-         this.items[0].items = [{
-         xtype: 'hiddenfield',
-         name: 'id', value: ''
-         }, {
-         xtype: 'hiddenfield',
-         name: 'object',
-         value: this.object
-         }, {
-         xtype: 'panel',
-         html: '* Campos obligatorios',
-         border: 0,
-         padding: 10
-         }].concat(this.fields);
-         this.items[0].buttons = this.buttons;
-         this.buttons = null;
-         this.callParent()
-         }
-         });
-         
          Ext.define('susencargos.view.DeprisaItemSelector', {
          extend: 'Ext.window.Window',
          maximizable: true,
@@ -2701,32 +2580,6 @@ Ext.application({
          this.items[1].bbar.store = this.storeFinish;
          this.callParent(config)
          }
-         });
-         
-         Ext.define('susencargos.view.application.Form', {
-         extend: 'susencargos.view.DeprisaForm',
-         alias: 'widget.formApplication',
-         title: 'Editar aplicaci\xf3n',
-         object: 'apps',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idapplication',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
          });
          
          Ext.define('susencargos.view.application.FormGroupModule', {
@@ -2832,56 +2685,6 @@ Ext.application({
          }, {
          text: 'Cancelar',
          action: 'cancel'
-         }]
-         });
-         
-         Ext.define('susencargos.view.application.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
-         iconCls: 'apps',
-         alias: 'widget.listApplications',
-         title: 'Listado aplicaciones',
-         store: 'Application',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idapplication'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'groups',
-         tooltip: 'Grupos',
-         icon: 'css/group.png',
-         stopSelection: false,
-         iconCls: 'group'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'modules',
-         tooltip: 'M\xf3dulos',
-         icon: 'css/module.png',
-         stopSelection: false,
-         iconCls: 'module'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         stopSelection: false,
-         icon: 'css/remove.png',
-         iconCls: 'remove'
          }]
          });
          
@@ -3986,6 +3789,166 @@ Ext.application({
          }]
          });
          */
+
+        //<editor-fold defaultstate="collapsed" desc="View Generales">
+        Ext.define('susencargos.view.DeprisaGrid', {
+            extend: 'Ext.grid.Panel',
+            alias: '',
+            plugins: {
+                ptype: 'gridfilters',
+                menuFilterText: 'Filtros'
+            },
+            layout: 'fit',
+            closable: true,
+            autoScroll: true,
+            buttonsAds: [],
+            buttonsIni: ['-', {
+                    xtype: 'button',
+                    text: 'Insertar',
+                    iconCls: 'insert',
+                    tooltip: 'Insertar',
+                    action: 'insert'
+                }, '-', {
+                    xtype: 'button',
+                    icon: 'css/clean.png',
+                    text: 'Limpiar filtros',
+                    tooltip: 'Limpiar filtros',
+                    action: 'clean'
+                }],
+            bbar: {
+                xtype: 'pagingtoolbar',
+                pageSize: 25,
+                displayInfo: true,
+                items: []
+            },
+            viewConfig: {
+                enableTextSelection: true
+            },
+            constructor: function (config) {
+                this.bbar.store = this.store;
+                this.bbar.items = this.buttonsIni.concat(this.buttonsAds);
+                this.callParent(config)
+            }
+        });
+
+        Ext.define('susencargos.view.DeprisaForm', {
+            extend: 'Ext.window.Window',
+            iconCls: 'edit',
+            width: 600,
+            maximizable: true,
+            object: '',
+            fields: [],
+            buttons: [],
+            modal: true,
+            layout: 'fit',
+            autoShow: true,
+            items: [{
+                    xtype: 'form',
+                    autoScroll: true,
+                    url: 'update/save_object.php',
+                    defaults: {
+                        labelAlign: 'right'
+                    }
+                }],
+            initComponent: function () {
+                this.items[0].items = [{
+                        xtype: 'hiddenfield',
+                        name: 'id', value: ''
+                    }, {
+                        xtype: 'hiddenfield',
+                        name: 'object',
+                        value: this.object
+                    }, {
+                        xtype: 'panel',
+                        html: '* Campos obligatorios',
+                        border: 0,
+                        padding: 10
+                    }].concat(this.fields);
+                this.items[0].buttons = this.buttons;
+                this.buttons = null;
+                this.callParent()
+            }
+        });
+        
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Aplicación">
+        Ext.define('susencargos.view.application.Grid', {
+            extend: 'susencargos.view.DeprisaGrid',
+            iconCls: 'apps',
+            alias: 'widget.listApplications',
+            title: 'Listado aplicaciones',
+            store: 'Application',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idapplication'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'groups',
+                    tooltip: 'Grupos',
+                    icon: 'css/group.png',
+                    stopSelection: false,
+                    iconCls: 'group'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'modules',
+                    tooltip: 'M\xf3dulos',
+                    icon: 'css/module.png',
+                    stopSelection: false,
+                    iconCls: 'module'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    stopSelection: false,
+                    icon: 'css/remove.png',
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.application.Form', {
+            extend: 'susencargos.view.DeprisaForm',
+            alias: 'widget.formApplication',
+            title: 'Editar aplicaci\xf3n',
+            object: 'apps',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idapplication',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+
         Ext.create('Ext.container.Viewport', {
             layout: 'border',
             items: [{
