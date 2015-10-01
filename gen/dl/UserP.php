@@ -72,7 +72,7 @@ class UserP extends \gen\dl\LBTObjectP {
             $obj->logged = ($row->logged == 1);
             array_push($list, $obj);
         }
-        return $list;
+        return new \utils\ListJson($list, $this->total);
     }
 
     /**

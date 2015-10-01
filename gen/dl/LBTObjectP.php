@@ -9,6 +9,7 @@ require_once(__DIR__ . "/../entities/UserEntity.php");
  * Clase padre de los objetos que administración de persistencia de las
  * entidades de las aplicaciones
  *
+ * @property \gen\entities\UserEntity $user Usaurio que ejecuta la acción
  * @author Leandro Baena Torres
  */
 abstract class LBTObjectP {
@@ -24,8 +25,6 @@ abstract class LBTObjectP {
         $this->connection = $connection;
         $this->total = 0;
         $this->user = new \gen\entities\UserEntity(0);
-        $this->filters = "";
-        $this->sorters = "";
     }
 
     //</editor-fold>
@@ -69,6 +68,7 @@ abstract class LBTObjectP {
      * @param string $sorters Ordenamientos aplicados a la consulta
      * @param int $start Registro inicial a traer en la consulta
      * @param int $limit Cantidad de registros a traer en la consulta
+     * @return \utils\ListJson Listado de registros en formato JSON
      */
     public abstract function readAll($filters, $sorters, $start, $limit);
 
