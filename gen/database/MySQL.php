@@ -158,7 +158,7 @@ class MySQL extends DataBase {
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password){
+    public function validate($email, $password) {
         $sql = "CALL sp_user_validate(\"$email\",\"$password\")";
         $rs = $this->link->query($sql);
         if ($rs == null) {
@@ -169,7 +169,7 @@ class MySQL extends DataBase {
         $this->link->next_result();
         return $row->id;
     }
-    
+
     /**
      * @see parent::close()
      */

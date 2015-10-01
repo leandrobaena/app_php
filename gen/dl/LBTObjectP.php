@@ -29,6 +29,28 @@ abstract class LBTObjectP {
     }
 
     //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Propiedades">
+    /**
+     * Trae un atributo
+     *
+     * @param string $field Atributo a traerle el valor
+     * @return mixed Valor del atributo
+     */
+    public function __get($field) {
+        return $this->$field;
+    }
+
+    /**
+     * Cambia el valor de un atributo
+     *
+     * @param string $field Atributo a cambiarle el valor
+     * @param mixed $value Nuevo valor del atributo
+     */
+    public function __set($field, $value) {
+        $this->$field = $value;
+    }
+
+//</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Métodos">
     /**
      * Lee el objeto desde la base de datos
@@ -86,19 +108,5 @@ abstract class LBTObjectP {
      * @var \gen\entities\UserEntity
      */
     protected $user;
-
-    /**
-     * Filtros pasados al procedimiento almacenado que trae el listado de objetos
-     * @var string
-     */
-    protected $filters;
-
-    /**
-     * Ordenamientos pasados al procedimiento almacenado que trae el listado de
-     * objetos
-     * @var string
-     */
-    protected $sorters;
-
     //</editor-fold>
 }

@@ -90,5 +90,19 @@ class UserP extends \gen\dl\LBTObjectP {
         );
     }
 
+    /**
+     * Valida que el login y el password determinado corresponda a un usuario
+     * con privilegios para una determinada aplicación
+     * 
+     * @param string $login Login ingresado por el usuario
+     * @param string $password Contraseña ingresada por el usuario
+     */
+    public function validate($login, $password){
+        $id = $this->connection->validate($login, $password);
+        if($id != 0){
+            $this->observer->iduser = $id;
+            $this->read();
+        }
+    }
     //</editor-fold>
 }
