@@ -3,25 +3,28 @@
 namespace gen\entities;
 
 require_once (__DIR__ . "/LBTObject.php");
+require_once (__DIR__ . "/../entities/ApplicationEntity.php");
 
 /**
- * Aplicacion del sistema
+ * Modulo de una aplicación del sistema
  *
  * @author Leandro Baena Torres
- * @property int $idapplication Identificador de la aplicación
- * @property string $name Nombre de la aplicación
  */
-class ApplicationEntity extends \gen\entities\LBTObject {
+class ModuleEntity extends \gen\entities\LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     /**
-     * Crea una nueva instancia de una aplicación
+     * Crea una nueva instancia de un módulo
      * 
-     * @param id Identificador de la aplicación, 0 si es nueva
+     * @param id Identificador del módulo, 0 si es nuevo
      */
     public function __construct($id = 0) {
-        $this->idapplication = $id;
+        $this->idmodule = $id;
         $this->name = "";
+        $this->class = "";
+        $this->script = "";
+        $this->application = new ApplicationEntity(0);
+        $this->idparent = 0;
     }
 
     //</editor-fold>
@@ -54,21 +57,43 @@ class ApplicationEntity extends \gen\entities\LBTObject {
      * @return string Objeto en formato JSON
      */
     public function __toString() {
-        return "{\"idapplication\":$this->idapplication,"
-                . "\"name\":\"$this->name\"}";
+        return "{\"idmodule\":$this->idmodule,"
+        . "\"name\":\"$this->name\","
+        . "\"class\":\"$this->class\"}"
+        . "\"script\":\"$this->script\"}"
+        . "\"application\":$this->application}";
     }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Atributos">
     /**
-     * @var int Identificador de la aplicación
+     * @var int Identificador del módulo
      */
-    private $idapplication;
+    private $idmodule;
 
     /**
-     * @var string Nombre de la aplicación
+     * @var string Nombre del módulo
      */
     private $name;
 
-    //</editor-fold>
+    /**
+     * @var string Clase del módulo
+     */
+    private $class;
+    
+    /**
+     * @var string Scrit que ejecuta el módulo al ser invocado
+     */
+    private $script;
+
+    /**
+     * @var ApplicationEntity Aplicación a la que pertenece el módulo
+     */
+    private $application;
+    
+    /**
+     * @var int Identificador del módulo padre del actual
+     */
+    private $idparent;
+//</editor-fold>
 }

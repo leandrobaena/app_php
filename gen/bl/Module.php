@@ -2,25 +2,29 @@
 
 namespace gen\bl;
 
-require_once(__DIR__ . "/../entities/ApplicationEntity.php");
-require_once(__DIR__ . "/../dl/ApplicationP.php");
+require_once(__DIR__ . "/../entities/ModuleEntity.php");
+require_once(__DIR__ . "/../dl/ModuleP.php");
 require_once(__DIR__ . "/../database/DataBaseFactory.php");
 require_once(__DIR__ . "/LBTObjectBL.php");
 
 /**
- * Manejo de aplicaciones del sistema
+ * Manejo de módulos del sistema
  * 
- * @property int $idapplication Identificador de la aplicación
- * @property string $name Nombre de la aplicación
+ * @property int $idmodule Identificador del módulo
+ * @property string $name Nombre del módulo
+ * @property int $idparent Identificador del módulo padre del actual
+ * @property string $class Clase del módulo
+ * @property string $script Script que se ejecuta al llamar el módulo
+ * @property \gen\entities\ApplicationEntity $application Aplicación a la que pertenece el módulo
  * @author Leandro Baena Torres
  */
-class Application extends \LBTObjectBL {
+class Module extends \LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {
-        $this->entity = new \gen\entities\ApplicationEntity($id);
+        $this->entity = new \gen\entities\ModuleEntity($id);
         $db = \gen\database\DataBaseFactory::factoryDatabase("mysql");
-        $this->persistence = new \gen\dl\ApplicationP($this->entity, $db);
+        $this->persistence = new \gen\dl\ModuleP($this->entity, $db);
     }
 
     // </editor-fold>
@@ -48,20 +52,20 @@ class Application extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de aplicaciones
+     * Trae un listado de módulos
      * @param string $filters Filtros aplicados a la consulta
      * @param string $sorters Ordenamientos aplicados a la consulta
      * @param int $start Registro inicial a traer
      * @param int $limit Número de registros a traer
-     * @return string Listado de aplicaciones en formato json
+     * @return string Listado de módulos en formato json
      */
     public function readAll($filters, $sorters, $start, $limit) {
         return $this->persistence->readAll($filters, $sorters, $start, $limit);
     }
 
     /**
-     * Crea la aplicación en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea la aplicación
+     * Crea el módulo en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que crea el módulo
      */
     public function create($user) {
         $this->persistence->user = $user;
@@ -69,8 +73,8 @@ class Application extends \LBTObjectBL {
     }
 
     /**
-     * Actualiza la aplicación en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza la aplicación
+     * Actualiza el módulo en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que actualiza el módulo
      */
     public function update($user) {
         $this->persistence->user = $user;
@@ -78,8 +82,8 @@ class Application extends \LBTObjectBL {
     }
 
     /**
-     * Elimina la aplicación en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina la aplicación
+     * Elimina el módulo en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que elimina el módulo
      */
     public function delete($user) {
         $this->persistence->user = $user;
@@ -87,11 +91,12 @@ class Application extends \LBTObjectBL {
     }
 
     /**
-     * Carga la aplicación de la base de datos
+     * Carga el módulo de la base de datos
      */
     public function read() {
         $this->persistence->read();
     }
+
     // </editor-fold>
 }
 

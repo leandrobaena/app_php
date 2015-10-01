@@ -3,6 +3,7 @@
 namespace gen\dl;
 
 require_once (__DIR__ . "/LBTObjectP.php");
+require_once (__DIR__ . "/../entities/ApplicationEntity.php");
 require_once (__DIR__ . "/../../utils/ListJson.php");
 
 /**

@@ -37,7 +37,7 @@ class User extends \LBTObjectBL {
      * @return mixed Valor del atributo
      */
     public function __get($field) {
-        return $this->observer->$field;
+        return $this->entity->$field;
     }
 
     /**
@@ -47,7 +47,7 @@ class User extends \LBTObjectBL {
      * @param mixed $value Nuevo valor del atributo
      */
     public function __set($field, $value) {
-        $this->observer->$field = $value;
+        $this->entity->$field = $value;
     }
 
     //</editor-fold>

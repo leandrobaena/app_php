@@ -2,6 +2,9 @@
 
 namespace gen\entities;
 
+require_once (__DIR__ . "/../../utils/FormatterText.php");
+require_once (__DIR__ . "/LBTObject.php");
+
 /**
  * Grupo al que pertenece un usuario del sistema
  *

@@ -3,6 +3,8 @@
 namespace gen\dl;
 
 require_once (__DIR__ . "/LBTObjectP.php");
+require_once (__DIR__ . "/../entities/UserEntity.php");
+require_once (__DIR__ . "/../../utils/ListJson.php");
 
 /**
  * Administrador de persistencia en base de datos de un usuario de las
@@ -23,7 +25,7 @@ class UserP extends \gen\dl\LBTObjectP {
     }
 
     /**
-     * Inserta u nuevo usuario en la base de datos
+     * Inserta un nuevo usuario en la base de datos
      */
     public function insert() {
         $this->observer->iduser = $this->connection->insert("gen_user", array(
