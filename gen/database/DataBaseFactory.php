@@ -2,10 +2,10 @@
 
 namespace gen\database;
 
-require_once(dirname(__FILE__) . "/MySQL.php");
-require_once(dirname(__FILE__) . "/MSSQL.php");
-require_once(dirname(__FILE__) . "/Oracle.php");
-require_once(dirname(__FILE__) . "/BDException.php");
+require_once(__DIR__ . "/MySQL.php");
+require_once(__DIR__ . "/MSSQL.php");
+require_once(__DIR__ . "/Oracle.php");
+require_once(__DIR__ . "/BDException.php");
 
 /**
  * Clase que sirve de fábrica para crear una conexión a una determinada base de

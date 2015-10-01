@@ -2,7 +2,7 @@
 
 namespace gen\database;
 
-require_once(dirname(__FILE__) . "/DataBase.php");
+require_once(__DIR__ . "/DataBase.php");
 
 /**
  * Conexion a un motor de base de datos SQL Server

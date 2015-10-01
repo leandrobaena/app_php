@@ -2,7 +2,7 @@
 
 namespace gen\database;
 
-require_once(dirname(__FILE__) . "/DataBase.php");
+require_once(__DIR__ . "/DataBase.php");
 
 /**
  * Conexion a un motor de base de datos Oracle
@@ -145,7 +145,7 @@ class Oracle extends DataBase {
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password){
+    public function validate($email, $password) {
         $sql = "EXEC sp_user_validate(\"$email\",\"$password\")";
         $rs = $this->query($this->link, $sql);
         if ($rs == null) {
@@ -155,7 +155,7 @@ class Oracle extends DataBase {
         $row = oci_fetch_object($rs);
         return $row->id;
     }
-    
+
     /**
      * @see parent::close()
      */

@@ -2,7 +2,7 @@
 
 namespace gen\database;
 
-require_once(dirname(__FILE__) . "/BDException.php");
+require_once(__DIR__ . "/BDException.php");
 
 /**
  * Clase general para la conexión y funciones de base de datos

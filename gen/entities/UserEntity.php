@@ -2,12 +2,20 @@
 
 namespace gen\entities;
 
-require_once (dirname(__DIR__) . "/../../utils/FormatterText.php");
+require_once (__DIR__ . "/../../utils/FormatterText.php");
+require_once (__DIR__ . "/LBTObject.php");
 
 /**
  * Usuario que tiene acceso a las aplicaciones
  *
  * @author Leandro Baena Torres
+ * @property int $iduser Identificador del usuario
+ * @property string $name Nombre del usuario
+ * @property string $login Login del usuario
+ * @property bool $active Si el usuario está o no activo
+ * @property string $email Email del usuario
+ * @property \DateTime $lastLogin Última fecha de acceso
+ * @property bool $logged Si está o no logeado
  */
 class UserEntity extends \gen\entities\LBTObject {
 
