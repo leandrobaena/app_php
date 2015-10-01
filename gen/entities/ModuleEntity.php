@@ -58,10 +58,11 @@ class ModuleEntity extends \gen\entities\LBTObject {
      */
     public function __toString() {
         return "{\"idmodule\":$this->idmodule,"
-        . "\"name\":\"$this->name\","
-        . "\"class\":\"$this->class\"}"
-        . "\"script\":\"$this->script\"}"
-        . "\"application\":$this->application}";
+                . "\"name\":\"$this->name\","
+                . "\"idparent\":" . ($this->idparent == 0 ? "null" : $this->idparent) . ","
+                . "\"class\":\"$this->class\","
+                . "\"script\":\"$this->script\","
+                . "\"application\":$this->application}";
     }
 
     //</editor-fold>
@@ -80,7 +81,7 @@ class ModuleEntity extends \gen\entities\LBTObject {
      * @var string Clase del módulo
      */
     private $class;
-    
+
     /**
      * @var string Scrit que ejecuta el módulo al ser invocado
      */
@@ -90,10 +91,11 @@ class ModuleEntity extends \gen\entities\LBTObject {
      * @var ApplicationEntity Aplicación a la que pertenece el módulo
      */
     private $application;
-    
+
     /**
      * @var int Identificador del módulo padre del actual
      */
     private $idparent;
+
 //</editor-fold>
 }

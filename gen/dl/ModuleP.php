@@ -63,11 +63,11 @@ class ModuleP extends \gen\dl\LBTObjectP {
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
-            $obj->idparent = ($rs->idparent != "" ? $rs->idparent : 0);
+            $obj->idparent = ($row->idparent != null ? $row->idparent : 0);
             $obj->class = $row->class;
             $obj->script = $row->script;
-            $obj->application = new \gen\entities\ApplicationEntity($rs->idapplication);
-            $obj->application->name = $rs->application;
+            $obj->application = new \gen\entities\ApplicationEntity($row->idapplication);
+            $obj->application->name = $row->application;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
