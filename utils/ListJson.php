@@ -8,6 +8,50 @@ namespace utils;
  * @author Leandro Baena Torres
  */
 class ListJson {
-    
+
+    //<editor-fold defaultstate="collapsed" desc="Constructores">
+    /**
+     * Cra en listado de registros que se expone en formato JSON
+     * @param array $records Registros que contiene el listado
+     * @param int $total Total de registros sin aplicar límites
+     */
+    public function __construct($records, $total) {
+        $this->records = $records;
+        $this->total = $total;
+    }
+
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Métodos">
+    /**
+     * Arreglo de registros en formato JSON
+     * @return string Arreglo de registros en formato JSON
+     */
+    public function __toString() {
+        $out = "{\"success\":true,\"total\":$this->total,\"data\":[";
+        $first = true;
+        foreach ($this->records as $r) {
+            if ($first) {
+                $first = false;
+            } else {
+                $out .= ",";
+            }
+            $out .= $r;
+        }
+        $out .= "]}";
+        return $out;
+    }
+
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Atributos">
+    /**
+     * @var int Total de registros que puede traer sin aplicar límites
+     */
     private $total;
+
+    /**
+     * @var array Listado de registros traidos por la consulta
+     */
+    private $records;
+
+    //</editor-fold>
 }
