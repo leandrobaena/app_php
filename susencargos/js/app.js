@@ -97,6 +97,34 @@ Ext.define('susencargos.model.Customer', {
         }, {
             name: 'phone',
             type: 'string'
+        }, {
+            name: 'city',
+            reference: 'susencargos.model.City'
+        }]
+});
+
+Ext.define('susencargos.model.Zone', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idzone',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
+
+Ext.define('susencargos.model.City', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idcity',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'zone',
+            reference: 'susencargos.model.Zone'
         }]
 });
 //</editor-fold>
@@ -183,6 +211,160 @@ Ext.apply(Ext.form.field.VTypes, {
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Controllers">
+Ext.create('Ext.app.Controller', {
+    control: {
+        /*Administración*/
+        'menu menuitem[action=users]': {click: 'users'},
+        'menu menuitem[action=groups]': {click: 'groups'},
+        'menu menuitem[action=apps]': {click: 'apps'},
+        'menu menuitem[action=customers]': {click: 'customers'},
+        'menu menuitem[action=zones]': {click: 'zones'},
+        'menu menuitem[action=cities]': {click: 'cities'},
+        'menu menuitem[action=templates]': {click: 'templates'},
+        'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
+        /*Operaciones*/
+        'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
+        'menu menuitem[action=picking]': {click: 'listPackagesPicking'},
+        /*Reportes*/
+        'menu menuitem[action=miles]': {click: 'miles'},
+        /*CMS*/
+        'menu menuitem[action=typesResource]': {click: 'typesResource'},
+        /*Aplicación*/
+        'menu menuitem[action=changePass]': {click: 'changePass'},
+        'menu menuitem[action=logout]': {click: 'logout'}
+    },
+    users: function () {
+        this.openGrid('listUsers');
+    },
+    groups: function () {
+        this.openGrid('listGroups');
+    },
+    apps: function () {
+        this.openGrid('listApplications');
+    },
+    customers: function () {
+        this.openGrid('listCustomers');
+    },
+    zones: function () {
+        this.openGrid('listZones');
+    },
+    cities: function () {
+        this.openGrid('listCities');
+    },
+    templates: function () {
+        this.openGrid('listTemplates');
+    },
+    statesTracking: function () {
+        this.openGrid('listStatesTracking');
+    },
+    changePass: function () {
+        Ext.create('Ext.window.Window', {
+            title: 'Cambiar contrase\xf1a',
+            iconCls: 'edit',
+            alias: 'widget.formChangePass',
+            width: 300,
+            modal: true,
+            layout: 'fit',
+            autoShow: true,
+            items: [{
+                    xtype: 'form',
+                    url: 'update/user_pass.php',
+                    defaults: {
+                        labelAlign: 'right'
+                    },
+                    frame: true,
+                    items: [{
+                            xtype: 'hiddenfield',
+                            name: 'iduser',
+                            value: 0
+                        }, {
+                            xtype: 'textfield',
+                            name: 'pass',
+                            itemId: 'pass',
+                            vtype: "alphanum",
+                            value: '',
+                            allowBlank: false,
+                            inputType: 'password',
+                            anchor: '90%',
+                            fieldLabel: '* Contrase\xf1a'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'confirm',
+                            value: '',
+                            allowBlank: false,
+                            vtype: 'password',
+                            initialPassField: 'pass',
+                            inputType: 'password',
+                            anchor: '90%',
+                            fieldLabel: '* Confirmaci\xf3n'
+                        }],
+                    buttons: [{
+                            text: 'Guardar',
+                            handler: function (bu, ev) {
+                                if (bu.up('form').getForm().isValid()) {
+                                    bu.up('form').getForm().submit({
+                                        waitMsg: 'Guardando ...',
+                                        success: function (t, p, o) {
+                                            var d = Ext.JSON.decode(p.response.responseText);
+                                            Ext.MessageBox.show({
+                                                title: d.msg.title,
+                                                msg: d.msg.body,
+                                                buttons: Ext.Msg.OK,
+                                                icon: Ext.Msg.INFO
+                                            });
+                                            bu.up('window').close();
+                                        },
+                                        failure: function (t, p) {
+                                            var d = Ext.JSON.decode(p.response.responseText);
+                                            Ext.MessageBox.show({
+                                                title: d.msg.title,
+                                                msg: d.msg.body,
+                                                buttons: Ext.Msg.OK,
+                                                icon: Ext.Msg.ERROR
+                                            });
+                                            bu.up('window').close();
+                                        }
+                                    });
+                                } else {
+                                    Ext.MessageBox.show({
+                                        title: 'Error',
+                                        msg: 'Ingrese los datos correctos',
+                                        buttons: Ext.Msg.OK,
+                                        icon: Ext.Msg.ERROR
+                                    });
+                                }
+                            }
+                        }, {
+                            text: 'Cancelar',
+                            handler: function (bu, ev) {
+                                bu.up('window').close();
+                            }
+                        }],
+                    bbar: ['* Campos obligatorios']
+                }]
+        });
+    },
+    logout: function () {
+        window.location = 'logout.php';
+    },
+    openGrid: function (grid) {
+        var opened = false;
+        var content = Ext.getCmp('contenido');
+        var panel = null;
+        Ext.each(content.items.items, function (n, i, s) {
+            if (n.alias == 'widget.' + grid) {
+                opened = true;
+                panel = n;
+            }
+        });
+        if (!opened) {
+            panel = Ext.widget(grid);
+            content.add(panel);
+        }
+        Ext.getCmp('contenido').setActiveTab(panel);
+    }
+});
+
 Ext.create('Ext.app.Controller', {
     control: {
         'listApplications button[action=insert]': {click: 'insert'},
@@ -933,152 +1115,6 @@ Ext.create('Ext.app.Controller', {
                 }
             });
         });
-    }
-});
-
-Ext.create('Ext.app.Controller', {
-    control: {
-        /*Administración*/
-        'menu menuitem[action=users]': {click: 'users'},
-        'menu menuitem[action=groups]': {click: 'groups'},
-        'menu menuitem[action=apps]': {click: 'apps'},
-        'menu menuitem[action=customers]': {click: 'customers'},
-        'menu menuitem[action=templates]': {click: 'templates'},
-        'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
-        /*Operaciones*/
-        'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
-        'menu menuitem[action=picking]': {click: 'listPackagesPicking'},
-        /*Reportes*/
-        'menu menuitem[action=miles]': {click: 'miles'},
-        /*CMS*/
-        'menu menuitem[action=typesResource]': {click: 'typesResource'},
-        /*Aplicación*/
-        'menu menuitem[action=changePass]': {click: 'changePass'},
-        'menu menuitem[action=logout]': {click: 'logout'}
-    },
-    users: function () {
-        this.openGrid('listUsers');
-    },
-    groups: function () {
-        this.openGrid('listGroups');
-    },
-    apps: function () {
-        this.openGrid('listApplications');
-    },
-    customers: function () {
-        this.openGrid('listCustomers');
-    },
-    templates: function () {
-        this.openGrid('listTemplates');
-    },
-    statesTracking: function () {
-        this.openGrid('listStatesTracking');
-    },
-    changePass: function () {
-        Ext.create('Ext.window.Window', {
-            title: 'Cambiar contrase\xf1a',
-            iconCls: 'edit',
-            alias: 'widget.formChangePass',
-            width: 300,
-            modal: true,
-            layout: 'fit',
-            autoShow: true,
-            items: [{
-                    xtype: 'form',
-                    url: 'update/user_pass.php',
-                    defaults: {
-                        labelAlign: 'right'
-                    },
-                    frame: true,
-                    items: [{
-                            xtype: 'hiddenfield',
-                            name: 'iduser',
-                            value: 0
-                        }, {
-                            xtype: 'textfield',
-                            name: 'pass',
-                            itemId: 'pass',
-                            vtype: "alphanum",
-                            value: '',
-                            allowBlank: false,
-                            inputType: 'password',
-                            anchor: '90%',
-                            fieldLabel: '* Contrase\xf1a'
-                        }, {
-                            xtype: 'textfield',
-                            name: 'confirm',
-                            value: '',
-                            allowBlank: false,
-                            vtype: 'password',
-                            initialPassField: 'pass',
-                            inputType: 'password',
-                            anchor: '90%',
-                            fieldLabel: '* Confirmaci\xf3n'
-                        }],
-                    buttons: [{
-                            text: 'Guardar',
-                            handler: function (bu, ev) {
-                                if (bu.up('form').getForm().isValid()) {
-                                    bu.up('form').getForm().submit({
-                                        waitMsg: 'Guardando ...',
-                                        success: function (t, p, o) {
-                                            var d = Ext.JSON.decode(p.response.responseText);
-                                            Ext.MessageBox.show({
-                                                title: d.msg.title,
-                                                msg: d.msg.body,
-                                                buttons: Ext.Msg.OK,
-                                                icon: Ext.Msg.INFO
-                                            });
-                                            bu.up('window').close();
-                                        },
-                                        failure: function (t, p) {
-                                            var d = Ext.JSON.decode(p.response.responseText);
-                                            Ext.MessageBox.show({
-                                                title: d.msg.title,
-                                                msg: d.msg.body,
-                                                buttons: Ext.Msg.OK,
-                                                icon: Ext.Msg.ERROR
-                                            });
-                                            bu.up('window').close();
-                                        }
-                                    });
-                                } else {
-                                    Ext.MessageBox.show({
-                                        title: 'Error',
-                                        msg: 'Ingrese los datos correctos',
-                                        buttons: Ext.Msg.OK,
-                                        icon: Ext.Msg.ERROR
-                                    });
-                                }
-                            }
-                        }, {
-                            text: 'Cancelar',
-                            handler: function (bu, ev) {
-                                bu.up('window').close();
-                            }
-                        }],
-                    bbar: ['* Campos obligatorios']
-                }]
-        });
-    },
-    logout: function () {
-        window.location = 'logout.php';
-    },
-    openGrid: function (grid) {
-        var opened = false;
-        var content = Ext.getCmp('contenido');
-        var panel = null;
-        Ext.each(content.items.items, function (n, i, s) {
-            if (n.alias == 'widget.' + grid) {
-                opened = true;
-                panel = n;
-            }
-        });
-        if (!opened) {
-            panel = Ext.widget(grid);
-            content.add(panel);
-        }
-        Ext.getCmp('contenido').setActiveTab(panel);
     }
 });
 
@@ -2006,12 +2042,22 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        var form = Ext.widget('formCustomer');
-        form.down('form').loadRecord(v.getStore().getAt(c));
+        Ext.getStore('City').load({
+            callback: function () {
+                var form = Ext.widget('formCustomer');
+                form.down('form').loadRecord(v.getStore().getAt(c));
+                form.down('form').getForm().findField('idcity').setValue(v.getStore().getAt(c).get('city').idcity);
+            }
+        });
     },
     editDbl: function (g, r) {
-        var form = Ext.widget('formCustomer');
-        form.down('form').loadRecord(r);
+        Ext.getStore('City').load({
+            callback: function () {
+                var form = Ext.widget('formCustomer');
+                form.down('form').loadRecord(r);
+                form.down('form').getForm().findField('idcity').setValue(r.get('city').idcity);
+            }
+        });
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid()) {
@@ -2069,6 +2115,218 @@ Ext.create('Ext.app.Controller', {
                             icon: Ext.Msg.INFO,
                             fn: function () {
                                 Ext.getStore('Customer').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listZones button[action=insert]': {click: 'insert'},
+        'listZones button[action=clean]': {click: 'cleanFilters'},
+        'listZones': {itemdblclick: 'editDbl'},
+        'listZones actioncolumn[action=edit]': {click: 'edit'},
+        'listZones actioncolumn[action=remove]': {click: 'remove'},
+        'formZone button[action=cancel]': {click: 'cancel'},
+        'formZone button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formZone').down('form').loadRecord(Ext.create('susencargos.model.Zone'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('Zone').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formZone');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formZone');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idzone').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Zone').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            })
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idzone'),
+                        object: 'zones'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Zone').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listCities button[action=insert]': {click: 'insert'},
+        'listCities button[action=clean]': {click: 'cleanFilters'},
+        'listCities': {itemdblclick: 'editDbl'},
+        'listCities actioncolumn[action=edit]': {click: 'edit'},
+        'listCities actioncolumn[action=remove]': {click: 'remove'},
+        'formCity button[action=cancel]': {click: 'cancel'},
+        'formCity button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formCity').down('form').loadRecord(Ext.create('susencargos.model.City'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('City').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        Ext.getStore('Zone').load({
+            callback: function () {
+                var form = Ext.widget('formCity');
+                form.down('form').loadRecord(v.getStore().getAt(c));
+                form.down('form').getForm().findField('idzone').setValue(v.getStore().getAt(c).get('zone').idzone);
+            }
+        });
+    },
+    editDbl: function (g, r) {
+        Ext.getStore('Zone').load({
+            callback: function () {
+                var form = Ext.widget('formCity');
+                form.down('form').loadRecord(r);
+                form.down('form').getForm().findField('idzone').setValue(r.get('zone').idzone);
+            }
+        });
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idcity').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('City').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            })
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idcity'),
+                        object: 'cities'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('City').load();
                             }
                         });
                     },
@@ -2146,11 +2404,47 @@ Ext.application({
             model: 'susencargos.model.User',
             object: 'users'
         });
-        
+
         Ext.create('susencargos.store.MainStore', {
             storeId: 'Customer',
             model: 'susencargos.model.Customer',
             object: 'customers'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'Zone',
+            model: 'susencargos.model.Zone',
+            object: 'zones'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'City',
+            model: 'susencargos.model.City',
+            object: 'cities'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'GroupsUser',
+            model: 'susencargos.model.Group',
+            object: 'groupsUser'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'NoGroupsUser',
+            model: 'susencargos.model.Group',
+            object: 'noGroupsUser'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'NoUsersGroup',
+            model: 'susencargos.model.User',
+            object: 'noUsersGroup'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'UsersGroup',
+            model: 'susencargos.model.User',
+            object: 'usersGroup'
         });
         //</editor-fold>
 
@@ -2180,12 +2474,6 @@ Ext.application({
          });
          
          Ext.create('susencargos.store.MainStore', {
-         storeId: 'GroupsUser',
-         model: 'susencargos.model.Group',
-         object: 'groupsUser'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
          storeId: 'NoApplicationsGroup',
          model: 'susencargos.model.Application',
          object: 'noApplicationsGroup'
@@ -2198,18 +2486,6 @@ Ext.application({
          });
          
          Ext.create('susencargos.store.MainStore', {
-         storeId: 'NoGroupsUser',
-         model: 'susencargos.model.Group',
-         object: 'noGroupsUser'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'NoUsersGroup',
-         model: 'susencargos.model.User',
-         object: 'noUsersGroup'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
          storeId: 'StateTracking',
          model: 'susencargos.model.StateTracking',
          object: 'statesTracking'
@@ -2219,12 +2495,6 @@ Ext.application({
          storeId: 'Template',
          model: 'susencargos.model.Template',
          object: 'templates'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'UsersGroup',
-         model: 'susencargos.model.User',
-         object: 'usersGroup'
          });
          
          Ext.define('susencargos.view.application.FormGroupModule', {
@@ -2348,148 +2618,6 @@ Ext.application({
          icon: 'css/remove.png',
          iconCls: 'remove'
          }]
-         });
-         
-         Ext.define("susencargos.view.country.FormCity", {
-         extend: "susencargos.view.MainForm",
-         alias: "widget.formCity",
-         title: "Editar ciudad",
-         object: "cities",
-         fields: [{
-         xtype: "hiddenfield",
-         name: "idcity",
-         value: 0
-         }, {
-         xtype: "hiddenfield",
-         name: "idcountry",
-         value: 0
-         }, {
-         xtype: "textfield",
-         name: "name",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Nombre"
-         }, {
-         xtype: "textfield",
-         name: "code",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* C\xf3digo"
-         }, {
-         xtype: "combo",
-         name: "isCourrier",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Solo courrier",
-         store: [[false, "No"], [true, "Si"]],
-         queryMode: "local",
-         typeAHead: true,
-         forceSelection: true
-         }],
-         buttons: [{
-         text: "Guardar",
-         action: "save"
-         }, {
-         text: "Cancelar",
-         action: "cancel"
-         }]
-         });
-         
-         Ext.define("susencargos.view.country.Cities", {
-         extend: "susencargos.view.MainGrid",
-         iconCls: "city",
-         alias: "widget.listCities",
-         title: "Listado de ciudades",
-         store: "City",
-         columns: [{
-         header: "ID",
-         filter: "number",
-         dataIndex: "idcity"
-         }, {
-         header: "Nombre",
-         filter: "string",
-         dataIndex: "name",
-         flex: 3
-         }, {
-         header: "C\xf3digo",
-         filter: "string",
-         dataIndex: "code",
-         flex: 1
-         }, {
-         header: "Solo courrier",
-         filter: "boolean",
-         dataIndex: "isCourrier",
-         renderer: function (a) {
-         if (a) {
-         return "Si"
-         } else {
-         return "No"
-         }
-         },
-         flex: 1
-         }, {
-         xtype: "actioncolumn",
-         width: 20,
-         action: "salesPoint",
-         tooltip: "Puntos de venta",
-         stopSelection: false,
-         icon: "css/salePoint.png",
-         iconCls: "edit"
-         }, {
-         xtype: "actioncolumn",
-         width: 20,
-         action: "edit",
-         stopSelection: false,
-         tooltip: "Editar",
-         icon: "css/edit.png",
-         iconCls: "edit"
-         }, {
-         xtype: "actioncolumn",
-         width: 20,
-         action: "remove",
-         tooltip: "Eliminar",
-         stopSelection: false,
-         icon: "css/remove.png",
-         iconCls: "remove"
-         }]
-         });
-         
-         Ext.define('susencargos.view.group.Users', {
-         extend: 'susencargos.view.DeprisaItemSelector',
-         iconCls: 'user',
-         alias: 'widget.listUsersGroup',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'iduser'
-         }, {
-         header: 'Login',
-         filter: 'string',
-         dataIndex: 'login',
-         flex: 3
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Activo',
-         dataIndex: 'active',
-         filter: 'boolean',
-         renderer: function (value) {
-         if (value) {
-         return "Si";
-         } else {
-         return "No";
-         }
-         },
-         flex: 1
-         }],
-         storeSource: 'NoUsersGroup',
-         storeFinish: 'UsersGroup'
          });
          
          Ext.define('susencargos.view.group.Applications', {
@@ -2828,36 +2956,9 @@ Ext.application({
          stopSelection: false
          }]
          });
-         
-         Ext.define('susencargos.view.user.Groups', {
-         extend: 'susencargos.view.DeprisaItemSelector',
-         alias: 'widget.listGroupsUser',
-         iconCls: 'group',
-         storeSource: 'NoGroupsUser',
-         storeFinish: 'GroupsUser',
-         columns: [{
-         header: 'ID',
-         dataIndex: 'idgroup'
-         }, {
-         header: 'Nombre',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Activo',
-         dataIndex: 'active',
-         renderer: function (value) {
-         if (value) {
-         return "Si"
-         } else {
-         return "No"
-         }
-         },
-         flex: 1
-         }]
-         });
          */
 
-        //<editor-fold defaultstate="collapsed" desc="View Generales">
+        //<editor-fold defaultstate="collapsed" desc="View Genericas">
         Ext.define('susencargos.view.MainGrid', {
             extend: 'Ext.grid.Panel',
             alias: '',
@@ -3186,6 +3287,42 @@ Ext.application({
                     action: 'cancel'
                 }]
         });
+
+        Ext.define('susencargos.view.group.Users', {
+            extend: 'susencargos.view.DeprisaItemSelector',
+            iconCls: 'user',
+            alias: 'widget.listUsersGroup',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'iduser'
+                }, {
+                    header: 'Login',
+                    filter: 'string',
+                    dataIndex: 'login',
+                    flex: 3
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Activo',
+                    dataIndex: 'active',
+                    filter: 'boolean',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si";
+                        } else {
+                            return "No";
+                        }
+                    },
+                    flex: 1
+                }],
+            storeSource: 'NoUsersGroup',
+            storeFinish: 'UsersGroup'
+        });
+
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Módulo">
         Ext.define('susencargos.view.application.Modules', {
@@ -3368,9 +3505,9 @@ Ext.application({
                     filter: 'boolean',
                     renderer: function (value) {
                         if (value) {
-                            return "Si"
+                            return "Si";
                         } else {
-                            return "No"
+                            return "No";
                         }
                     },
                     flex: 1
@@ -3461,11 +3598,38 @@ Ext.application({
                     action: 'cancel'
                 }]
         });
+
+        Ext.define('susencargos.view.user.Groups', {
+            extend: 'susencargos.view.DeprisaItemSelector',
+            alias: 'widget.listGroupsUser',
+            iconCls: 'group',
+            storeSource: 'NoGroupsUser',
+            storeFinish: 'GroupsUser',
+            columns: [{
+                    header: 'ID',
+                    dataIndex: 'idgroup'
+                }, {
+                    header: 'Nombre',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Activo',
+                    dataIndex: 'active',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si";
+                        } else {
+                            return "No";
+                        }
+                    },
+                    flex: 1
+                }]
+        });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Clientes">
         Ext.define('susencargos.view.customer.Grid', {
             extend: 'susencargos.view.MainGrid',
-            iconCls: 'group',
+            iconCls: 'customer',
             alias: 'widget.listCustomers',
             title: 'Listado clientes',
             store: 'Customer',
@@ -3493,6 +3657,13 @@ Ext.application({
                     filter: 'string',
                     dataIndex: 'phone',
                     flex: 2
+                }, {
+                    header: 'Ciudad',
+                    dataIndex: 'city',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.name;
+                    }
                 }, {
                     xtype: 'actioncolumn',
                     width: 20,
@@ -3549,6 +3720,159 @@ Ext.application({
                     allowBlank: false,
                     anchor: '90%',
                     fieldLabel: '* Teléfono'
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: 'Ciudad',
+                    store: 'City',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idcity',
+                    displayField: 'name',
+                    name: 'idcity',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Zonas">
+        Ext.define('susencargos.view.zone.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'zone',
+            alias: 'widget.listZones',
+            title: 'Listado rutas',
+            store: 'Zone',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idzone'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.zone.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formZone',
+            title: 'Editar ruta',
+            object: 'zones',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idzone',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Ciudades">
+        Ext.define('susencargos.view.city.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'city',
+            alias: 'widget.listCities',
+            title: 'Listado ciudades',
+            store: 'City',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idcity'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Zona',
+                    dataIndex: 'zone',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.name;
+                    }
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.city.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formCity',
+            title: 'Editar ciudad',
+            object: 'cities',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idcity',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: 'Ruta',
+                    store: 'Zone',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idzone',
+                    displayField: 'name',
+                    name: 'idzone',
+                    anchor: '90%',
+                    queryMode: 'local'
                 }],
             buttons: [{
                     text: 'Guardar',

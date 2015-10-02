@@ -4,7 +4,9 @@ require_once (__DIR__ . "/../../gen/bl/User.php");
 require_once (__DIR__ . "/../../gen/bl/Application.php");
 require_once (__DIR__ . "/../../gen/bl/Group.php");
 require_once (__DIR__ . "/../../gen/bl/Module.php");
-require_once (__DIR__ . "/../../gen/bl/Customer.php");
+require_once (__DIR__ . "/../../sus/bl/Customer.php");
+require_once (__DIR__ . "/../../sus/bl/Zone.php");
+require_once (__DIR__ . "/../../sus/bl/City.php");
 
 session_start();
 
@@ -46,13 +48,37 @@ if (!isset($_SESSION["user"])) {
                 echo("{\"success\":true,\"msg\":{\"title\":\"Usuario insertado\",\"body\":\"El usuario fue insertado con éxito\"}}");
                 break;
             case "customers":
-                $obj = new \gen\bl\Customer($_POST["id"]);
+                $obj = new \sus\bl\Customer($_POST["id"]);
                 $obj->name = $_POST["name"];
                 $obj->taxid = $_POST["taxid"];
                 $obj->address = $_POST["address"];
                 $obj->phone = $_POST["phone"];
+                $obj->city = new sus\entities\CityEntity($_POST["idcity"]);
                 $obj->create($_SESSION["user"]);
-                echo("{\"success\":true,\"msg\":{\"title\":\"Ciente insertado\",\"body\":\"El cliente fue insertado con éxito\"}}");
+                echo("{\"success\":true,\"msg\":{\"title\":\"Cliente insertado\",\"body\":\"El cliente fue insertado con éxito\"}}");
+                break;
+            case "zones":
+                $obj = new \sus\bl\Zone($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->create($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Ruta insertada\",\"body\":\"La ruta fue insertada con éxito\"}}");
+                break;
+            case "cities":
+                $obj = new \sus\bl\City($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->zone = new sus\entities\ZoneEntity($_POST["idzone"]);
+                $obj->create($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Ciudad insertada\",\"body\":\"La ciudad fue insertada con éxito\"}}");
+                break;
+            case "userGroup":
+                $obj = new \gen\bl\Group($_POST["idgroup"]);
+                $obj->insertUser($_POST["iduser"], $_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Usuario asignado al grupo\",\"body\":\"El usuario ha sido asignado al grupo con \\xe9xito\"}}");
+                break;
+            case "groupUser":
+                $obj = new \gen\bl\User($_POST["iduser"]);
+                $obj->insertGroup($_POST["group"], $_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Grupo asignado al usuario\",\"body\":\"El grupo ha sido asignado al usuario con \\xe9xito\"}}");
                 break;
         }
     } else {//Actualiza
@@ -90,13 +116,27 @@ if (!isset($_SESSION["user"])) {
                 echo("{\"success\":true,\"msg\":{\"title\":\"Usuario actualizado\",\"body\":\"El usuario fue actualizado con éxito\"}}");
                 break;
             case "customers":
-                $obj = new \gen\bl\Customer($_POST["id"]);
+                $obj = new \sus\bl\Customer($_POST["id"]);
                 $obj->name = $_POST["name"];
                 $obj->taxid = $_POST["taxid"];
                 $obj->address = $_POST["address"];
                 $obj->phone = $_POST["phone"];
+                $obj->city = new sus\entities\CityEntity($_POST["idcity"]);
                 $obj->update($_SESSION["user"]);
-                echo("{\"success\":true,\"msg\":{\"title\":\"Ciente actualizado\",\"body\":\"El cliente fue actualizado con éxito\"}}");
+                echo("{\"success\":true,\"msg\":{\"title\":\"Cliente actualizado\",\"body\":\"El cliente fue actualizado con éxito\"}}");
+                break;
+            case "zones":
+                $obj = new \sus\bl\Zone($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->update($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Zona actualizada\",\"body\":\"La zona fue actualizada con éxito\"}}");
+                break;
+            case "cities":
+                $obj = new \sus\bl\City($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->zone = new sus\entities\ZoneEntity($_POST["idzone"]);
+                $obj->update($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Ciudad actualizada\",\"body\":\"La ciudad fue actualizada con éxito\"}}");
                 break;
         }
     }
