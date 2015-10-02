@@ -57,7 +57,7 @@ class CityP extends \gen\dl\LBTObjectP {
                 "c.idcity, c.name, c.idzone, z.name zone", "sus_city c JOIN sus_zone z ON c.idzone = z.idzone", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
-            $obj = new \sus\entities\ZoneEntity($row->idzone);
+            $obj = new \sus\entities\CityEntity($row->idzone);
             $obj->name = $row->name;
             $obj->zone = new \sus\entities\ZoneEntity($row->idzone);
             $obj->zone->name = $row->zone;
