@@ -11,7 +11,7 @@ require_once (__DIR__ . "/CityEntity.php");
  *
  * @property int $idcustomer Identificador del cliente
  * @property string $name Nombre del cliente
- * @property string $nit NIT del cliente
+ * @property string $taxid NIT del cliente
  * @property string $address Dirección del cliente
  * @property string $phone Teléfono del cliente
  * @property CityEntity $city Ciudad a la que pertenece el cliente
@@ -28,7 +28,7 @@ class CustomerEntity extends \gen\entities\LBTObject {
     public function __construct($id = 0) {
         $this->idcustomer = $id;
         $this->name = "";
-        $this->nit = false;
+        $this->taxid = false;
         $this->address = "";
         $this->phone = "";
         $this->city = new CityEntity(0);
@@ -66,7 +66,7 @@ class CustomerEntity extends \gen\entities\LBTObject {
     public function __toString() {
         return "{\"idcustomer\":$this->idcustomer,"
                 . "\"name\":\"$this->name\","
-                . "\"nit\":\"$this->nit\","
+                . "\"taxid\":\"$this->taxid\","
                 . "\"address\":\"$this->address\","
                 . "\"phone\":\"$this->phone\","
                 . "\"city\":$this->city}";
@@ -87,7 +87,7 @@ class CustomerEntity extends \gen\entities\LBTObject {
     /**
      * @var string NIT del cliente
      */
-    private $nit;
+    private $taxid;
 
     /**
      * @var string Dirección del cliente
