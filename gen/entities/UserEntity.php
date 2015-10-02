@@ -8,7 +8,6 @@ require_once (__DIR__ . "/LBTObject.php");
 /**
  * Usuario que tiene acceso a las aplicaciones
  *
- * @author Leandro Baena Torres
  * @property int $iduser Identificador del usuario
  * @property string $name Nombre del usuario
  * @property string $login Login del usuario
@@ -16,6 +15,7 @@ require_once (__DIR__ . "/LBTObject.php");
  * @property string $email Email del usuario
  * @property \DateTime $lastLogin Última fecha de acceso
  * @property bool $logged Si está o no logeado
+ * @author Leandro Baena Torres
  */
 class UserEntity extends \gen\entities\LBTObject {
 
@@ -70,7 +70,7 @@ class UserEntity extends \gen\entities\LBTObject {
                 . "\"login\":\"$this->login\","
                 . "\"active\":" . ($this->active ? "true" : "false") . ","
                 . "\"email\":\"$this->email\","
-                . "\"lastLogin\":\"" . $this->lastLogin->format("yyyy-MM-dd HH:mm:ss") . "\","
+                . "\"lastLogin\":\"" . $this->lastLogin->format("Y-m-d H:i:s") . "\","
                 . "\"logged\":" . ($this->logged ? "true" : "false") . "}";
     }
 

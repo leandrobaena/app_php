@@ -2,30 +2,28 @@
 
 namespace gen\bl;
 
-require_once(__DIR__ . "/../entities/UserEntity.php");
-require_once(__DIR__ . "/../dl/UserP.php");
+require_once(__DIR__ . "/../entities/CustomerEntity.php");
+require_once(__DIR__ . "/../dl/CustomerP.php");
 require_once(__DIR__ . "/../database/DataBaseFactory.php");
 require_once(__DIR__ . "/LBTObjectBL.php");
 
 /**
- * Manejo de usuarios de las aplicaciones
+ * Manejo de clientes del susencargos
  * 
- * @property int $iduser Identificador del usuario
- * @property string $name Nombre del usuario
- * @property string $login Login del usuario
- * @property bool $active Si el usuario está o no activo
- * @property string $email Email del usuario
- * @property \DateTime $lastLogin Última fecha de acceso
- * @property bool $logged Si está o no logeado
+ * @property int $idcustomer Identificador del cliente
+ * @property string $name Nombre del cliente
+ * @property string $taxid NIT del cliente
+ * @property string $address Dirección del cliente
+ * @property string $phone Teléfono del cliente
  * @author Leandro Baena Torres
  */
-class User extends \LBTObjectBL {
+class Customer extends \LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {
-        $this->entity = new \gen\entities\UserEntity($id);
+        $this->entity = new \gen\entities\CustomerEntity($id);
         $db = \gen\database\DataBaseFactory::factoryDatabase("mysql");
-        $this->persistence = new \gen\dl\UserP($this->entity, $db);
+        $this->persistence = new \gen\dl\CustomerP($this->entity, $db);
     }
 
     // </editor-fold>
@@ -53,20 +51,20 @@ class User extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de usuarios
+     * Trae un listado de clientes
      * @param string $filters Filtros aplicados a la consulta
      * @param string $sorters Ordenamientos aplicados a la consulta
      * @param int $start Registro inicial a traer
      * @param int $limit Número de registros a traer
-     * @return string Listado de usuarios en formato json
+     * @return string Listado de clientes en formato json
      */
     public function readAll($filters, $sorters, $start, $limit) {
         return $this->persistence->readAll($filters, $sorters, $start, $limit);
     }
 
     /**
-     * Crea el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea el grupo
+     * Crea el cliente en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que crea el cliente
      */
     public function create($user) {
         $this->persistence->user = $user;
@@ -74,8 +72,8 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Actualiza el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza el grupo
+     * Actualiza el cliente en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que actualiza el cliente
      */
     public function update($user) {
         $this->persistence->user = $user;
@@ -83,8 +81,8 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Elimina el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina el grupo
+     * Elimina el cliente en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que elimina el cliente
      */
     public function delete($user) {
         $this->persistence->user = $user;
@@ -92,24 +90,11 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Carga el grupo de la base de datos
+     * Carga el cliente de la base de datos
      */
     public function read() {
         $this->persistence->read();
     }
-
-    /**
-     * Valida que el login y el password determinado corresponda a un usuario
-     * con privilegios para una determinada aplicación
-     * 
-     * @param string $login Login ingresado por el usuario
-     * @param string $password Contraseña ingresada por el usuario
-     */
-    public function validate($login, $password) {
-        $this->persistence->validate($login, $password);
-        return $this->entity;
-    }
-
     // </editor-fold>
 }
 

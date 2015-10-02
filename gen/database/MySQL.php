@@ -67,7 +67,6 @@ class MySQL extends DataBase {
         }
         $row = $rs->fetch_object();
         $rs->close();
-        $this->link->next_result();
         return $row;
     }
 

@@ -6,25 +6,29 @@ require_once (__DIR__ . "/../../utils/FormatterText.php");
 require_once (__DIR__ . "/LBTObject.php");
 
 /**
- * Grupo al que pertenece un usuario del sistema
+ * Cliente de susencargos
  *
- * @property int $idgroup Identificador del grupo
- * @property string $name Nombre del grupo
- * @property bool $active Si el grupo está o no activo
+ * @property int $idcustomer Identificador del cliente
+ * @property string $name Nombre del cliente
+ * @property string $nit NIT del cliente
+ * @property string $address Dirección del cliente
+ * @property string $phone Teléfono del cliente
  * @author Leandro Baena Torres
  */
-class GroupEntity extends \gen\entities\LBTObject {
+class CustomerEntity extends \gen\entities\LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     /**
-     * Crea una nueva instancia de un grupo
+     * Crea una nueva instancia de un cliente
      * 
-     * @param id Identificador del grupo, 0 si es nuevo
+     * @param id Identificador del cliente, 0 si es nuevo
      */
     public function __construct($id = 0) {
-        $this->idgroup = $id;
+        $this->idcustomer = $id;
         $this->name = "";
-        $this->active = false;
+        $this->nit = false;
+        $this->address = "";
+        $this->phone = "";
     }
 
     //</editor-fold>
@@ -57,27 +61,39 @@ class GroupEntity extends \gen\entities\LBTObject {
      * @return string Objeto en formato JSON
      */
     public function __toString() {
-        return "{\"idgroup\":$this->idgroup,"
+        return "{\"idcustomer\":$this->idcustomer,"
                 . "\"name\":\"$this->name\","
-                . "\"active\":" . ($this->active ? "true" : "false") . "}";
+                . "\"nit\":\"$this->nit\","
+                . "\"address\":\"$this->address\","
+                . "\"phone\":\"$this->phone\"}";
     }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Atributos">
     /**
-     * @var int Identificador del grupo
+     * @var int Identificador del cliente
      */
-    private $idgroup;
+    private $idcustomer;
 
     /**
-     * @var string Nombre del grupo
+     * @var string Nombre del cliente
      */
     private $name;
 
     /**
-     * @var bool Si el grupo está o no activo
+     * @var string NIT del cliente
      */
-    private $active;
+    private $nit;
+
+    /**
+     * @var string Dirección del cliente
+     */
+    private $address;
+
+    /**
+     * @var string Teléfono del cliente
+     */
+    private $phone;
 
     //</editor-fold>
 }

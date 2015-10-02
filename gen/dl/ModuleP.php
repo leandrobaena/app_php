@@ -31,7 +31,7 @@ class ModuleP extends \gen\dl\LBTObjectP {
             "idparent" => ($this->observer->idparent == 0 ? "NULL" : $this->observer->idparent),
             "class" => "'" . $this->observer->class . "'",
             "script" => "'" . $this->observer->script . "'",
-            "idapplication" => $this->observer->application->idappalication), $this->user->iduser);
+            "idapplication" => $this->observer->application->idapplication), $this->user->iduser);
     }
 
     /**

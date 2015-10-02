@@ -33,6 +33,7 @@ class UserP extends \gen\dl\LBTObjectP {
             "name" => "'" . $this->observer->name . "'",
             "active" => ($this->observer->active ? "1" : "0"),
             "email" => "'" . $this->observer->email . "'",
+            "password" => "'" . md5($this->observer->login) . "'",
             "logged" => 0), $this->user->iduser);
     }
 
@@ -70,7 +71,7 @@ class UserP extends \gen\dl\LBTObjectP {
             $obj->name = $row->name;
             $obj->active = ($row->active == 1);
             $obj->email = $row->email;
-            $obj->lastLogin = $row->lastLogin;
+            $obj->lastLogin = new \DateTime($row->lastLogin);
             $obj->logged = ($row->logged == 1);
             array_push($list, $obj);
         }
@@ -87,7 +88,7 @@ class UserP extends \gen\dl\LBTObjectP {
             "name" => "'" . $this->observer->name . "'",
             "active" => ($this->observer->active ? "1" : "0"),
             "email" => "'" . $this->observer->email . "'",
-            "lastLogin" => "'" . $this->observer->lastLogin->format("yyyy-mm-dd HH:mm:ss") . "'",
+            "lastLogin" => "'" . $this->observer->lastLogin->format("Y-m-d H:i:s") . "'",
             "logged" => 0), array("iduser" => $this->observer->iduser), $this->user->iduser
         );
     }

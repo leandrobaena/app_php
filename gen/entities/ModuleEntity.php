@@ -8,6 +8,13 @@ require_once (__DIR__ . "/../entities/ApplicationEntity.php");
 /**
  * Modulo de una aplicación del sistema
  *
+ * @property int $idmodule Identificador del módulo
+ * @property string $name Nombre del módulo
+ * @property string $class Clase css del módulo
+ * @property string $script Script que ejecuta el módulo al ser invocado
+ * @property ApplicationEntity $application Aplicación a la que pertenece el
+ * módulo
+ * @property int $idparent Identificador del módulo padre del actua módulo
  * @author Leandro Baena Torres
  */
 class ModuleEntity extends \gen\entities\LBTObject {
