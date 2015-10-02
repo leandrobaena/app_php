@@ -3,6 +3,7 @@
 namespace gen\bl;
 
 require_once(__DIR__ . "/../entities/ModuleEntity.php");
+require_once(__DIR__ . "/../entities/UserEntity.php");
 require_once(__DIR__ . "/../dl/ModuleP.php");
 require_once(__DIR__ . "/../database/DataBaseFactory.php");
 require_once(__DIR__ . "/LBTObjectBL.php");
@@ -95,6 +96,34 @@ class Module extends \LBTObjectBL {
      */
     public function read() {
         $this->persistence->read();
+    }
+
+    /**
+     * Trae el listado de módulos a los que puede acceder un determinado usuario
+     * 
+     * @param int $idapplication Identificador de la aplicación a la que se le
+     * consultan los módulos
+     * @param int $iduser Identificador del usuario al que se le validan los
+     * permisos
+     * @return \utils\ListJson listado de módulos a los que puede acceder un
+     * determinado usuario
+     */
+    public function modulesByUser($idapplication, $iduser) {
+        return $this->persistence->modulesByUser($idapplication, $iduser);
+    }
+
+    /**
+     * Trae el listado de submódulos a los que puede acceder un determinado usuario
+     * 
+     * @param int $idapplication Identificador de la aplicación a la que se le
+     * consultan los módulos
+     * @param int $iduser Identificador del usuario al que se le validan los
+     * permisos
+     * @return \utils\ListJson listado de submódulos a los que puede acceder un
+     * determinado usuario
+     */
+    public function submodulesByUser($idapplication, $iduser) {
+        return $this->persistence->submodulesByUser($idapplication, $iduser);
     }
 
     // </editor-fold>

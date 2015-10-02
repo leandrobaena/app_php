@@ -87,5 +87,46 @@ class ModuleP extends \gen\dl\LBTObjectP {
         );
     }
 
+    /**
+     * Trae el listado de módulos a los que puede acceder un determinado usuario
+     * 
+     * @param int $idapplication Identificador de la aplicación a la que se le consultan los módulos
+     * @param int $iduser Identificador del usuario al que se le validan los permisos
+     */
+    public function modulesByUser($idapplication, $iduser) {
+        $list = array();
+        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication JOIN gen_group_application ga ON a.idapplication = ga.idapplication JOIN gen_group g ON g.idgroup = ga.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent IS NULL", "", 0, 1000);
+        foreach ($rs as $row) {
+            $obj = new \gen\entities\ModuleEntity($row->idmodule);
+            $obj->name = $row->name;
+            $obj->idparent = ($row->idparent != null ? $row->idparent : 0);
+            $obj->class = $row->class;
+            $obj->script = $row->script;
+            $obj->application = new \gen\entities\ApplicationEntity($row->idapplication);
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
+
+    /**
+     * Trae el listado de módulos a los que puede acceder un determinado usuario
+     * 
+     * @param int $idapplication Identificador de la aplicación a la que se le consultan los módulos
+     * @param int $iduser Identificador del usuario al que se le validan los permisos
+     */
+    public function submodulesByUser($idapplication, $iduser) {
+        $list = array();
+        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication JOIN gen_group_application ga ON a.idapplication = ga.idapplication JOIN gen_group g ON g.idgroup = ga.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent = ".$this->observer->idmodule, "", 0, 1000);
+        foreach ($rs as $row) {
+            $obj = new \gen\entities\ModuleEntity($row->idmodule);
+            $obj->name = $row->name;
+            $obj->idparent = ($row->idparent != null ? $row->idparent : 0);
+            $obj->class = $row->class;
+            $obj->script = $row->script;
+            $obj->application = new \gen\entities\ApplicationEntity($row->idapplication);
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
     //</editor-fold>
 }
