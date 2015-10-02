@@ -1,42 +1,36 @@
 <?php
 
 require_once (__DIR__ . "/../gen/bl/User.php");
+require_once (__DIR__ . "/../gen/bl/Module.php");
 
 session_start();
 
 
-//Module m = new Module(ConfigurationManager.ConnectionStrings["deprisa"].ToString(), 0, (EUser)Session["user"]);
-//List<EModule> modules = m.modulesByUser(Int32.Parse(ConfigurationManager.AppSettings["app"].ToString()), ((EUser)Session["user"]).Iduser);
+$m = new gen\bl\Module(0);
+$modules = $m->modulesByUser(1, $_SESSION["user"]->iduser);
 $out = "[";
-/* $first = true;
-  foreach (EModule module in modules) {
-  if ($first) {
-  $first = false;
-  } else {
-  $out .= ",'-',";
-  }
-  $out .= "{text: '" + module . Name + "',iconCls:'" + module . _Class + "',menu:[";
-  //Module sm = new Module(ConfigurationManager.ConnectionStrings["deprisa"].ToString(), module.Idmodule, (EUser)Session["user"]);
-  //List<EModule> submodules = sm.submodulesByUser(Int32.Parse(ConfigurationManager.AppSettings["app"].ToString()), ((EUser)Session["user"]).Iduser);
-  $firstSub = true;
-  foreach (EModule submodule in submodules) {
-  if ($firstSub) {
-  $firstSub = false;
-  } else {
-  $out .= ",";
-  }
-  $out .= "{iconCls:'" + submodule . _Class + "',text:'" + submodule . Name + "',action:'" + submodule . Script + "'}";
-  }
-  $out .= "]}";
-  }
- */
+$first = true;
+foreach ($modules->records as $module) {
+    if ($first) {
+        $first = false;
+    } else {
+        $out .= ",'-',";
+    }
+    $out .= "{text: '" . $module->name . "',iconCls:'" . $module->class . "',menu:[";
+    $sm = new gen\bl\Module($module->idmodule);
+    $submodules = $sm->submodulesByUser(1, $_SESSION["user"]->iduser);
+    $firstSub = true;
+    foreach ($submodules->records as $submodule) {
+        if ($firstSub) {
+            $firstSub = false;
+        } else {
+            $out .= ",";
+        }
+        $out .= "{iconCls:'" . $submodule->class . "',text:'" . $submodule->name . "',action:'" . $submodule->script . "'}";
+    }
+    $out .= "]}";
+}
 //Alineación a derecha
-
-$out .= "{text: 'Administración',iconCls:'app',menu:[";
-$out .= "{iconCls:'apps',text:'Aplicaciones',action:'apps'},";
-$out .= "{iconCls:'group',text:'Grupos',action:'groups'}";
-$out .= "]}";
-
 $out .= ",'->'";
 
 $out .= ",{text: '" . $_SESSION["user"]->name . "',iconCls:'app',menu:[";
