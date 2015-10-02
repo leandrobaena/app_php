@@ -25,17 +25,6 @@ Ext.define('susencargos.model.Group', {
         }]
 });
 
-Ext.define('susencargos.model.LevelAccess', {
-    extend: 'Ext.data.Model',
-    fields: [{
-            name: 'idlevelaccess',
-            type: 'int'
-        }, {
-            name: 'name',
-            type: 'string'
-        }]
-});
-
 Ext.define('susencargos.model.User', {
     extend: 'Ext.data.Model',
     fields: [{
@@ -90,9 +79,30 @@ Ext.define('susencargos.model.Module', {
         }],
     idProperty: 'idmodule'
 });
+
+Ext.define('susencargos.model.Customer', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idcustomer',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'taxid',
+            type: 'string'
+        }, {
+            name: 'address',
+            type: 'string'
+        }, {
+            name: 'phone',
+            type: 'string'
+        }]
+});
 //</editor-fold>
 
-Ext.define("susencargos.store.DeprisaStore", {
+//<editor-fold defaultstate="collapsed" desc="MainStore">
+Ext.define("susencargos.store.MainStore", {
     extend: "Ext.data.Store",
     remoteSort: true,
     remoteFilter: true,
@@ -127,12 +137,14 @@ Ext.define("susencargos.store.DeprisaStore", {
                     msg: "Sesi\xf3n expirada",
                     buttons: Ext.Msg.OK,
                     icon: Ext.Msg.ERROR
-                })
+                });
             }
         }
     }
 });
+//</editor-fold>
 
+//<editor-fold defaultstate="collapsed" desc="Configuración inicial">
 Ext.Loader.setConfig({
     enabled: true
 });
@@ -168,7 +180,9 @@ Ext.apply(Ext.form.field.VTypes, {
     },
     passwordText: 'La contrase\xf1a y la confirmaci\xf3n no coinciden'
 });
+//</editor-fold>
 
+//<editor-fold defaultstate="collapsed" desc="Controllers">
 Ext.create('Ext.app.Controller', {
     control: {
         'listApplications button[action=insert]': {click: 'insert'},
@@ -924,109 +938,11 @@ Ext.create('Ext.app.Controller', {
 
 Ext.create('Ext.app.Controller', {
     control: {
-        'listLevelsAccess button[action=insert]': {click: 'insert'},
-        'listLevelsAccess button[action=clean]': {click: 'cleanFilters'},
-        'listLevelsAccess': {itemdblclick: 'editDbl'},
-        'listLevelsAccess actioncolumn[action=edit]': {click: 'edit'},
-        'listLevelsAccess actioncolumn[action=remove]': {click: 'remove'},
-        'formLevelAccess button[action=cancel]': {click: 'cancel'},
-        'formLevelAccess button[action=save]': {click: 'save'}
-    },
-    cleanFilters: function (b, e) {
-        b.up('grid').filters.clearFilters();
-    },
-    insert: function (b, e) {
-        Ext.widget('formLevelAccess').down('form').loadRecord(Ext.create('susencargos.model.LevelAccess'));
-    },
-    cancel: function (b, e) {
-        b.up('window').close();
-    },
-    edit: function (v, r, c, i, e) {
-        Ext.widget('formLevelAccess').down('form').loadRecord(v.getStore().getAt(c))
-    },
-    editDbl: function (g, r) {
-        Ext.widget('formLevelAccess').down('form').loadRecord(r);
-    },
-    save: function (b, e) {
-        if (b.up('form').getForm().isValid()) {
-            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idlevelaccess').getValue());
-            b.up('form').getForm().submit({
-                waitMsg: 'Guardando ...',
-                success: function (t, p, o) {
-                    var d = Ext.JSON.decode(p.response.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO,
-                        fn: function () {
-                            Ext.getStore('LevelAccess').load();
-                        }
-                    });
-                    b.up('window').close();
-                },
-                failure: function (t, p) {
-                    var d = Ext.JSON.decode(p.response.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
-                    b.up('window').close();
-                }
-            });
-        } else {
-            Ext.MessageBox.show({
-                title: 'Error',
-                msg: 'Ingrese los datos correctos',
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.ERROR
-            })
-        }
-    },
-    remove: function (v, r, c, i, e) {
-        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
-            if (o == 'yes') {
-                Ext.Ajax.request({
-                    url: 'delete/delete_object.php',
-                    params: {
-                        id: v.getStore().getAt(c).get('idlevelaccess'),
-                        object: 'levelsAccess'
-                    },
-                    success: function (response) {
-                        var d = Ext.JSON.decode(response.responseText);
-                        Ext.MessageBox.show({
-                            title: d.msg.title,
-                            msg: d.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO,
-                            fn: function () {
-                                Ext.getStore('LevelAccess').load()
-                            }
-                        });
-                    },
-                    failed: function (t, p, o) {
-                        Ext.MessageBox.show({
-                            title: p.response.result.msg.title,
-                            msg: p.response.result.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO
-                        });
-                    }
-                });
-            }
-        })
-    }
-});
-
-Ext.create('Ext.app.Controller', {
-    control: {
         /*Administración*/
         'menu menuitem[action=users]': {click: 'users'},
         'menu menuitem[action=groups]': {click: 'groups'},
         'menu menuitem[action=apps]': {click: 'apps'},
-        'menu menuitem[action=levelsAccess]': {click: 'levelsAccess'},
+        'menu menuitem[action=customers]': {click: 'customers'},
         'menu menuitem[action=templates]': {click: 'templates'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
         /*Operaciones*/
@@ -1044,254 +960,19 @@ Ext.create('Ext.app.Controller', {
         this.openGrid('listUsers');
     },
     groups: function () {
-        this.openGrid('listGroups')
+        this.openGrid('listGroups');
     },
     apps: function () {
-        this.openGrid('listApplications')
+        this.openGrid('listApplications');
     },
-    levelsAccess: function () {
-        this.openGrid('listLevelsAccess')
-    },
-    typesLocker: function () {
-        this.openGrid('listTypesLocker')
-    },
-    typesID: function () {
-        this.openGrid('listTypesID')
-    },
-    moneys: function () {
-        this.openGrid('listMoneys')
-    },
-    measuringsSystem: function () {
-        this.openGrid('listMeasuringsSystem')
-    },
-    countries: function () {
-        this.openGrid('listCountries')
-    },
-    occupations: function () {
-        this.openGrid('listOccupations')
-    },
-    economySectors: function () {
-        this.openGrid('listEconomySectors')
-    },
-    secretQuestions: function () {
-        this.openGrid('listSecretQuestions')
-    },
-    infoMethods: function () {
-        this.openGrid('listInfoMethods')
-    },
-    typesPackage: function () {
-        this.openGrid('listTypesPackage')
+    customers: function () {
+        this.openGrid('listCustomers');
     },
     templates: function () {
-        this.openGrid('listTemplates')
-    },
-    lockers: function () {
-        this.openGrid('listLockers')
-    },
-    rejectionReasons: function () {
-        this.openGrid('listRejectionReasons')
+        this.openGrid('listTemplates');
     },
     statesTracking: function () {
-        this.openGrid('listStatesTracking')
-    },
-    groupsTracking: function () {
-        this.openGrid('listGroupsTracking')
-    },
-    deliveryCompanies: function () {
-        this.openGrid('listDeliveryCompanies')
-    },
-    wareHouses: function () {
-        this.openGrid('listWareHouses')
-    },
-    products: function () {
-        this.openGrid('listProducts')
-    },
-    listCustomers: function () {
-        this.openGrid('listListCustomers')
-    },
-    payments: function () {
-        this.openGrid('listPayments')
-    },
-    typesResource: function () {
-        this.openGrid('listTypesResource')
-    },
-    resources: function () {
-        this.openGrid('listResources')
-    },
-    pages: function () {
-        this.openGrid('listPages')
-    },
-    enterPackage: function () {
-        Ext.MessageBox.prompt(
-                'Tracking No.',
-                'Ingrese el tracking al que se le desea hacer el ingreso',
-                function (b, t, opt) {
-                    if (b == "ok" && t != "") {
-                        if (t.substr(0, 8) == "42033126" && t.length > 28) {
-                            t = t.substr(8, t.length);
-                        }
-                        Ext.Ajax.request({
-                            url: 'stores/list_objects.php',
-                            method: 'get',
-                            params: {
-                                tracking: t,
-                                object: 'packageByTracking'
-                            },
-                            success: function (response) {
-                                var d = Ext.JSON.decode(response.responseText);
-                                if (d.total == 0) {
-                                    Ext.MessageBox.show({
-                                        title: 'Error',
-                                        msg: 'No es posible ingresar este tracking ya que no se encuentra como recibido',
-                                        buttons: Ext.Msg.OK,
-                                        icon: Ext.Msg.ERROR
-                                    });
-                                } else {
-                                    Ext.getStore('Payment').load({
-                                        callback: function () {
-                                            Ext.getStore('TypeUbication').load({
-                                                callback: function () {
-                                                    Ext.getStore('Provide').load({
-                                                        callback: function () {
-                                                            Ext.getStore('TypePackage').load({
-                                                                start: 0,
-                                                                limit: 100,
-                                                                callback: function () {
-                                                                    Ext.getStore('Item').getProxy().setExtraParam('idpackage', d.data[0].idpackage);
-                                                                    Ext.getStore('Item').load({
-                                                                        callback: function () {
-                                                                            var form = Ext.widget('formEnterPackage');
-                                                                            var _package = Ext.create('susencargos.model.Package', {
-                                                                                idpackage: d.data[0].idpackage,
-                                                                                locker: d.data[0].locker,
-                                                                                product: d.data[0].product,
-                                                                                statePackage: d.data[0].statePackage,
-                                                                                typePackage: d.data[0].typePackage,
-                                                                                cityOrigin: d.data[0].cityOrigin,
-                                                                                description: d.data[0].description,
-                                                                                tracking: d.data[0].tracking,
-                                                                                provide: d.data[0].provide,
-                                                                                deliveryCompany: d.data[0].deliveryCompany,
-                                                                                weight: d.data[0].weight,
-                                                                                lenght: d.data[0].lenght,
-                                                                                height: d.data[0].height,
-                                                                                width: d.data[0].width,
-                                                                                declaredValue: d.data[0].declaredValue,
-                                                                                datePrealert: d.data[0].datePrealert,
-                                                                                dateReceive: d.data[0].dateReceive,
-                                                                                userReceive: d.data[0].userReceive,
-                                                                                dateEnter: d.data[0].dateEnter,
-                                                                                userEnter: d.data[0].userEnter,
-                                                                                dateAuthorization: d.data[0].dateAuthorization,
-                                                                                weightVolumen: d.data[0].weightVolumen,
-                                                                                observations: d.data[0].observations,
-                                                                                consolidate: d.data[0].consolidate,
-                                                                                autodispatch: d.data[0].autodispatch,
-                                                                                payment: d.data[0].payment
-                                                                            });
-                                                                            form.down('form').loadRecord(_package);
-                                                                            form.down('form').getForm().findField('idlocker').setReadOnly(_package.get('locker').idlocker != 0);
-                                                                            form.down('form').getForm().findField('prealerted').setValue(_package.get('locker').idlocker != 0);
-                                                                            form.down('form').getForm().findField('idcityorigin').setValue(_package.get('cityOrigin').idcity);
-                                                                            form.down('form').getForm().findField('iddeliverycompany').setValue(_package.get('deliveryCompany').iddeliverycompany);
-                                                                            form.down('form').getForm().findField('idpayment').setValue(_package.get('payment').idpayment);
-                                                                            form.down('form').getForm().findField('idpayment').setReadOnly(true);
-                                                                            form.down('form').getForm().findField('provide').setValue(_package.get('provide').idprovide);
-                                                                            form.down('form').getForm().findField('provide').setReadOnly(_package.get('locker').idlocker != 0);
-                                                                            form.down('form').getForm().findField('idproduct').setValue(_package.get('product').idproduct);
-                                                                            form.down('form').getForm().findField('idlocker').setValue(_package.get('locker').idlocker);
-                                                                            form.down('form').getForm().findField('idtypepackage').setValue(_package.get('typePackage').idtypepackage);
-                                                                            form.down('form').getForm().findField('autodispatch').setReadOnly(true);
-                                                                            if (Ext.util.Cookies.get('lastTypeUbication') != null) {
-                                                                                form.down('form').getForm().findField('idtypeubication').setValue(parseInt(Ext.util.Cookies.get('lastTypeUbication')));
-                                                                            } else {
-                                                                                form.down('form').getForm().findField('idtypeubication').setValue(1);
-                                                                            }
-                                                                        }
-                                                                    });
-                                                                }
-                                                            });
-                                                        }
-                                                    });
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-                            },
-                            failed: function (t, p, o) {
-                                Ext.MessageBox.show({
-                                    title: 'Error',
-                                    msg: 'No es posible leer el tracking',
-                                    buttons: Ext.Msg.OK,
-                                    icon: Ext.Msg.ERROR
-                                });
-                            }
-                        });
-                    }
-                }
-        );
-    },
-    enteredPackages: function () {
-        this.openGrid('listEnteredPackages')
-    },
-    pendingPackages: function () {
-        this.openGrid('listPendingPackages')
-    },
-    dgPackages: function () {
-        this.openGrid('listDGPackages')
-    },
-    authorizedPackages: function () {
-        this.openGrid('listAuthorizedPackages')
-    },
-    dispatchs: function () {
-        this.openGrid('listDispatchedPackages')
-    },
-    receivePackages: function () {
-        Ext.getStore('DeliveryCompanyReceivePackage').load({
-            callback: function () {
-                Ext.widget('formSelectDeliveryCompany');
-            }
-        });
-    },
-    receivedPackages: function () {
-        this.openGrid('listReceivedPackages')
-    },
-    provides: function () {
-        this.openGrid('listProvides')
-    },
-    prealerts: function () {
-        this.openGrid('listPrealerts')
-    },
-    requestsPending: function () {
-        this.openGrid('listRequestsPending')
-    },
-    admonPackages: function () {
-        this.openGrid('listAdmonPackages')
-    },
-    listPackagesPicking: function () {
-        this.openGrid('listPackagesPicking')
-    },
-    miles: function () {
-        Ext.widget('formMiles');
-    },
-    rptAuthorized: function () {
-        Ext.widget('formReportAuthorized')
-    },
-    rptAllPackage: function () {
-        Ext.widget('formReportAllPackage')
-    },
-    rptReceivedPackages: function () {
-        this.openGrid('listReportReceivedPackages')
-    },
-    rptProductivity: function () {
-        Ext.widget('formReportProductivity');
-    },
-    rptLocker: function () {
-        Ext.widget('formReportLocker');
-    },
-    rptBehavior: function () {
-        Ext.widget('formReportBehavior');
+        this.openGrid('listStatesTracking');
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -1367,7 +1048,7 @@ Ext.create('Ext.app.Controller', {
                                         msg: 'Ingrese los datos correctos',
                                         buttons: Ext.Msg.OK,
                                         icon: Ext.Msg.ERROR
-                                    })
+                                    });
                                 }
                             }
                         }, {
@@ -1380,37 +1061,8 @@ Ext.create('Ext.app.Controller', {
                 }]
         });
     },
-    printerUser: function (a, d, g, b, f) {
-        Ext.getStore('Printer').load({
-            callback: function () {
-                Ext.Ajax.request({
-                    method: 'GET',
-                    url: "stores/list_objects.php",
-                    params: {
-                        id: 0,
-                        object: "printerUser"
-                    },
-                    success: function (e) {
-                        var h = Ext.JSON.decode(e.responseText);
-                        var form = Ext.widget("formPrinterUser");
-                        form.down("form").getForm().findField('iduser').setValue(0);
-                        form.down("form").getForm().findField('idprinter').setValue((h.data[0].idprinter == 0 ? "" : h.data[0].idprinter))
-                    },
-                    failed: function (e) {
-                        var h = Ext.JSON.decode(e.responseText);
-                        Ext.MessageBox.show({
-                            title: p.response.result.msg.title,
-                            msg: p.response.result.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR
-                        })
-                    }
-                })
-            }
-        })
-    },
     logout: function () {
-        window.location = 'logout.php'
+        window.location = 'logout.php';
     },
     openGrid: function (grid) {
         var opened = false;
@@ -1427,73 +1079,6 @@ Ext.create('Ext.app.Controller', {
             content.add(panel);
         }
         Ext.getCmp('contenido').setActiveTab(panel);
-    },
-    typesUbication: function () {
-        this.openGrid('listTypesUbication')
-    },
-    printers: function () {
-        this.openGrid('listPrinters')
-    },
-    missings: function () {
-        this.openGrid('listMissingPackages')
-    },
-    storageAbandonment: function () {
-        Ext.Ajax.request({
-            url: 'stores/list_objects.php',
-            method: 'get',
-            params: {
-                object: 'storageAbandonment'
-            },
-            success: function (response) {
-                var d = Ext.JSON.decode(response.responseText);
-                Ext.MessageBox.show({
-                    title: d.msg.title,
-                    msg: d.msg.body,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO,
-                    fn: function () {
-                        window.open("./reports/" + d.msg.file, "_blank");
-                    }
-                })
-            },
-            failed: function (t, p, o) {
-                Ext.MessageBox.show({
-                    title: p.response.result.msg.title,
-                    msg: p.response.result.msg.body,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO
-                })
-            }
-        })
-    },
-    rptPackageNoAuthorized: function () {
-        Ext.Ajax.request({
-            url: 'stores/list_objects.php',
-            method: 'get',
-            params: {
-                object: 'rptPackageNoAuthorized'
-            },
-            success: function (response) {
-                var d = Ext.JSON.decode(response.responseText);
-                Ext.MessageBox.show({
-                    title: d.msg.title,
-                    msg: d.msg.body,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO,
-                    fn: function () {
-                        window.open("./reports/" + d.msg.file, "_blank");
-                    }
-                })
-            },
-            failed: function (t, p, o) {
-                Ext.MessageBox.show({
-                    title: p.response.result.msg.title,
-                    msg: p.response.result.msg.body,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO
-                })
-            }
-        })
     }
 });
 
@@ -2400,24 +1985,127 @@ Ext.create("Ext.app.Controller", {
     }
 });
 
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listCustomers button[action=insert]': {click: 'insert'},
+        'listCustomers button[action=clean]': {click: 'cleanFilters'},
+        'listCustomers': {itemdblclick: 'editDbl'},
+        'listCustomers actioncolumn[action=edit]': {click: 'edit'},
+        'listCustomers actioncolumn[action=remove]': {click: 'remove'},
+        'formCustomer button[action=cancel]': {click: 'cancel'},
+        'formCustomer button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formCustomer').down('form').loadRecord(Ext.create('susencargos.model.Customer'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('Customer').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formCustomer');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formCustomer');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idcustomer').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Customer').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            })
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idcustomer'),
+                        object: 'customers'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Customer').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="Aplicación">
 Ext.application({
     requires: ['Ext.container.Viewport', 'Ext.chart.*', 'Ext.ux.form.TinyMCE'],
     name: 'susencargos',
     launch: function () {
         //<editor-fold defaultstate="collapsed" desc="Stores">
-        Ext.create('susencargos.store.DeprisaStore', {
+        Ext.create('susencargos.store.MainStore', {
             storeId: 'Application',
             model: 'susencargos.model.Application',
             object: 'apps'
         });
 
-        Ext.create('susencargos.store.DeprisaStore', {
+        Ext.create('susencargos.store.MainStore', {
             storeId: 'Group',
             model: 'susencargos.model.Group',
             object: 'groups'
         });
 
-        Ext.create('susencargos.store.DeprisaStore', {
+        Ext.create('susencargos.store.MainStore', {
             storeId: 'Module',
             model: 'susencargos.model.Module',
             object: 'modules'
@@ -2452,95 +2140,95 @@ Ext.application({
                 }
             }
         });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'User',
+            model: 'susencargos.model.User',
+            object: 'users'
+        });
+        
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'Customer',
+            model: 'susencargos.model.Customer',
+            object: 'customers'
+        });
         //</editor-fold>
+
         /*
-         
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'ApplicationsGroup',
          model: 'susencargos.model.Application',
          object: 'applicationsGroup'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'FieldTemplate',
          model: 'susencargos.model.FieldTemplate',
          object: 'fields'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'GroupsApplication',
          model: 'susencargos.model.Group',
          object: 'groupsApplication'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'GroupsModule',
          model: 'susencargos.model.GroupModule',
          object: 'groupsModule'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'GroupsUser',
          model: 'susencargos.model.Group',
          object: 'groupsUser'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
-         storeId: 'LevelAccess',
-         model: 'susencargos.model.LevelAccess',
-         object: 'levelsAccess'
-         });
-         
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'NoApplicationsGroup',
          model: 'susencargos.model.Application',
          object: 'noApplicationsGroup'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'NoGroupsApplication',
          model: 'susencargos.model.Group',
          object: 'noGroupsApplication'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'NoGroupsUser',
          model: 'susencargos.model.Group',
          object: 'noGroupsUser'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'NoUsersGroup',
          model: 'susencargos.model.User',
          object: 'noUsersGroup'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'StateTracking',
          model: 'susencargos.model.StateTracking',
          object: 'statesTracking'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'Template',
          model: 'susencargos.model.Template',
          object: 'templates'
          });
          
-         Ext.create('susencargos.store.DeprisaStore', {
-         storeId: 'User',
-         model: 'susencargos.model.User',
-         object: 'users'
-         });
-         
-         Ext.create('susencargos.store.DeprisaStore', {
+         Ext.create('susencargos.store.MainStore', {
          storeId: 'UsersGroup',
          model: 'susencargos.model.User',
          object: 'usersGroup'
          });
          
          Ext.define('susencargos.view.application.FormGroupModule', {
-         extend: 'susencargos.view.DeprisaForm',
+         extend: 'susencargos.view.MainForm',
          alias: 'widget.formGroupModule',
          title: 'Editar grupo de un m\xf3dulo',
          object: 'groupsModule',
@@ -2588,63 +2276,6 @@ Ext.application({
          }]
          });
          
-         Ext.define('susencargos.view.application.FormModule', {
-         extend: 'susencargos.view.DeprisaForm',
-         alias: 'widget.formModule',
-         title: 'Editar m\xf3dulo',
-         object: 'modules',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idmodule',
-         value: 0
-         }, {
-         xtype: 'combo',
-         name: 'idparent',
-         emptyText: '- Nuevo m\xf3dulo -',
-         value: '',
-         anchor: '90%',
-         store: 'Module',
-         valueField: 'idmodule',
-         displayField: 'name',
-         fieldLabel: '* M\xf3dulo padre',
-         queryMode: 'local',
-         forceSelection: true,
-         typeAhead: true
-         }, {
-         xtype: 'hiddenfield',
-         name: 'idapplication',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }, {
-         xtype: 'textfield',
-         name: 'class',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Clase'
-         }, {
-         xtype: 'textfield',
-         name: 'script',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Script/Acci\xf3n'
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
-         
          Ext.define('susencargos.view.application.Groups', {
          extend: 'susencargos.view.DeprisaItemSelector',
          alias: 'widget.listGroupsApplication',
@@ -2677,7 +2308,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.application.GroupsModule', {
-         extend: 'susencargos.view.DeprisaGrid',
+         extend: 'susencargos.view.MainGrid',
          iconCls: 'group',
          alias: 'widget.listGroupsModule',
          title: 'Listado grupos asignados a un m\xf3dulo',
@@ -2720,7 +2351,7 @@ Ext.application({
          });
          
          Ext.define("susencargos.view.country.FormCity", {
-         extend: "susencargos.view.DeprisaForm",
+         extend: "susencargos.view.MainForm",
          alias: "widget.formCity",
          title: "Editar ciudad",
          object: "cities",
@@ -2767,139 +2398,8 @@ Ext.application({
          }]
          });
          
-         Ext.define("susencargos.view.country.Form", {
-         extend: "susencargos.view.DeprisaForm",
-         alias: "widget.formCountry",
-         title: "Editar pa\xeds",
-         object: "countries",
-         fields: [{
-         xtype: "hiddenfield",
-         name: "idcountry",
-         value: 0
-         }, {
-         xtype: "textfield",
-         name: "name",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Nombre"
-         }, {
-         xtype: "textfield",
-         name: "codeIATA",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* C\xf3digo IATA"
-         }, {
-         xtype: "numberfield",
-         name: "minValueDeclared",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* M\xednimo declarado"
-         }, {
-         xtype: "numberfield",
-         name: "maxValueDeclared",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* M\xe1ximo declarado"
-         }, {
-         xtype: "combo",
-         name: "idmoney",
-         anchor: "90%",
-         value: "",
-         store: "Money",
-         valueField: "idmoney",
-         displayField: "name",
-         fieldLabel: "* Moneda",
-         queryMode: "local",
-         forceSelection: true
-         }, {
-         xtype: "combo",
-         name: "idmeasuringsystem",
-         anchor: "90%",
-         value: "",
-         store: "MeasuringSystem",
-         valueField: "idmeasuringsystem",
-         displayField: "name",
-         fieldLabel: "* Sistema de medida",
-         queryMode: "local"
-         }, {
-         xtype: "numberfield",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         name: "maxWeight",
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Peso m\xe1ximo"
-         }, {
-         xtype: "numberfield",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         name: "milesByDollar",
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Millas por dolar"
-         }, {
-         xtype: "numberfield",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         name: "maxWeightDocs",
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Peso m\xe1ximo documentos"
-         }, {
-         xtype: "numberfield",
-         decimalPrecision: 2,
-         decimalSeparator: ".",
-         hideTrigger: true,
-         name: "maxLongitude",
-         value: 0,
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* M\xe1ximo longitud"
-         }, {
-         xtype: "combo",
-         name: "delivery",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* Pa\xeds de entrega",
-         store: [[false, "No"], [true, "Si"]],
-         queryMode: "local",
-         typeAHead: true
-         }, {
-         xtype: "textfield",
-         name: "codeOffice",
-         value: "",
-         allowBlank: false,
-         anchor: "90%",
-         fieldLabel: "* C\xf3digo oficina Socrates"
-         }],
-         buttons: [{
-         text: "Guardar",
-         action: "save"
-         }, {
-         text: "Cancelar",
-         action: "cancel"
-         }]
-         });
-         
          Ext.define("susencargos.view.country.Cities", {
-         extend: "susencargos.view.DeprisaGrid",
+         extend: "susencargos.view.MainGrid",
          iconCls: "city",
          alias: "widget.listCities",
          title: "Listado de ciudades",
@@ -3009,65 +2509,6 @@ Ext.application({
          storeFinish: 'ApplicationsGroup'
          });
          
-         Ext.define('susencargos.view.level_access.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
-         iconCls: 'levelAccess',
-         alias: 'widget.listLevelsAccess',
-         title: 'Listado niveles de acceso',
-         store: 'LevelAccess',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idlevelaccess'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         stopSelection: false,
-         icon: 'css/remove.png',
-         iconCls: 'remove'
-         }]
-         });
-         
-         Ext.define('susencargos.view.level_access.Form', {
-         extend: 'susencargos.view.DeprisaForm',
-         alias: 'widget.formLevelAccess',
-         object: 'levelsAccess',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idlevelaccess',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
-         
          Ext.define('susencargos.view.locker.FormChangePassword', {
          extend: 'Ext.window.Window',
          alias: 'widget.formChangePasswordCustomer',
@@ -3165,7 +2606,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.state_tracking.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
+         extend: 'susencargos.view.MainGrid',
          iconCls: 'stateTracking',
          alias: 'widget.listStatesTracking',
          title: 'Listado estados de tracking',
@@ -3207,7 +2648,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.state_tracking.Form', {
-         extend: 'susencargos.view.DeprisaForm',
+         extend: 'susencargos.view.MainForm',
          alias: 'widget.formStateTracking',
          title: 'Editar estado de tracking',
          object: 'statesTracking',
@@ -3244,7 +2685,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.template.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
+         extend: 'susencargos.view.MainGrid',
          iconCls: 'template',
          alias: 'widget.listTemplates',
          title: 'Listado de plantillas de correo',
@@ -3290,7 +2731,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.template.Form', {
-         extend: 'susencargos.view.DeprisaForm',
+         extend: 'susencargos.view.MainForm',
          alias: 'widget.formTemplate',
          title: 'Editar plantilla de correo',
          object: 'templates',
@@ -3325,7 +2766,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.template.FormField', {
-         extend: 'susencargos.view.DeprisaForm',
+         extend: 'susencargos.view.MainForm',
          alias: 'widget.formFieldTemplate',
          title: 'Editar campo',
          object: 'fields',
@@ -3355,7 +2796,7 @@ Ext.application({
          });
          
          Ext.define('susencargos.view.template.Fields', {
-         extend: 'susencargos.view.DeprisaGrid',
+         extend: 'susencargos.view.MainGrid',
          iconCls: 'fieldTemplate',
          alias: 'widget.listFieldsTemplate',
          title: 'Listado de campos',
@@ -3414,159 +2855,10 @@ Ext.application({
          flex: 1
          }]
          });
-         
-         Ext.define('susencargos.view.user.Grid', {
-         extend: 'susencargos.view.DeprisaGrid',
-         alias: 'widget.listUsers',
-         title: 'Listado usuarios',
-         store: 'User',
-         iconCls: 'user',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'iduser'
-         }, {
-         header: 'Login',
-         filter: 'string',
-         dataIndex: 'login',
-         flex: 3
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Activo',
-         dataIndex: 'active',
-         filter: 'boolean',
-         renderer: function (value) {
-         if (value) {
-         return "Si"
-         } else {
-         return "No"
-         }
-         },
-         flex: 1
-         }, {
-         header: 'Ultimo ingreso',
-         dataIndex: 'lastLogin',
-         filter: {
-         type: 'date',
-         fields: {lt: {text: 'Antes de'}, gt: {text: 'Depu\xe9s de '}, eq: {text: 'El d\xeda'}}, dateFormat: 'Y-m-d H:i:s'
-         },
-         flex: 1,
-         renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
-         }, {
-         header: 'Logeado',
-         dataIndex: 'logged',
-         filter: 'boolean',
-         renderer: function (value) {
-         if (value) {
-         return "Si"
-         } else {
-         return "No"
-         }
-         },
-         flex: 1
-         }, {
-         header: 'Email',
-         filter: 'string',
-         dataIndex: 'email',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'group',
-         tooltip: 'Grupos',
-         icon: 'css/group.png',
-         stopSelection: false,
-         iconCls: 'group'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'printer',
-         tooltip: 'Impresora',
-         icon: 'css/printer.png',
-         stopSelection: false,
-         iconCls: 'printer'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         icon: 'css/remove.png',
-         iconCls: 'remove',
-         stopSelection: false
-         }]
-         });
-         
-         Ext.define('susencargos.view.user.Form', {
-         extend: 'susencargos.view.DeprisaForm',
-         alias: 'widget.formUser',
-         title: 'Editar usuario',
-         object: 'users',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'iduser',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'login',
-         vtype: "email",
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Login'
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }, {
-         xtype: 'combo',
-         name: 'active',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Activo',
-         store: [[false, 'No'], [true, 'Si']],
-         forceSelection: true,
-         queryMode: 'local',
-         typeAHead: true
-         }, {
-         xtype: 'textfield',
-         name: 'email',
-         value: '',
-         vtype: 'email',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Email'
-         }],
-         buttons: [{
-         text: 'Cambiar contrase\xf1a',
-         action: 'changePass'
-         }, {
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
          */
 
         //<editor-fold defaultstate="collapsed" desc="View Generales">
-        Ext.define('susencargos.view.DeprisaGrid', {
+        Ext.define('susencargos.view.MainGrid', {
             extend: 'Ext.grid.Panel',
             alias: '',
             plugins: {
@@ -3606,7 +2898,7 @@ Ext.application({
             }
         });
 
-        Ext.define('susencargos.view.DeprisaForm', {
+        Ext.define('susencargos.view.MainForm', {
             extend: 'Ext.window.Window',
             iconCls: 'edit',
             width: 600,
@@ -3720,7 +3012,7 @@ Ext.application({
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Aplicación">
         Ext.define('susencargos.view.application.Grid', {
-            extend: 'susencargos.view.DeprisaGrid',
+            extend: 'susencargos.view.MainGrid',
             iconCls: 'apps',
             alias: 'widget.listApplications',
             title: 'Listado aplicaciones',
@@ -3770,7 +3062,7 @@ Ext.application({
         });
 
         Ext.define('susencargos.view.application.Form', {
-            extend: 'susencargos.view.DeprisaForm',
+            extend: 'susencargos.view.MainForm',
             alias: 'widget.formApplication',
             title: 'Editar aplicaci\xf3n',
             object: 'apps',
@@ -3797,7 +3089,7 @@ Ext.application({
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Grupo">
         Ext.define('susencargos.view.group.Grid', {
-            extend: 'susencargos.view.DeprisaGrid',
+            extend: 'susencargos.view.MainGrid',
             iconCls: 'group',
             alias: 'widget.listGroups',
             title: 'Listado grupos',
@@ -3859,7 +3151,7 @@ Ext.application({
         });
 
         Ext.define('susencargos.view.group.Form', {
-            extend: 'susencargos.view.DeprisaForm',
+            extend: 'susencargos.view.MainForm',
             alias: 'widget.formGroup',
             title: 'Editar grupo',
             object: 'groups',
@@ -3970,6 +3262,302 @@ Ext.application({
                     }]
             }
         });
+
+        Ext.define('susencargos.view.application.FormModule', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formModule',
+            title: 'Editar m\xf3dulo',
+            object: 'modules',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idmodule',
+                    value: 0
+                }, {
+                    xtype: 'combo',
+                    name: 'idparent',
+                    emptyText: '- Nuevo m\xf3dulo -',
+                    value: '',
+                    anchor: '90%',
+                    store: 'Module',
+                    valueField: 'idmodule',
+                    displayField: 'name',
+                    fieldLabel: '* M\xf3dulo padre',
+                    queryMode: 'local',
+                    forceSelection: true,
+                    typeAhead: true
+                }, {
+                    xtype: 'hiddenfield',
+                    name: 'idapplication',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'textfield',
+                    name: 'class',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Clase'
+                }, {
+                    xtype: 'textfield',
+                    name: 'script',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Script/Acci\xf3n'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Usuarios">
+        Ext.define('susencargos.view.user.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            alias: 'widget.listUsers',
+            title: 'Listado usuarios',
+            store: 'User',
+            iconCls: 'user',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'iduser'
+                }, {
+                    header: 'Login',
+                    filter: 'string',
+                    dataIndex: 'login',
+                    flex: 3
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Activo',
+                    dataIndex: 'active',
+                    filter: 'boolean',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si"
+                        } else {
+                            return "No"
+                        }
+                    },
+                    flex: 1
+                }, {
+                    header: 'Ultimo ingreso',
+                    dataIndex: 'lastLogin',
+                    filter: {
+                        type: 'date',
+                        fields: {lt: {text: 'Antes de'}, gt: {text: 'Depu\xe9s de '}, eq: {text: 'El d\xeda'}}, dateFormat: 'Y-m-d H:i:s'
+                    },
+                    flex: 1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                }, {
+                    header: 'Logeado',
+                    dataIndex: 'logged',
+                    filter: 'boolean',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si"
+                        } else {
+                            return "No"
+                        }
+                    },
+                    flex: 1
+                }, {
+                    header: 'Email',
+                    filter: 'string',
+                    dataIndex: 'email',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'group',
+                    tooltip: 'Grupos',
+                    icon: 'css/group.png',
+                    stopSelection: false,
+                    iconCls: 'group'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    iconCls: 'remove',
+                    stopSelection: false
+                }]
+        });
+
+        Ext.define('susencargos.view.user.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formUser',
+            title: 'Editar usuario',
+            object: 'users',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'iduser',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'login',
+                    vtype: "email",
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Login'
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'combo',
+                    name: 'active',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Activo',
+                    store: [[false, 'No'], [true, 'Si']],
+                    forceSelection: true,
+                    queryMode: 'local',
+                    typeAHead: true
+                }, {
+                    xtype: 'textfield',
+                    name: 'email',
+                    value: '',
+                    vtype: 'email',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Email'
+                }],
+            buttons: [{
+                    text: 'Cambiar contrase\xf1a',
+                    action: 'changePass'
+                }, {
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Clientes">
+        Ext.define('susencargos.view.customer.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'group',
+            alias: 'widget.listCustomers',
+            title: 'Listado clientes',
+            store: 'Customer',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idcustomer'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'NIT',
+                    filter: 'string',
+                    dataIndex: 'taxid',
+                    flex: 2
+                }, {
+                    header: 'Dirección',
+                    filter: 'string',
+                    dataIndex: 'address',
+                    flex: 3
+                }, {
+                    header: 'Teléfono',
+                    filter: 'string',
+                    dataIndex: 'phone',
+                    flex: 2
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.customer.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formCustomer',
+            title: 'Editar cliente',
+            object: 'customers',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idcustomer',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'textfield',
+                    name: 'taxid',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* NIT'
+                }, {
+                    xtype: 'textfield',
+                    name: 'address',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Dirección'
+                }, {
+                    xtype: 'textfield',
+                    name: 'phone',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Teléfono'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
         //</editor-fold>
         Ext.create('Ext.container.Viewport', {
             layout: 'border',
@@ -4006,3 +3594,4 @@ Ext.application({
         });
     }
 });
+//</editor-fold>
