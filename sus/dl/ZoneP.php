@@ -31,7 +31,7 @@ class ZoneP extends \gen\dl\LBTObjectP {
     }
 
     /**
-     * Lee un grupo de la base de datos
+     * Lee una zona de la base de datos
      */
     public function read() {
         $rs = $this->connection->read("name", "sus_zone", "idzone = " . $this->observer->idzone);
@@ -54,7 +54,7 @@ class ZoneP extends \gen\dl\LBTObjectP {
                 "idzone, name", "sus_zone", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
-            $obj = new \sus\entities\ZoneEntity($row->idgroup);
+            $obj = new \sus\entities\ZoneEntity($row->idzone);
             $obj->name = $row->name;
             array_push($list, $obj);
         }

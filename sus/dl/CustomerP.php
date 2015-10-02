@@ -29,18 +29,22 @@ class CustomerP extends \gen\dl\LBTObjectP {
             "name" => "'" . $this->observer->name . "'",
             "taxid" => "'" . $this->observer->taxid . "'",
             "address" => "'" . $this->observer->address . "'",
-            "phone" => "'" . $this->observer->phone . "'"), $this->user->iduser);
+            "phone" => "'" . $this->observer->phone . "'",
+            "idcity" => $this->observer->city - idcity
+                ), $this->user->iduser);
     }
 
     /**
      * Lee un cliente de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("name, taxid, address, phone", "sus_customer", "idcustomer = " . $this->observer->idcustomer);
+        $rs = $this->connection->read("c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity", "c.idcustomer = " . $this->observer->idcustomer);
         $this->observer->name = $rs->name;
         $this->observer->taxid = $rs->taxid;
         $this->observer->address = $rs->address;
         $this->observer->phone = $rs->phone;
+        $this->observer->city = new \sus\entities\CityEntity($rs->idcity);
+        $this->observer->city->name = $rs->city;
     }
 
     /**
@@ -56,7 +60,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "idcustomer, name, taxid, address, phone", "sus_customer", $filters, $sorters, $start, $limit, $this->total
+                "c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\CustomerEntity($row->idcustomer);
@@ -64,6 +68,8 @@ class CustomerP extends \gen\dl\LBTObjectP {
             $obj->taxid = $row->taxid;
             $obj->address = $row->address;
             $obj->phone = $row->phone;
+            $obj->city = new \sus\entities\CityEntity($row->idcity);
+            $obj->city->name = $row->city;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -78,7 +84,9 @@ class CustomerP extends \gen\dl\LBTObjectP {
             "name" => "'" . $this->observer->name . "'",
             "taxid" => "'" . $this->observer->taxid . "'",
             "address" => "'" . $this->observer->address . "'",
-            "phone" => "'" . $this->observer->phone . "'"), array("idcustomer" => $this->observer->idcustomer), $this->user->iduser
+            "phone" => "'" . $this->observer->phone . "'",
+            "idcity" => $this->observer->city->idcity
+                ), array("idcustomer" => $this->observer->idcustomer), $this->user->iduser
         );
     }
 

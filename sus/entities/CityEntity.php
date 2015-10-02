@@ -5,23 +5,25 @@ namespace sus\entities;
 require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
 
 /**
- * Zona de entrega de susencargos
+ * Ciudad o municipio de entrega de susencargos
  *
- * @property int $idzone Identificador de la zona
- * @property string $name Nombre de la zona
+ * @property int $idcity Identificador de la ciudad
+ * @property string $name Nombre de la ciudad
+ * @property ZoneEntity $zone Zona a la que pertenece la ciudad
  * @author Leandro Baena Torres
  */
-class ZoneEntity extends \gen\entities\LBTObject {
+class CityEntity extends \gen\entities\LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     /**
-     * Crea una nueva instancia de una zona de entrega
+     * Crea una nueva instancia de una ciudad de entrega
      * 
-     * @param id Identificador de la zona de entrega, 0 si es nueva
+     * @param id Identificador de la ciudad de entrega, 0 si es nueva
      */
     public function __construct($id = 0) {
-        $this->idzone = $id;
+        $this->idcity = $id;
         $this->name = "";
+        $this->zone = new ZoneEntity(0);
     }
 
     //</editor-fold>
@@ -54,21 +56,27 @@ class ZoneEntity extends \gen\entities\LBTObject {
      * @return string Objeto en formato JSON
      */
     public function __toString() {
-        return "{\"idzone\":$this->idzone,"
-                . "\"name\":\"$this->name\"}";
+        return "{\"idcity\":$this->idcity,"
+                . "\"name\":\"$this->name\","
+                . "\"zone\":$this->zone}";
     }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Atributos">
     /**
-     * @var int Identificador de la zona
+     * @var int Identificador de la ciudad
      */
-    private $idzone;
+    private $idcity;
 
     /**
-     * @var string Nombre de la zona
+     * @var string Nombre de la ciudad
      */
     private $name;
+    
+    /**
+     * @var ZoneEntity Zona a la que pertenece la ciudad
+     */
+    private $zone;
 
     //</editor-fold>
 }
