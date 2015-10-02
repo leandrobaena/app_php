@@ -7,6 +7,7 @@ require_once (__DIR__ . "/../../gen/bl/Module.php");
 require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
+require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
 
 session_start();
 
@@ -64,6 +65,11 @@ if (!isset($_SESSION["user"])) {
             $obj = new \gen\bl\User($_POST["iduser"]);
             $obj->deleteGroup($_POST["idgroup"], $_SESSION["user"]);
             echo("{\"success\":true,\"msg\":{\"title\":\"Grupo eliminado\",\"body\":\"El grupo ha sido desvinculado del usuario con \\xe9xito\"}}");
+            break;
+        case "statesTracking":
+            $obj = new \sus\bl\StateTracking($_POST["id"]);
+            $obj->delete($_SESSION["user"]);
+            echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa eliminado\",\"body\":\"El estado de remesa ha sido eliminado con \\xe9xito\"}}");
             break;
     }
 }

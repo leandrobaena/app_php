@@ -127,14 +127,26 @@ Ext.define('susencargos.model.City', {
             reference: 'susencargos.model.Zone'
         }]
 });
+
+Ext.define('susencargos.model.StateTracking', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idstatetracking',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStore">
 Ext.define("susencargos.store.MainStore", {
     extend: "Ext.data.Store",
     remoteSort: true,
-    remoteFilter: true,
+    remoteFilter: false,
     object: "",
+    autoLoad: true,
     proxy: {
         type: "ajax",
         url: "stores/list_objects.php",
@@ -1129,11 +1141,7 @@ Ext.create('Ext.app.Controller', {
         'formStateTracking button[action=save]': {click: 'save'}
     },
     insert: function (b, e) {
-        Ext.getStore('GroupTracking').load({
-            callback: function () {
-                Ext.widget('formStateTracking').down('form').loadRecord(Ext.create('susencargos.model.StateTracking'));
-            }
-        });
+        Ext.widget('formStateTracking').down('form').loadRecord(Ext.create('susencargos.model.StateTracking'));
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
@@ -1143,22 +1151,12 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.getStore('GroupTracking').load({
-            callback: function () {
-                var form = Ext.widget('formStateTracking');
-                form.down('form').loadRecord(v.getStore().getAt(c));
-                form.down('form').getForm().findField('idgrouptracking').setValue(v.getStore().getAt(c).get('groupTracking').idgrouptracking);
-            }
-        });
+        var form = Ext.widget('formStateTracking');
+        form.down('form').loadRecord(v.getStore().getAt(c));
     },
     editDbl: function (g, r) {
-        Ext.getStore('GroupTracking').load({
-            callback: function () {
-                var form = Ext.widget('formStateTracking');
-                form.down('form').loadRecord(r);
-                form.down('form').getForm().findField('idgrouptracking').setValue(r.get('groupTracking').idgrouptracking);
-            }
-        });
+        var form = Ext.widget('formStateTracking');
+        form.down('form').loadRecord(r);
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid()) {
@@ -2043,6 +2041,10 @@ Ext.create('Ext.app.Controller', {
     },
     edit: function (v, r, c, i, e) {
         Ext.getStore('City').load({
+            params: {
+                start: 0,
+                limit: 1000
+            },
             callback: function () {
                 var form = Ext.widget('formCustomer');
                 form.down('form').loadRecord(v.getStore().getAt(c));
@@ -2052,6 +2054,10 @@ Ext.create('Ext.app.Controller', {
     },
     editDbl: function (g, r) {
         Ext.getStore('City').load({
+            params: {
+                start: 0,
+                limit: 1000
+            },
             callback: function () {
                 var form = Ext.widget('formCustomer');
                 form.down('form').loadRecord(r);
@@ -2426,25 +2432,35 @@ Ext.application({
         Ext.create('susencargos.store.MainStore', {
             storeId: 'GroupsUser',
             model: 'susencargos.model.Group',
+            autoLoad: false,
             object: 'groupsUser'
         });
 
         Ext.create('susencargos.store.MainStore', {
             storeId: 'NoGroupsUser',
             model: 'susencargos.model.Group',
+            autoLoad: false,
             object: 'noGroupsUser'
         });
 
         Ext.create('susencargos.store.MainStore', {
             storeId: 'NoUsersGroup',
             model: 'susencargos.model.User',
+            autoLoad: false,
             object: 'noUsersGroup'
         });
 
         Ext.create('susencargos.store.MainStore', {
             storeId: 'UsersGroup',
             model: 'susencargos.model.User',
+            autoLoad: false,
             object: 'usersGroup'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'StateTracking',
+            model: 'susencargos.model.StateTracking',
+            object: 'statesTracking'
         });
         //</editor-fold>
 
@@ -2483,12 +2499,6 @@ Ext.application({
          storeId: 'NoGroupsApplication',
          model: 'susencargos.model.Group',
          object: 'noGroupsApplication'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'StateTracking',
-         model: 'susencargos.model.StateTracking',
-         object: 'statesTracking'
          });
          
          Ext.create('susencargos.store.MainStore', {
@@ -2730,85 +2740,6 @@ Ext.application({
          text: "Cancelar",
          action: 'cancel'
          }]
-         }]
-         });
-         
-         Ext.define('susencargos.view.state_tracking.Grid', {
-         extend: 'susencargos.view.MainGrid',
-         iconCls: 'stateTracking',
-         alias: 'widget.listStatesTracking',
-         title: 'Listado estados de tracking',
-         store: 'StateTracking',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idstatetracking'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Grupo',
-         filter: 'string',
-         dataIndex: 'groupTracking',
-         renderer: function (value) {
-         return value.name;
-         },
-         flex: 1
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         stopSelection: false,
-         icon: 'css/remove.png',
-         iconCls: 'remove'
-         }]
-         });
-         
-         Ext.define('susencargos.view.state_tracking.Form', {
-         extend: 'susencargos.view.MainForm',
-         alias: 'widget.formStateTracking',
-         title: 'Editar estado de tracking',
-         object: 'statesTracking',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idstatetracking',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }, {
-         xtype: 'combo',
-         name: 'idgrouptracking',
-         forceSelection: true,
-         anchor: '90%',
-         allowBlank: false,
-         store: 'GroupTracking',
-         fieldLabel: 'Grupo *',
-         valueField: 'idgrouptracking',
-         displayField: 'name',
-         queryMode: 'local'
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
          }]
          });
          
@@ -3873,6 +3804,67 @@ Ext.application({
                     name: 'idzone',
                     anchor: '90%',
                     queryMode: 'local'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Estados remesa">
+        Ext.define('susencargos.view.state_tracking.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'stateTracking',
+            alias: 'widget.listStatesTracking',
+            title: 'Listado estados de remesa',
+            store: 'StateTracking',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idstatetracking'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    stopSelection: false,
+                    icon: 'css/remove.png',
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.state_tracking.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formStateTracking',
+            title: 'Editar estado de remesa',
+            object: 'statesTracking',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idstatetracking',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
                 }],
             buttons: [{
                     text: 'Guardar',

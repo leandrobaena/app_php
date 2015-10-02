@@ -7,6 +7,7 @@ require_once (__DIR__ . "/../../gen/bl/Module.php");
 require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
+require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
 
 $start = 0;
 $limit = 1000;
@@ -68,6 +69,10 @@ switch ($object) {
     case "noUsersGroup":
         $obj = new \gen\bl\Group($_GET["idgroup"]);
         $list = $obj->listNoUsers($filters, $sorters, $start, $limit);
+        break;
+    case "stateTracking":
+        $obj = new \sus\bl\StateTracking(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
         break;
 }
 

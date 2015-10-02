@@ -7,6 +7,7 @@ require_once (__DIR__ . "/../../gen/bl/Module.php");
 require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
+require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
 
 session_start();
 
@@ -80,6 +81,12 @@ if (!isset($_SESSION["user"])) {
                 $obj->insertGroup($_POST["group"], $_SESSION["user"]);
                 echo("{\"success\":true,\"msg\":{\"title\":\"Grupo asignado al usuario\",\"body\":\"El grupo ha sido asignado al usuario con \\xe9xito\"}}");
                 break;
+            case "statesTracking":
+                $obj = new \sus\bl\StateTracking($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->create($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa insertado\",\"body\":\"El estado de remesa fue insertado con éxito\"}}");
+                break;
         }
     } else {//Actualiza
         switch ($_POST["object"]) {
@@ -137,6 +144,12 @@ if (!isset($_SESSION["user"])) {
                 $obj->zone = new sus\entities\ZoneEntity($_POST["idzone"]);
                 $obj->update($_SESSION["user"]);
                 echo("{\"success\":true,\"msg\":{\"title\":\"Ciudad actualizada\",\"body\":\"La ciudad fue actualizada con éxito\"}}");
+                break;
+            case "statesTracking":
+                $obj = new \sus\bl\StateTracking($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->update($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa actualizado\",\"body\":\"El estado de remesa fue actualizado con éxito\"}}");
                 break;
         }
     }
