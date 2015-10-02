@@ -70,7 +70,7 @@ switch ($object) {
         $obj = new \gen\bl\Group($_GET["idgroup"]);
         $list = $obj->listNoUsers($filters, $sorters, $start, $limit);
         break;
-    case "stateTracking":
+    case "statesTracking":
         $obj = new \sus\bl\StateTracking(0);
         $list = $obj->readAll($filters, $sorters, $start, $limit);
         break;
