@@ -65,8 +65,8 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Crea el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea el grupo
+     * Crea el usuario en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que crea el usuario
      */
     public function create($user) {
         $this->persistence->user = $user;
@@ -74,7 +74,7 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Actualiza el grupo en la base de datos
+     * Actualiza el usuario en la base de datos
      * @param \gen\entities\UserEntity $user Usuario que actualiza el grupo
      */
     public function update($user) {
@@ -83,7 +83,7 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Elimina el grupo en la base de datos
+     * Elimina el usuario en la base de datos
      * @param \gen\entities\UserEntity $user Usuario que elimina el grupo
      */
     public function delete($user) {
@@ -92,7 +92,7 @@ class User extends \LBTObjectBL {
     }
 
     /**
-     * Carga el grupo de la base de datos
+     * Carga el usuario de la base de datos
      */
     public function read() {
         $this->persistence->read();
@@ -110,6 +110,49 @@ class User extends \LBTObjectBL {
         return $this->entity;
     }
 
+    /**
+     * Trae un listado de grupos a los que pertenece el usuario
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return string Listado de grupos a los que pertenece el usuario en formato json
+     */
+    public function listGroups($filters, $sorters, $start, $limit) {
+        return $this->persistence->listGroups($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Trae un listado de grupos a los que no pertenece el usuario
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return string Listado de grupos a los que no pertenece el usuario en formato json
+     */
+    public function listNoGroups($filters, $sorters, $start, $limit) {
+        return $this->persistence->listNoGroups($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Asigna un grupo a este usuario
+     * @param int $idgroup Identificador del grupo
+     * @param int $user Usuario que asigna el grupo al usuario
+     */
+    public function insertGroup($idgroup, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->insertGroup($idgroup);
+    }
+
+    /**
+     * Desvincula el usuario del grupo determinado en la base de datos
+     * @param int $idgroup Identificador del grupo que se desvincula del usuario
+     * @param int $user Usuario que desvincula el grupo del usuario
+     */
+    public function deleteGroup($idgroup, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->deleteGroup($idgroup);
+    }
     // </editor-fold>
 }
 

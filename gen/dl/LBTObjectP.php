@@ -9,7 +9,7 @@ require_once(__DIR__ . "/../entities/UserEntity.php");
  * Clase padre de los objetos que administración de persistencia de las
  * entidades de las aplicaciones
  *
- * @property \gen\entities\UserEntity $user Usaurio que ejecuta la acción
+ * @property \gen\entities\UserEntity $user Usuario que ejecuta la acción
  * @author Leandro Baena Torres
  */
 abstract class LBTObjectP {

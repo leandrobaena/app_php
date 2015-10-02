@@ -93,6 +93,50 @@ class Group extends \LBTObjectBL {
     public function read() {
         $this->persistence->read();
     }
+
+    /**
+     * Trae un listado de usuarios que componen el grupo
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de usuarios que componen el grupo en formato json
+     */
+    public function listUsers($filters, $sorters, $start, $limit) {
+        return $this->persistence->listUsers($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Trae un listado de usuarios que no componen el grupo
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de usuarios que no componen el grupo en formato json
+     */
+    public function listNoUsers($filters, $sorters, $start, $limit) {
+        return $this->persistence->listNoUsers($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Asigna un usuario a este grupo
+     * @param int $iduser Identificador del usuario
+     * @param int $user Usuario que asigna el grupo al usuario
+     */
+    public function insertUser($iduser, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->insertUser($iduser);
+    }
+
+    /**
+     * Desvincula el usuario determinado del grupo en la base de datos
+     * @param int $iduser Identificador del usuario que se desvincula del grupo
+     * @param int $user Usuario que desvincula el grupo del usuario
+     */
+    public function deleteUser($iduser, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->deleteUser($iduser);
+    }
     // </editor-fold>
 }
 
