@@ -138,6 +138,94 @@ Ext.define('susencargos.model.StateTracking', {
             type: 'string'
         }]
 });
+
+Ext.define('susencargos.model.Package', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idpackage',
+            type: 'int'
+        }, {
+            name: 'date',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        }, {
+            name: 'citySource',
+            reference: 'susencargos.model.City'
+        }, {
+            name: 'cityDestination',
+            reference: 'susencargos.model.City'
+        }, {
+            name: 'customer',
+            reference: 'susencargos.model.Customer'
+        }, {
+            name: 'nameTo',
+            type: 'string'
+        }, {
+            name: 'addressTo',
+            type: 'string'
+        }, {
+            name: 'phoneTo',
+            type: 'string'
+        }, {
+            name: 'content',
+            type: 'string'
+        }, {
+            name: 'observations',
+            type: 'string'
+        }, {
+            name: 'weight',
+            type: 'float'
+        }, {
+            name: 'volumen',
+            type: 'float'
+        }, {
+            name: 'amount',
+            type: 'int'
+        }, {
+            name: 'declaredValue',
+            type: 'float'
+        }, {
+            name: 'shippingValue',
+            type: 'float'
+        }, {
+            name: 'managementValue',
+            type: 'float'
+        }, {
+            name: 'totalValue',
+            type: 'float'
+        }, {
+            name: 'reference',
+            type: 'string'
+        }, {
+            name: 'payType',
+            reference: 'susencargos.model.PayType'
+        }, {
+            name: 'stateTracking',
+            reference: 'susencargos.model.StateTracking'
+        }]
+});
+
+Ext.define('susencargos.model.PayType', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idpaytype',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
+
+Ext.define('susencargos.model.PackageType', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idpackagetype',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStore">
@@ -235,8 +323,8 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=templates]': {click: 'templates'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
         /*Operaciones*/
+        'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
-        'menu menuitem[action=picking]': {click: 'listPackagesPicking'},
         /*Reportes*/
         'menu menuitem[action=miles]': {click: 'miles'},
         /*CMS*/
@@ -268,6 +356,43 @@ Ext.create('Ext.app.Controller', {
     },
     statesTracking: function () {
         this.openGrid('listStatesTracking');
+    },
+    packages: function () {
+        this.openGrid('listPackages');
+    },
+    enterPackage: function () {
+        Ext.getStore('City').load({
+            params: {
+                start: 0,
+                limit: 1000
+            },
+            callback: function () {
+                Ext.getStore('Customer').load({
+                    params: {
+                        start: 0,
+                        limit: 1000
+                    },
+                    callback: function () {
+                        Ext.getStore('PayType').load({
+                            callback: function () {
+                                Ext.getStore('PackageType').load({
+                                    callback: function () {
+                                        var form = Ext.widget('formPackage').down('form');
+                                        form.loadRecord(Ext.create('susencargos.model.Package'));
+                                        form.getForm().findField('amount').setValue(1);
+                                        form.getForm().findField('declaredValue').setValue(400000);
+                                        form.getForm().findField('idpackagetype').setValue(1);
+                                        form.getForm().findField('weight').setValue(30);
+                                        form.getForm().findField('idpaytype').setValue(1);
+                                        form.getForm().findField('date').setValue(Ext.Date.format(new Date(),"Y-m-d"));
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -2349,6 +2474,278 @@ Ext.create('Ext.app.Controller', {
         });
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listPackages button[action=insert]': {click: 'insert'},
+        'listPackages button[action=clean]': {click: 'cleanFilters'},
+        'listPackages': {itemdblclick: 'editDbl'},
+        'listPackages actioncolumn[action=edit]': {click: 'edit'},
+        'listPackages actioncolumn[action=remove]': {click: 'remove'},
+        'formPackage combo[name=idcustomer]': {select: 'changeCustomer'},
+        'formPackage combo[name=idpackagetype]': {select: 'changePackageType'},
+        'formPackage button[action=cancel]': {click: 'cancel'},
+        'formPackage button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formPackage').down('form').loadRecord(Ext.create('susencargos.model.Package'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('City').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    changeCustomer: function (c, i) {
+        var form = c.up('window').down('form').getForm();
+        form.findField('idcitysource').setValue(i[0].get('city').idcity);
+    },
+    changePackageType: function (c, i) {
+        var form = c.up('window').down('form').getForm();
+        if (i[0].get('idpackagetype') == 1) {//Caja
+            form.findField('weight').setValue(30);
+        } else {//Sobre
+            form.findField('weight').setValue(1);
+        }
+    },
+    edit: function (v, r, c, i, e) {
+        Ext.getStore('City').load({
+            params: {
+                start: 0,
+                limit: 1000
+            },
+            callback: function () {
+                Ext.getStore('Customer').load({
+                    params: {
+                        start: 0,
+                        limit: 1000
+                    },
+                    callback: function () {
+                        Ext.getStore('PayType').load({
+                            callback: function () {
+                                Ext.getStore('PackageType').load({
+                                    callback: function () {
+                                        var form = Ext.widget('formPackage');
+                                        form.down('form').loadRecord(v.getStore().getAt(c));
+                                        form.down('form').getForm().findField('idcitysource').setValue(v.getStore().getAt(c).get('citySource').idcity);
+                                        form.down('form').getForm().findField('idcitydestination').setValue(v.getStore().getAt(c).get('cityDestination').idcity);
+                                        form.down('form').getForm().findField('idcustomer').setValue(v.getStore().getAt(c).get('customer').idcustomer);
+                                        form.down('form').getForm().findField('idpaytype').setValue(v.getStore().getAt(c).get('payType').idpaytype);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    },
+    editDbl: function (g, r) {
+        Ext.getStore('City').load({
+            params: {
+                start: 0,
+                limit: 1000
+            },
+            callback: function () {
+                Ext.getStore('Customer').load({
+                    params: {
+                        start: 0,
+                        limit: 1000
+                    },
+                    callback: function () {
+                        Ext.getStore('PayType').load({
+                            callback: function () {
+                                Ext.getStore('PackageType').load({
+                                    callback: function () {
+                                        var form = Ext.widget('formCity');
+                                        form.down('form').loadRecord(r);
+                                        form.down('form').getForm().findField('idcitysource').setValue(r.get('citySource').idcity);
+                                        form.down('form').getForm().findField('idcitydestination').setValue(r.get('cityDestination').idcity);
+                                        form.down('form').getForm().findField('idcustomer').setValue(r.get('customer').idcustomer);
+                                        form.down('form').getForm().findField('idpaytype').setValue(r.get('payType').idpaytype);
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idpackage').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('City').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            })
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idcity'),
+                        object: 'cities'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('City').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listPayTypes button[action=insert]': {click: 'insert'},
+        'listPayTypes button[action=clean]': {click: 'cleanFilters'},
+        'listPayTypes': {itemdblclick: 'editDbl'},
+        'listPayTypes actioncolumn[action=edit]': {click: 'edit'},
+        'listPayTypes actioncolumn[action=remove]': {click: 'remove'},
+        'formPayType button[action=cancel]': {click: 'cancel'},
+        'formPayType button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formPayType').down('form').loadRecord(Ext.create('susencargos.model.PayType'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('PayType').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formPayType');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formPayType');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idpaytype').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('PayType').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idpaytype'),
+                        object: 'payTypes'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('PayType').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -2461,6 +2858,24 @@ Ext.application({
             storeId: 'StateTracking',
             model: 'susencargos.model.StateTracking',
             object: 'statesTracking'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'Package',
+            model: 'susencargos.model.Package',
+            object: 'packages'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'PayType',
+            model: 'susencargos.model.PayType',
+            object: 'payTypes'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'PackageType',
+            model: 'susencargos.model.PackageType',
+            object: 'packageTypes'
         });
         //</editor-fold>
 
@@ -3875,6 +4290,352 @@ Ext.application({
                 }]
         });
         //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Remesas">
+        Ext.define('susencargos.view.package.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'package',
+            alias: 'widget.listPackages',
+            title: 'Listado remesas',
+            store: 'Package',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idpackage',
+                    felx: 1
+                }, {
+                    header: 'Fecha',
+                    dataIndex: 'date',
+                    filter: {
+                        type: 'date',
+                        fields: {lt: {text: 'Antes de'}, gt: {text: 'Depu\xe9s de '}, eq: {text: 'El d\xeda'}}, dateFormat: 'Y-m-d'
+                    },
+                    flex: 2,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                }, {
+                    header: 'Cliente',
+                    dataIndex: 'customer',
+                    flex: 2,
+                    renderer: function(value){
+                        return value.name;
+                    }
+                }, {
+                    header: 'Origen',
+                    dataIndex: 'citySource',
+                    flex: 2,
+                    renderer: function(value){
+                        return value.name;
+                    }
+                }, {
+                    header: 'Destino',
+                    dataIndex: 'cityDestination',
+                    flex: 2,
+                    renderer: function(value){
+                        return value.name;
+                    }
+                }, {
+                    header: 'Destinatario',
+                    dataIndex: 'nameTo',
+                    flex: 2
+                }, {
+                    header: 'Dirección',
+                    dataIndex: 'addressTo',
+                    flex: 2
+                }, {
+                    header: 'Peso',
+                    dataIndex: 'weight',
+                    flex: 1
+                }, {
+                    header: 'Cantidad',
+                    dataIndex: 'amount',
+                    flex: 1
+                }, {
+                    header: 'Valor declarado',
+                    dataIndex: 'declaredValue',
+                    flex: 1
+                }, {
+                    header: 'Tipo de pago',
+                    dataIndex: 'payType',
+                    flex: 2,
+                    renderer: function(value){
+                        return value.name;
+                    }
+                }, {
+                    header: 'Estado remesa',
+                    dataIndex: 'stateTracking',
+                    flex: 2,
+                    renderer: function(value){
+                        return value.name;
+                    }
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    stopSelection: false,
+                    icon: 'css/remove.png',
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.package.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formPackage',
+            title: 'Editar remesa',
+            object: 'packages',
+            fields: [{
+                    xtype: 'container',
+                    layout: {
+                        type: 'table',
+                        columns: 2
+                    },
+                    defaults: {
+                        layout: 'anchor',
+                        anchor: '100%',
+                        style: "margin: 3px; padding:3px;"
+                    },
+                    items: [{
+                            xtype: 'hiddenfield',
+                            name: 'idpackage',
+                            value: 0
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: '* Remitente',
+                            store: 'Customer',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idcustomer',
+                            displayField: 'name',
+                            name: 'idcustomer',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'datefield',
+                            name: 'date',
+                            value: '',
+                            allowBlank: false,
+                            anchor: '90%',
+                            fieldLabel: '* Fecha del envío',
+                            format: 'Y-m-d'
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: '* Tipo de pago',
+                            store: 'PayType',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idpaytype',
+                            displayField: 'name',
+                            name: 'idpaytype',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: '* Tipo de envío',
+                            store: 'PackageType',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idpackagetype',
+                            displayField: 'name',
+                            name: 'idpackagetype',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: '* Ciudad origen',
+                            store: 'City',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idcity',
+                            displayField: 'name',
+                            name: 'idcitysource',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'combo',
+                            fieldLabel: '* Ciudad destino',
+                            store: 'City',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idcity',
+                            displayField: 'name',
+                            name: 'idcitydestination',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'nameTo',
+                            value: '',
+                            allowBlank: false,
+                            anchor: '90%',
+                            fieldLabel: '* Nombre destinatario'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'addressTo',
+                            value: '',
+                            allowBlank: false,
+                            anchor: '90%',
+                            fieldLabel: '* Dirección destinatario'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'phoneTo',
+                            value: '',
+                            anchor: '90%',
+                            fieldLabel: 'Teléfono destinatario'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'content',
+                            value: '',
+                            anchor: '90%',
+                            fieldLabel: 'Dice contener'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'observations',
+                            value: '',
+                            anchor: '90%',
+                            fieldLabel: 'Observaciones'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'weight',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Peso'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'volumen',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Volumen'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'amount',
+                            allowBlank: false,
+                            value: 1,
+                            anchor: '90%',
+                            fieldLabel: '* Cantidad'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'declaredValue',
+                            allowBlank: false,
+                            value: 400000,
+                            anchor: '90%',
+                            fieldLabel: '* Valor declarado'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'shippingValue',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Valor del flete'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'managementValue',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Flete manejo'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'totalValue',
+                            value: 30,
+                            readOnly: true,
+                            anchor: '90%',
+                            fieldLabel: 'Valor total'
+                        }, {
+                            xtype: 'textfield',
+                            name: 'reference',
+                            value: '',
+                            anchor: '90%',
+                            fieldLabel: 'Referencia'
+                        }]
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Tipos de pago">
+        Ext.define('susencargos.view.zone.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'payType',
+            alias: 'widget.listPayTypes',
+            title: 'Listado de tipos de pago',
+            store: 'PayType',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idpaytype'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.zone.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formPayType',
+            title: 'Editar tipo de pago',
+            object: 'payTypes',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idpaytype',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Viewport principal">
         Ext.create('Ext.container.Viewport', {
             layout: 'border',
             items: [{
@@ -3908,6 +4669,7 @@ Ext.application({
                     html: '<b>Susencargos.com.co &copy;</b>'
                 }]
         });
+        //</editor-fold>
     }
 });
 //</editor-fold>

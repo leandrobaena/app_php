@@ -8,6 +8,9 @@ require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
 require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
+require_once (__DIR__ . "/../../sus/bl/PayType.php");
+require_once (__DIR__ . "/../../sus/bl/Package.php");
+require_once (__DIR__ . "/../../sus/bl/PackageType.php");
 
 session_start();
 
@@ -87,6 +90,35 @@ if (!isset($_SESSION["user"])) {
                 $obj->create($_SESSION["user"]);
                 echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa insertado\",\"body\":\"El estado de remesa fue insertado con éxito\"}}");
                 break;
+            case "payTypes":
+                $obj = new \sus\bl\PayType($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->create($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de pago insertado\",\"body\":\"El tipos de pago fue insertado con éxito\"}}");
+                break;
+            case "packages":
+                $obj = new \sus\bl\Package($_POST["id"]);
+                $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
+                $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
+                $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
+                $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                $obj->nameTo = $_POST["nameTo"];
+                $obj->addressTo = $_POST["addressTo"];
+                $obj->phoneTo = $_POST["phoneTo"];
+                $obj->content = $_POST["content"];
+                $obj->observations = $_POST["observations"];
+                $obj->weight = $_POST["weight"];
+                $obj->volumen = $_POST["volumen"];
+                $obj->amount = $_POST["amount"];
+                $obj->declaredValue = $_POST["declaredValue"];
+                $obj->shippingValue = $_POST["shippingValue"];
+                $obj->managementValue = $_POST["managementValue"];
+                $obj->totalValue = $_POST["totalValue"];
+                $obj->reference = $_POST["reference"];
+                $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                $obj->create($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
+                break;
         }
     } else {//Actualiza
         switch ($_POST["object"]) {
@@ -150,6 +182,35 @@ if (!isset($_SESSION["user"])) {
                 $obj->name = $_POST["name"];
                 $obj->update($_SESSION["user"]);
                 echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa actualizado\",\"body\":\"El estado de remesa fue actualizado con éxito\"}}");
+                break;
+            case "payTypes":
+                $obj = new \sus\bl\PayType($_POST["id"]);
+                $obj->name = $_POST["name"];
+                $obj->update($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de pago actualizado\",\"body\":\"El tipo de pago fue actualizado con éxito\"}}");
+                break;
+            case "packages":
+                $obj = new \sus\bl\Package($_POST["id"]);
+                $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
+                $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
+                $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
+                $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                $obj->nameTo = $_POST["nameTo"];
+                $obj->addressTo = $_POST["addressTo"];
+                $obj->phoneTo = $_POST["phoneTo"];
+                $obj->content = $_POST["content"];
+                $obj->observations = $_POST["observations"];
+                $obj->weight = $_POST["weight"];
+                $obj->volumen = $_POST["volumen"];
+                $obj->amount = $_POST["amount"];
+                $obj->declaredValue = $_POST["declaredValue"];
+                $obj->shippingValue = $_POST["shippingValue"];
+                $obj->managementValue = $_POST["managementValue"];
+                $obj->totalValue = $_POST["totalValue"];
+                $obj->reference = $_POST["reference"];
+                $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                $obj->update($_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Remesa actualizada\",\"body\":\"La remesa fue actualizada con éxito\"}}");
                 break;
         }
     }

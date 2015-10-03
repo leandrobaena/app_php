@@ -8,6 +8,7 @@ require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
 require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
+require_once (__DIR__ . "/../../sus/bl/PayType.php");
 
 session_start();
 
@@ -70,6 +71,11 @@ if (!isset($_SESSION["user"])) {
             $obj = new \sus\bl\StateTracking($_POST["id"]);
             $obj->delete($_SESSION["user"]);
             echo("{\"success\":true,\"msg\":{\"title\":\"Estado de remesa eliminado\",\"body\":\"El estado de remesa ha sido eliminado con \\xe9xito\"}}");
+            break;
+        case "payTypes":
+            $obj = new \sus\bl\PayType($_POST["id"]);
+            $obj->delete($_SESSION["user"]);
+            echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de pago eliminado\",\"body\":\"El tipo de pago ha sido eliminado con \\xe9xito\"}}");
             break;
     }
 }

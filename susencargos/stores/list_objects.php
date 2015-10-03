@@ -8,6 +8,9 @@ require_once (__DIR__ . "/../../sus/bl/Customer.php");
 require_once (__DIR__ . "/../../sus/bl/Zone.php");
 require_once (__DIR__ . "/../../sus/bl/City.php");
 require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
+require_once (__DIR__ . "/../../sus/bl/Package.php");
+require_once (__DIR__ . "/../../sus/bl/PayType.php");
+require_once (__DIR__ . "/../../sus/bl/PackageType.php");
 
 $start = 0;
 $limit = 1000;
@@ -72,6 +75,18 @@ switch ($object) {
         break;
     case "statesTracking":
         $obj = new \sus\bl\StateTracking(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
+        break;
+    case "packages":
+        $obj = new \sus\bl\Package(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
+        break;
+    case "payTypes":
+        $obj = new \sus\bl\PayType(0);
+        $list = $obj->readAll($filters, $sorters, $start, $limit);
+        break;
+    case "packageTypes":
+        $obj = new \sus\bl\PackageType(0);
         $list = $obj->readAll($filters, $sorters, $start, $limit);
         break;
 }
