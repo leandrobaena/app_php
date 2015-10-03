@@ -56,16 +56,18 @@ if (in_array(strtolower($code_type), array("code128", "code128b"))) {
     $code_array2 = array("3-1-1-1-3", "1-3-1-1-3", "3-3-1-1-1", "1-1-3-1-3", "3-1-3-1-1", "1-3-3-1-1", "1-1-1-3-3", "3-1-1-3-1", "1-3-1-3-1", "1-1-3-3-1");
     for ($X = 1; $X <= strlen($text); $X++) {
         for ($Y = 0; $Y < count($code_array1); $Y++) {
-            if (substr($text, ($X - 1), 1) == $code_array1[$Y])
+            if (substr($text, ($X - 1), 1) == $code_array1[$Y]) {
                 $temp[$X] = $code_array2[$Y];
+            }
         }
     }
     for ($X = 1; $X <= strlen($text); $X+=2) {
         if (isset($temp[$X]) && isset($temp[($X + 1)])) {
             $temp1 = explode("-", $temp[$X]);
             $temp2 = explode("-", $temp[($X + 1)]);
-            for ($Y = 0; $Y < count($temp1); $Y++)
+            for ($Y = 0; $Y < count($temp1); $Y++) {
                 $code_string .= $temp1[$Y] . $temp2[$Y];
+            }
         }
     }
     $code_string = "1111" . $code_string . "311";
@@ -76,16 +78,18 @@ if (in_array(strtolower($code_type), array("code128", "code128b"))) {
     $upper_text = strtoupper($text);
     for ($X = 1; $X <= strlen($upper_text); $X++) {
         for ($Y = 0; $Y < count($code_array1); $Y++) {
-            if (substr($upper_text, ($X - 1), 1) == $code_array1[$Y])
+            if (substr($upper_text, ($X - 1), 1) == $code_array1[$Y]) {
                 $code_string .= $code_array2[$Y] . "1";
+            }
         }
     }
     $code_string = "11221211" . $code_string . "1122121";
 }
 // Pad the edges of the barcode
 $code_length = 20;
-for ($i = 1; $i <= strlen($code_string); $i++)
+for ($i = 1; $i <= strlen($code_string); $i++) {
     $code_length = $code_length + (integer) (substr($code_string, ($i - 1), 1));
+}
 if (strtolower($orientation) == "horizontal") {
     $img_width = $code_length;
     $img_height = $size;
@@ -100,10 +104,11 @@ imagefill($image, 0, 0, $white);
 $location = 10;
 for ($position = 1; $position <= strlen($code_string); $position++) {
     $cur_size = $location + ( substr($code_string, ($position - 1), 1) );
-    if (strtolower($orientation) == "horizontal")
+    if (strtolower($orientation) == "horizontal") {
         imagefilledrectangle($image, $location, 0, $cur_size, $img_height, ($position % 2 == 0 ? $white : $black));
-    else
+    } else {
         imagefilledrectangle($image, 0, $location, $img_width, $cur_size, ($position % 2 == 0 ? $white : $black));
+    }
     $location = $cur_size;
 }
 // Draw barcode to the screen
