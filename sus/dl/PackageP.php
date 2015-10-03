@@ -4,6 +4,8 @@ namespace sus\dl;
 
 require_once (__DIR__ . "/../../gen/dl/LBTObjectP.php");
 require_once (__DIR__ . "/../entities/PackageEntity.php");
+require_once (__DIR__ . "/../entities/PayTypeEntity.php");
+require_once (__DIR__ . "/../entities/StateTrackingEntity.php");
 require_once (__DIR__ . "/../../utils/ListJson.php");
 
 /**
@@ -43,7 +45,9 @@ class PackageP extends \gen\dl\LBTObjectP {
             "shippingValue" => $this->observer->shippingValue,
             "managementValue" => $this->observer->managementValue,
             "totalValue" => $this->observer->totalValue,
-            "reference" => "'" . $this->observer->reference . "'"
+            "reference" => "'" . $this->observer->reference . "'",
+            "idpaytype" => $this->observer->payType->idpaytype,
+            "idstatetracking" => $this->observer->stateTracking->idstatetracking
                 ), $this->user->iduser);
     }
 
@@ -53,10 +57,12 @@ class PackageP extends \gen\dl\LBTObjectP {
     public function read() {
         $rs = $this->connection->read("p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
 cu.name customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference", "sus_package p JOIN
+p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type, p.idstatetracking, st.name state_tracking", "sus_package p JOIN
 sus_city c ON p.idcitysource = c.idcity JOIN
-sus_city c1 ON p.idcitydestination = c.idcity JOIN
-sus_customer cu ON p.idcustomer = cu.idcustomer", "p.idpackage = " . $this->observer->idpackage);
+sus_city c1 ON p.idcitydestination = c1.idcity JOIN
+sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
+sus_pay_type pt ON p.idpaytype = pt.idpaytype JOIN
+sus_state_tracking st ON p.idstatetracking = st.idstatetracking", "p.idpackage = " . $this->observer->idpackage);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
         $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
         $this->observer->citySource->name = $rs->city_source;
@@ -77,6 +83,10 @@ sus_customer cu ON p.idcustomer = cu.idcustomer", "p.idpackage = " . $this->obse
         $this->observer->managementValue = $rs->managementValue;
         $this->observer->totalValue = $rs->totalValue;
         $this->observer->reference = $rs->reference;
+        $this->observer->payType = new \sus\entities\PayTypeEntity($rs->idpaytype);
+        $this->observer->payType->name = $rs->pay_type;
+        $this->observer->stateTracking = new \sus\entities\StateTrackingEntity($rs->idstatetracking);
+        $this->observer->stateTracking->name = $rs->state_tracking;
     }
 
     /**
@@ -94,10 +104,12 @@ sus_customer cu ON p.idcustomer = cu.idcustomer", "p.idpackage = " . $this->obse
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
 cu.name customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference", "sus_package p JOIN
+p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type, p.idstatetracking, st.name state_tracking", "sus_package p JOIN
 sus_city c ON p.idcitysource = c.idcity JOIN
-sus_city c1 ON p.idcitydestination = c.idcity JOIN
-sus_customer cu ON p.idcustomer = cu.idcustomer", $filters, $sorters, $start, $limit, $this->total
+sus_city c1 ON p.idcitydestination = c1.idcity JOIN
+sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
+sus_pay_type pt ON p.idpaytype = pt.idpaytype JOIN
+sus_state_tracking st ON p.idstatetracking = st.idstatetracking", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -121,6 +133,10 @@ sus_customer cu ON p.idcustomer = cu.idcustomer", $filters, $sorters, $start, $l
             $obj->managementValue = $row->managementValue;
             $obj->totalValue = $row->totalValue;
             $obj->reference = $row->reference;
+            $obj->payType = new \sus\entities\PayTypeEntity($row->idpaytype);
+            $obj->payType->name = $row->pay_type;
+            $obj->stateTracking = new \sus\entities\StateTrackingEntity($row->idstatetracking);
+            $obj->stateTracking->name = $row->state_tracking;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -148,7 +164,9 @@ sus_customer cu ON p.idcustomer = cu.idcustomer", $filters, $sorters, $start, $l
             "shippingValue" => $this->observer->shippingValue,
             "managementValue" => $this->observer->managementValue,
             "totalValue" => $this->observer->totalValue,
-            "reference" => "'" . $this->observer->reference . "'"
+            "reference" => "'" . $this->observer->reference . "'",
+            "idpaytype" => $this->observer->payType->idpaytype,
+            "idstatetracking" => $this->observer->stateTracking->idstatetracking
                 ), array("idpackage" => $this->observer->idpackage), $this->user->iduser
         );
     }

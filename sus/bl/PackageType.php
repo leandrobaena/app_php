@@ -2,42 +2,25 @@
 
 namespace sus\bl;
 
-require_once(__DIR__ . "/../entities/PackageEntity.php");
-require_once(__DIR__ . "/../dl/PackageP.php");
+require_once(__DIR__ . "/../entities/PackageTypeEntity.php");
+require_once(__DIR__ . "/../dl/PackageTypeP.php");
 require_once(__DIR__ . "/../../gen/database/DataBaseFactory.php");
 require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
 
 /**
- * Manejo de remesas de susencargos
+ * Manejo de tipos de envío de susencargos
  * 
- * @property int $idpackage Identificador de la remesa
- * @property \DateTime $date Fecha de la remesa
- * @property CityEntity $citySource Ciudad origen
- * @property CityEntity $cityDestination Ciudad destino
- * @property CustomerEntity $customer Cliente al que se le despacha
- * @property string $nameTo Nombre del destinatario
- * @property string $addressTo Dirección del destinatario
- * @property string $phoneTo Teléfono del destinatario
- * @property string $content Contenido declarado de la remesa
- * @property string $observations Observaciones de la remesa
- * @property float $weight Peso de la remesa
- * @property float $volumen Volumen de la remesa
- * @property int $amount Cantidad de unidades
- * @property float $declaredValue Valor declarado de la remesa
- * @property float $shippingValue Valor del flete de la remesa
- * @property float $managementValue Valor del manejo de la remesa
- * @property float $totalValue Valor total de la remesa
- * @property string $reference Referencia de la remesa, generalmente código externo
- * @property \sus\entities\PayTypeEntity $payType Tipo de pago de la remesa
+ * @property int $idzone Identificador del tipo de envío
+ * @property string $name Nombre del tipo de envío
  * @author Leandro Baena Torres
  */
-class Package extends \LBTObjectBL {
+class PackageType extends \LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {
-        $this->entity = new \sus\entities\PackageEntity($id);
+        $this->entity = new \sus\entities\PackageTypeEntity($id);
         $db = \gen\database\DataBaseFactory::factoryDatabase("mysql");
-        $this->persistence = new \sus\dl\PackageP($this->entity, $db);
+        $this->persistence = new \sus\dl\PackageTypeP($this->entity, $db);
     }
 
     // </editor-fold>
@@ -65,20 +48,20 @@ class Package extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de remesas
+     * Trae un listado de tipos de envío
      * @param string $filters Filtros aplicados a la consulta
      * @param string $sorters Ordenamientos aplicados a la consulta
      * @param int $start Registro inicial a traer
      * @param int $limit Número de registros a traer
-     * @return string Listado de remesas en formato json
+     * @return string Listado de tipos de envío en formato json
      */
     public function readAll($filters, $sorters, $start, $limit) {
         return $this->persistence->readAll($filters, $sorters, $start, $limit);
     }
 
     /**
-     * Crea la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea la remesa
+     * Crea el tipo de envío en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que crea el tipo de envío
      */
     public function create($user) {
         $this->persistence->user = $user;
@@ -86,8 +69,8 @@ class Package extends \LBTObjectBL {
     }
 
     /**
-     * Actualiza la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza la remesa
+     * Actualiza el tipo de envío en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que actualiza el tipo de envío
      */
     public function update($user) {
         $this->persistence->user = $user;
@@ -95,8 +78,8 @@ class Package extends \LBTObjectBL {
     }
 
     /**
-     * Elimina la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina la remesa
+     * Elimina el tipo de envío en la base de datos
+     * @param \gen\entities\UserEntity $user Usuario que elimina el tipo de envío
      */
     public function delete($user) {
         $this->persistence->user = $user;
@@ -104,7 +87,7 @@ class Package extends \LBTObjectBL {
     }
 
     /**
-     * Carga la remesa de la base de datos
+     * Carga el tipo de envío de la base de datos
      */
     public function read() {
         $this->persistence->read();

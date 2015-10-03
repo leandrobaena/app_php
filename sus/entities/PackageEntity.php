@@ -26,6 +26,8 @@ require_once (__DIR__ . "/CityEntity.php");
  * @property float $managementValue Valor del manejo de la remesa
  * @property float $totalValue Valor total de la remesa
  * @property string $reference Referencia de la remesa, generalmente código externo
+ * @property PayTypeEntity $payType Tipo de pago de la remesa
+ * @property StateTrackingEntity $stateTracking Estado de seguimiento de la remesa
  * @author Leandro Baena Torres
  */
 class PackageEntity extends \gen\entities\LBTObject {
@@ -37,8 +39,26 @@ class PackageEntity extends \gen\entities\LBTObject {
      * @param id Identificador de la zona de entrega, 0 si es nueva
      */
     public function __construct($id = 0) {
-        $this->idzone = $id;
-        $this->name = "";
+        $this->idpackage = $id;
+        $this->date = new \DateTime();
+        $this->citySource = new CityEntity(0);
+        $this->cityDestination = new CityEntity(0);
+        $this->customer = new CustomerEntity(0);
+        $this->nameTo = "";
+        $this->addressTo = "";
+        $this->phoneTo = "";
+        $this->content = "";
+        $this->observations = "";
+        $this->weight = 0;
+        $this->volumen = 0;
+        $this->amount = 0;
+        $this->declaredValue = 0;
+        $this->shippingValue = 0;
+        $this->managementValue = 0;
+        $this->totalValue = 0;
+        $this->reference = "";
+        $this->payType = new PayTypeEntity(0);
+        $this->stateTracking = new StateTrackingEntity(0);
     }
 
     //</editor-fold>
@@ -72,7 +92,7 @@ class PackageEntity extends \gen\entities\LBTObject {
      */
     public function __toString() {
         return "{\"idpackage\":$this->idpackage,"
-                . "\"date\":\"" . $this->date - format("Y-m-d") . "\","
+                . "\"date\":\"" . $this->date->format("Y-m-d") . "\","
                 . "\"citySource\":$this->citySource,"
                 . "\"cityDestination\":$this->cityDestination,"
                 . "\"customer\":$this->customer,"
@@ -88,7 +108,9 @@ class PackageEntity extends \gen\entities\LBTObject {
                 . "\"shippingValue\":$this->shippingValue,"
                 . "\"managementValue\":$this->managementValue,"
                 . "\"totalValue\":$this->totalValue,"
-                . "\"reference\":\"$this->reference\"}";
+                . "\"reference\":\"$this->reference\","
+                . "\"payType\":$this->payType,"
+                . "\"stateTracking\":$this->stateTracking}";
     }
 
     //</editor-fold>
@@ -182,6 +204,16 @@ class PackageEntity extends \gen\entities\LBTObject {
      * @var string Referencia de la remesa, generalmente código externo
      */
     private $reference;
+
+    /**
+     * @var PayTypeEntity Tipo de pago de la remesa
+     */
+    private $payType;
+
+    /**
+     * @var StateTrackingEntity Estado de seguimeinto de la remesa
+     */
+    private $stateTracking;
 
     //</editor-fold>
 }
