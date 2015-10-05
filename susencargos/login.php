@@ -18,7 +18,7 @@ if (strlen($login) == 0 || strlen($password) == 0) {
 } else {
     try {
         $user = new gen\bl\User(0);
-        $u = $user->validate($login, $password);
+        $u = $user->validate($login, $password, 1);
         if ($u->iduser == 0) {
             $out = "{\"success\":false, \"msg\":{\"title\":\"Error\",\"body\":\"Datos inválidos\"}}";
         } else {

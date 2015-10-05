@@ -226,6 +226,34 @@ Ext.define('susencargos.model.PackageType', {
             type: 'string'
         }]
 });
+
+Ext.define('susencargos.model.LevelAccess', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idlevelaccess',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
+
+Ext.define('susencargos.model.GroupModule', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idgroupmodule',
+            type: 'int'
+        }, {
+            name: 'group',
+            reference: 'susencargos.model.Group'
+        }, {
+            name: 'module',
+            reference: 'susencargos.model.Module'
+        }, {
+            name: 'levelAccess',
+            reference: 'susencargos.model.LevelAccess'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStore">
@@ -321,6 +349,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=zones]': {click: 'zones'},
         'menu menuitem[action=cities]': {click: 'cities'},
         'menu menuitem[action=templates]': {click: 'templates'},
+        'menu menuitem[action=levelsAccess]': {click: 'levelsAccess'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
@@ -359,6 +388,9 @@ Ext.create('Ext.app.Controller', {
     },
     packages: function () {
         this.openGrid('listPackages');
+    },
+    levelsAccess: function () {
+        this.openGrid('listLevelsAccess');
     },
     enterPackage: function () {
         Ext.getStore('City').load({
@@ -550,7 +582,7 @@ Ext.create('Ext.app.Controller', {
         Ext.each(content.items.items, function (n, i, s) {
             if (n.alias == 'widget.listModules') {
                 opened = true;
-                panel = n
+                panel = n;
             }
         });
         if (!opened) {
@@ -611,7 +643,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -645,7 +677,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     },
     insertGroup: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
@@ -763,7 +795,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     removeModule: function (v, c, dr, dp) {
@@ -798,7 +830,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     },
     groupsModule: function (v, r, c, i, e) {
         Ext.getStore('GroupsModule').getProxy().setExtraParam('idmodule', v.getStore().getAt(c).get('idmodule'));
@@ -809,7 +841,7 @@ Ext.create('Ext.app.Controller', {
         Ext.each(content.items.items, function (n, i, s) {
             if (n.alias == 'widget.listGroupsModule') {
                 opened = true;
-                panel = n
+                panel = n;
             }
         });
         if (!opened) {
@@ -820,11 +852,17 @@ Ext.create('Ext.app.Controller', {
         Ext.getCmp('contenido').setActiveTab(panel);
     },
     insertGroupModule: function (b, e) {
-        Ext.getStore('Group').load();
-        Ext.getStore('LevelAccess').load();
-        var form = Ext.widget('formGroupModule');
-        form.down('form').loadRecord(Ext.create('susencargos.model.GroupModule'));
-        form.down('form').getForm().findField('idmodule').setValue(Ext.getStore('GroupsModule').getProxy().extraParams.idmodule);
+        Ext.getStore('Group').load({
+            callback: function () {
+                Ext.getStore('LevelAccess').load({
+                    callback: function () {
+                        var form = Ext.widget('formGroupModule');
+                        form.down('form').loadRecord(Ext.create('susencargos.model.GroupModule'));
+                        form.down('form').getForm().findField('idmodule').setValue(Ext.getStore('GroupsModule').getProxy().extraParams.idmodule);
+                    }
+                });
+            }
+        });
     },
     cleanFiltersGroupsModule: function (b, e) {
         b.up('treepanel').filters.clearFilters();
@@ -865,7 +903,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     editDblGroupModule: function (g, r) {
@@ -929,7 +967,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     }
 });
 
@@ -948,23 +986,7 @@ Ext.create('Ext.app.Controller', {
         'listUsersGroup grid#gridDestination dataview': {drop: 'insertUser'},
         'listUsersGroup grid#gridSource dataview': {drop: 'removeUser'},
         'listApplicationsGroup grid#gridDestination dataview': {drop: 'insertApplication'},
-        'listApplicationsGroup grid#gridSource dataview': {drop: 'removeApplication'},
-        'listCountriesGroup grid#gridDestination dataview': {drop: 'insertCountry'},
-        'listCountriesGroup grid#gridSource dataview': {drop: 'removeCountry'}
-    },
-    countries: function (v, r, c, i, e) {
-        Ext.getStore('CountriesGroup').getProxy().setExtraParam('idgroup', v.getStore().getAt(c).get('idgroup'));
-        Ext.getStore('CountriesGroup').load({
-            callback: function () {
-                Ext.getStore('NoCountriesGroup').getProxy().setExtraParam('idgroup', v.getStore().getAt(c).get('idgroup'));
-                Ext.getStore('NoCountriesGroup').load({
-                    callback: function () {
-                        panel = Ext.widget('listCountriesGroup');
-                        panel.setTitle('Listado paises asignados al grupo ' + v.getStore().getAt(c).get('name'));
-                    }
-                });
-            }
-        });
+        'listApplicationsGroup grid#gridSource dataview': {drop: 'removeApplication'}
     },
     applications: function (v, r, c, i, e) {
         Ext.getStore('ApplicationsGroup').getProxy().setExtraParam('idgroup', v.getStore().getAt(c).get('idgroup'));
@@ -993,7 +1015,7 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.widget('formGroup').down('form').loadRecord(v.getStore().getAt(c))
+        Ext.widget('formGroup').down('form').loadRecord(v.getStore().getAt(c));
     },
     editDbl: function (g, r) {
         Ext.widget('formGroup').down('form').loadRecord(r);
@@ -1033,7 +1055,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -1053,7 +1075,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('Group').load()
+                                Ext.getStore('Group').load();
                             }
                         });
                     },
@@ -1068,7 +1090,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     },
     insertUser: function (n, d, dr, dp) {
         Ext.each(d.records, function (n, i, s) {
@@ -1318,7 +1340,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -1338,7 +1360,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('StateTracking').load()
+                                Ext.getStore('StateTracking').load();
                             }
                         });
                     },
@@ -1352,7 +1374,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     }
 });
 
@@ -1372,7 +1394,7 @@ Ext.create('Ext.app.Controller', {
         'listFieldsTemplate actioncolumn[action=edit]': {click: 'editField'},
         'listFieldsTemplate actioncolumn[action=remove]': {click: 'removeField'},
         'formFieldTemplate button[action=cancel]': {click: 'cancel'},
-        'formFieldTemplate button[action=save]': {click: 'saveField'},
+        'formFieldTemplate button[action=save]': {click: 'saveField'}
     },
     fields: function (v, r, c, i, e) {
         Ext.getStore('FieldTemplate').getProxy().setExtraParam('idtemplate', v.getStore().getAt(c).get('idtemplate'));
@@ -1383,7 +1405,7 @@ Ext.create('Ext.app.Controller', {
         Ext.each(content.items.items, function (n, i, s) {
             if (n.alias == 'widget.listFieldsTemplate') {
                 opened = true;
-                panel = n
+                panel = n;
             }
         });
         if (!opened) {
@@ -1404,7 +1426,7 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.widget('formTemplate').down('form').loadRecord(v.getStore().getAt(c))
+        Ext.widget('formTemplate').down('form').loadRecord(v.getStore().getAt(c));
     },
     editDbl: function (g, r) {
         Ext.widget('formTemplate').down('form').loadRecord(r);
@@ -1444,7 +1466,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -1464,7 +1486,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('Template').load()
+                                Ext.getStore('Template').load();
                             }
                         });
                     },
@@ -1478,7 +1500,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     },
     insertField: function (b, e) {
         var form = Ext.widget('formFieldTemplate');
@@ -1490,7 +1512,7 @@ Ext.create('Ext.app.Controller', {
         Ext.getStore('FieldTemplate').load();
     },
     editField: function (v, r, c, i, e) {
-        Ext.widget('formFieldTemplate').down('form').loadRecord(v.getStore().getAt(c))
+        Ext.widget('formFieldTemplate').down('form').loadRecord(v.getStore().getAt(c));
     },
     editDblField: function (g, r) {
         Ext.widget('formFieldTemplate').down('form').loadRecord(r);
@@ -1530,7 +1552,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     removeField: function (v, r, c, i, e) {
@@ -1550,7 +1572,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('FieldTemplate').load()
+                                Ext.getStore('FieldTemplate').load();
                             }
                         });
                     },
@@ -1564,7 +1586,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
             }
-        })
+        });
     }
 });
 
@@ -1582,18 +1604,10 @@ Ext.create("Ext.app.Controller", {
         "formUser button[action=changePass]": {click: 'changePass'},
         "listGroupsUser grid#gridDestination dataview": {drop: 'insertGroup'},
         "listGroupsUser grid#gridSource dataview": {drop: 'removeGroup'},
-        "formCustomerRegister combo[name=idcountry]": {change: 'changeCountry'},
-        "formCustomerRegister combo[name=idcity]": {change: 'changeCity'},
-        "formCustomerRegister combo[name=delivery_salepoint]": {change: 'changeSalePoint'},
-        "formCustomerRegister textfield[name=identification]": {blur: 'blurID'},
-        "formCustomerRegister textfield[name=email]": {blur: 'blurEmail'},
-        "formCustomerRegister button[text=Registrar]": {click: 'registerCustomer'},
         "formRecoveryPass combo[name=idrecoverymethod]": {change: 'changeRecoveryMethod'},
         "formRecoveryPass textfield[name=email]": {blur: 'blurEmailRecoveryPass'},
         "formRecoveryPass button[text=Continuar]": {click: 'recoveryPass'},
-        "formChangePass button[text=Cambiar]": {click: 'setNewPass'},
-        "formPrinterUser button[action=cancel]": {click: 'cancel'},
-        "formPrinterUser button[action=save]": {click: 'savePrinter'}
+        "formChangePass button[text=Cambiar]": {click: 'setNewPass'}
     },
     group: function (b, f, h, d, g) {
         Ext.getStore("GroupsUser").getProxy().setExtraParam("iduser", b.getStore().getAt(h).get("iduser"));
@@ -1603,50 +1617,21 @@ Ext.create("Ext.app.Controller", {
         var a = Ext.widget("listGroupsUser");
         a.setTitle("Listado grupos del usuario " + b.getStore().getAt(h).get("name"))
     },
-    printer: function (a, d, g, b, f) {
-        Ext.getStore('Printer').load({
-            callback: function () {
-                Ext.Ajax.request({
-                    method: 'GET',
-                    url: "stores/list_objects.php",
-                    params: {
-                        id: a.getStore().getAt(g).get("iduser"),
-                        object: "printerUser"
-                    },
-                    success: function (e) {
-                        var h = Ext.JSON.decode(e.responseText);
-                        var form = Ext.widget("formPrinterUser");
-                        form.down("form").getForm().findField('iduser').setValue(a.getStore().getAt(g).get("iduser"));
-                        form.down("form").getForm().findField('idprinter').setValue((h.data[0].idprinter == 0 ? "" : h.data[0].idprinter))
-                    },
-                    failed: function (e) {
-                        var h = Ext.JSON.decode(e.responseText);
-                        Ext.MessageBox.show({
-                            title: p.response.result.msg.title,
-                            msg: p.response.result.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR
-                        })
-                    }
-                })
-            }
-        })
-    },
     insert: function (a, c) {
         Ext.widget("formUser").down("form").loadRecord(Ext.create("susencargos.model.User"))
     },
     cleanFilters: function (a, c) {
         a.up("grid").filters.clearFilters();
-        Ext.getStore('User').load()
+        Ext.getStore('User').load();
     },
     cancel: function (a, c) {
-        a.up("window").close()
+        a.up("window").close();
     },
     edit: function (a, d, g, b, f) {
-        Ext.widget("formUser").down("form").loadRecord(a.getStore().getAt(g))
+        Ext.widget("formUser").down("form").loadRecord(a.getStore().getAt(g));
     },
     editDbl: function (b, a) {
-        Ext.widget("formUser").down("form").loadRecord(a)
+        Ext.widget("formUser").down("form").loadRecord(a);
     },
     save: function (a, c) {
         if (a.up("form").getForm().isValid()) {
@@ -1654,56 +1639,22 @@ Ext.create("Ext.app.Controller", {
             a.up("form").getForm().submit({waitMsg: "Guardando ...", success: function (b, e, g) {
                     var f = Ext.JSON.decode(e.response.responseText);
                     Ext.MessageBox.show({title: f.msg.title, msg: f.msg.body, buttons: Ext.Msg.OK, icon: Ext.Msg.INFO, fn: function () {
-                            Ext.getStore("User").load()
+                            Ext.getStore("User").load();
                         }});
                     a.up("window").close()
                 }, failure: function (b, e) {
                     var f = Ext.JSON.decode(e.response.responseText);
                     Ext.MessageBox.show({title: f.msg.title, msg: f.msg.body, buttons: Ext.Msg.OK, icon: Ext.Msg.ERROR});
-                    a.up("window").close()
-                }})
-        } else {
-            Ext.MessageBox.show({
-                title: "Error",
-                msg: "Ingrese los datos correctos",
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.ERROR
-            })
-        }
-    },
-    savePrinter: function (a, c) {
-        if (a.up("form").getForm().isValid()) {
-            a.up("form").getForm().findField("id").setValue(a.up("form").getForm().findField("iduser").getValue());
-            a.up("form").getForm().submit({
-                waitMsg: "Guardando ...",
-                success: function (b, e, g) {
-                    var f = Ext.JSON.decode(e.response.responseText);
-                    Ext.MessageBox.show({
-                        title: f.msg.title,
-                        msg: f.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO
-                    });
-                    a.up("window").close()
-                },
-                failure: function (b, e) {
-                    var f = Ext.JSON.decode(e.response.responseText);
-                    Ext.MessageBox.show({
-                        title: f.msg.title,
-                        msg: f.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
-                    a.up("window").close()
+                    a.up("window").close();
                 }
-            })
+            });
         } else {
             Ext.MessageBox.show({
                 title: "Error",
                 msg: "Ingrese los datos correctos",
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (a, d, g, b, f) {
@@ -1723,22 +1674,22 @@ Ext.create("Ext.app.Controller", {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore("User").load()
+                                Ext.getStore("User").load();
                             }
-                        })
+                        });
                     },
                     failed: function (e) {
-                        var h = Ext.JSON.decode(e.responseText);
+                        var p = Ext.JSON.decode(e.responseText);
                         Ext.MessageBox.show({
                             title: p.response.result.msg.title,
                             msg: p.response.result.msg.body,
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.ERROR
-                        })
+                        });
                     }
-                })
+                });
             }
-        })
+        });
     },
     changePass: function (a, c) {
         Ext.create("Ext.window.Window", {
@@ -1801,7 +1752,7 @@ Ext.create("Ext.app.Controller", {
                                         buttons: Ext.Msg.OK,
                                         icon: Ext.Msg.INFO
                                     });
-                                    b.up("window").close()
+                                    b.up("window").close();
                                 },
                                 failure: function (e, f) {
                                     var g = Ext.JSON.decode(f.response.responseText);
@@ -1811,25 +1762,25 @@ Ext.create("Ext.app.Controller", {
                                         buttons: Ext.Msg.OK,
                                         icon: Ext.Msg.ERROR
                                     });
-                                    b.up("window").close()
+                                    b.up("window").close();
                                 }
-                            })
+                            });
                         } else {
                             Ext.MessageBox.show({
                                 title: "Error",
                                 msg: "Ingrese los datos correctos",
                                 buttons: Ext.Msg.OK,
                                 icon: Ext.Msg.ERROR
-                            })
+                            });
                         }
                     }
                 }, {
                     text: "Cancelar",
                     handler: function (b, d) {
-                        b.up("window").close()
+                        b.up("window").close();
                     }
                 }]
-        })
+        });
     },
     insertGroup: function (e, b, a, c) {
         Ext.each(b.records, function (g, d, f) {
@@ -1847,7 +1798,7 @@ Ext.create("Ext.app.Controller", {
                         msg: j.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO
-                    })
+                    });
                 },
                 failure: function (h, i, k) {
                     var j = Ext.JSON.decode(h.responseText);
@@ -1856,9 +1807,9 @@ Ext.create("Ext.app.Controller", {
                         msg: j.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.ERROR
-                    })
+                    });
                 }
-            })
+            });
         })
     },
     removeGroup: function (c, b, a, e) {
@@ -1876,7 +1827,7 @@ Ext.create("Ext.app.Controller", {
                         msg: j.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO
-                    })
+                    });
                 },
                 failure: function (h, i, k) {
                     var j = Ext.JSON.decode(h.responseText);
@@ -1885,190 +1836,10 @@ Ext.create("Ext.app.Controller", {
                         msg: j.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.ERROR
-                    })
+                    });
                 }
-            })
-        })
-    },
-    changeCountry: function (e, d, a, b) {
-        if (Ext.isNumber(d)) {
-            Ext.getStore("FE_City").getProxy().setExtraParam("idcountry", d);
-            Ext.getStore("FE_City").load({
-                start: 0,
-                limit: 10000,
-                callback: function (c) {
-                    e.up("form").getForm().findField("idcity").setValue(c[0].get("idcity"))
-                }
-            })
-        }
-    },
-    changeCity: function (e, d, a, b) {
-        if (Ext.isNumber(d)) {
-            Ext.getStore("FE_SalePoint").getProxy().setExtraParam("idcity", d);
-            Ext.getStore("FE_SalePoint").load()
-        }
-    },
-    changeSalePoint: function (e, d, a, b) {
-        if (d == 1) {
-            e.up("form").getForm().findField("idsalepoint").setVisible(true);
-            e.up("form").getForm().findField("address").setVisible(false);
-            e.up("form").getForm().findField("address").allowBlank = true;
-            e.up("form").getForm().findField("idsalepoint").allowBlank = false
-        } else {
-            e.up("form").getForm().findField("idsalepoint").setVisible(false);
-            e.up("form").getForm().findField("address").setVisible(true);
-            e.up("form").getForm().findField("address").allowBlank = false;
-            e.up("form").getForm().findField("idsalepoint").allowBlank = true
-        }
-    },
-    registerCustomer: function (a, c) {
-        if (a.up("form").getForm().isValid()) {
-            if (!a.up("form").getForm().findField("agree_tyc").getValue()) {
-                Ext.MessageBox.show({
-                    title: "Error",
-                    msg: "Debes aceptar los t\xe9rminos y condiciones",
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.ERROR
-                })
-            } else {
-                a.up("form").getForm().submit({
-                    waitMsg: "Guardando ...",
-                    success: function (b, e, g) {
-                        var f = Ext.JSON.decode(e.response.responseText);
-                        Ext.MessageBox.show({
-                            title: f.msg.title,
-                            msg: f.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO,
-                            fn: function () {
-                                window.location = "Paginas/Default.php"
-                            }
-                        })
-                    },
-                    failure: function (b, e) {
-                        var f = Ext.JSON.decode(e.response.responseText);
-                        Ext.MessageBox.show({
-                            title: f.msg.title,
-                            msg: f.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR
-                        })
-                    }
-                })
-            }
-        } else {
-            Ext.MessageBox.show({
-                title: "Error",
-                msg: "Ingrese los datos correctos",
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.ERROR
-            })
-        }
-    },
-    blurID: function (a, b, c) {
-        if (a.getValue() != "") {
-            Ext.Ajax.request({
-                url: "ajax/validate_data_register.php",
-                params: {
-                    id: a.getValue(),
-                    object: "id"
-                },
-                success: function (e) {
-                    var f = Ext.JSON.decode(e.responseText);
-                    if (!f.success) {
-                        Ext.MessageBox.show({
-                            title: "Documento inv\xe1lido",
-                            msg: "El documento ya se encuentra registrado",
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR
-                        })
-                    }
-                }
-            })
-        }
-    },
-    blurEmail: function (a, b, c) {
-        if (a.getValue() != "") {
-            Ext.Ajax.request({
-                url: "ajax/validate_data_register.php",
-                params: {
-                    email: a.getValue(),
-                    object: "email"
-                },
-                success: function (e) {
-                    var f = Ext.JSON.decode(e.responseText);
-                    if (!f.success) {
-                        Ext.MessageBox.show({
-                            title: "Email inv\xe1lido",
-                            msg: "El email ya se encuentra registrado",
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR
-                        })
-                    }
-                }
-            })
-        }
-    },
-    changeRecoveryMethod: function (e, d, a, b) {
-        if (d == 1) {
-            e.up("form").getForm().findField("idsecretquestion").setVisible(true);
-            e.up("form").getForm().findField("idsecretquestion").allowBlank = false;
-            e.up("form").getForm().findField("secret_answer").setVisible(true);
-            e.up("form").getForm().findField("secret_answer").allowBlank = false
-        } else {
-            e.up("form").getForm().findField("idsecretquestion").setVisible(false);
-            e.up("form").getForm().findField("idsecretquestion").allowBlank = true;
-            e.up("form").getForm().findField("secret_answer").setVisible(false);
-            e.up("form").getForm().findField("secret_answer").allowBlank = true
-        }
-    },
-    blurEmailRecoveryPass: function (a, b, c) {
-        if (a.getValue() != "") {
-            Ext.Ajax.request({
-                url: "ajax/validate_data_register.php",
-                params: {
-                    email: a.getValue(),
-                    object: "email"
-                },
-                success: function (e) {
-                    var f = Ext.JSON.decode(e.responseText);
-                    if (f.success) {
-                        Ext.MessageBox.show({
-                            title: "Email inv\xe1lido",
-                            msg: "El email no se encuentra registrado en nuestro sistema",
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.ERROR,
-                            fn: function () {
-                                a.focus(true)
-                            }
-                        })
-                    } else {
-                        Ext.getStore("FE_SecretQuestion").load();
-                        Ext.Ajax.request({
-                            url: "ajax/validate_data_register.php",
-                            params: {
-                                email: a.getValue(),
-                                object: "secretQuestion"
-                            },
-                            success: function (g) {
-                                var h = Ext.JSON.decode(g.responseText);
-                                if (h.success) {
-                                    a.up("form").getForm().findField("idsecretquestion").setValue(h.secretQuestion.idsecretquestion);
-                                    a.up("form").getForm().findField("idsecretquestion").setReadOnly(true)
-                                } else {
-                                    Ext.MessageBox.show({
-                                        title: "Error",
-                                        msg: "Hubo un error al recuperar la pregunta secreta",
-                                        buttons: Ext.Msg.OK,
-                                        icon: Ext.Msg.ERROR
-                                    })
-                                }
-                            }
-                        })
-                    }
-                }
-            })
-        }
+            });
+        });
     },
     recoveryPass: function (a, c) {
         if (a.up("form").getForm().isValid()) {
@@ -2083,10 +1854,10 @@ Ext.create("Ext.app.Controller", {
                         icon: Ext.Msg.INFO,
                         fn: function () {
                             if (a.up("form").getForm().findField("idrecoverymethod").getValue() == 1) {
-                                window.location = "change_pass.php?" + f.link
+                                window.location = "change_pass.php?" + f.link;
                             }
                         }
-                    })
+                    });
                 },
                 failure: function (b, e) {
                     var f = Ext.JSON.decode(e.response.responseText);
@@ -2095,16 +1866,16 @@ Ext.create("Ext.app.Controller", {
                         msg: f.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.ERROR
-                    })
+                    });
                 }
-            })
+            });
         } else {
             Ext.MessageBox.show({
                 title: "Error",
                 msg: "Ingrese los datos correctos",
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     setNewPass: function (a, c) {
@@ -2119,9 +1890,9 @@ Ext.create("Ext.app.Controller", {
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO,
                         fn: function () {
-                            window.location = "Ingresar.php"
+                            window.location = "Ingresar.php";
                         }
-                    })
+                    });
                 },
                 failure: function (b, e) {
                     var f = Ext.JSON.decode(e.response.responseText);
@@ -2130,16 +1901,16 @@ Ext.create("Ext.app.Controller", {
                         msg: f.msg.body,
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.ERROR
-                    })
+                    });
                 }
-            })
+            });
         } else {
             Ext.MessageBox.show({
                 title: "Error",
                 msg: "Ingrese los datos correctos",
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     }
 });
@@ -2225,7 +1996,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -2326,7 +2097,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -2437,7 +2208,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -2608,7 +2379,7 @@ Ext.create('Ext.app.Controller', {
                 msg: 'Ingrese los datos correctos',
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
-            })
+            });
         }
     },
     remove: function (v, r, c, i, e) {
@@ -2746,6 +2517,107 @@ Ext.create('Ext.app.Controller', {
         });
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listLevelsAccess button[action=insert]': {click: 'insert'},
+        'listLevelsAccess button[action=clean]': {click: 'cleanFilters'},
+        'listLevelsAccess': {itemdblclick: 'editDbl'},
+        'listLevelsAccess actioncolumn[action=edit]': {click: 'edit'},
+        'listLevelsAccess actioncolumn[action=remove]': {click: 'remove'},
+        'formLevelAccess button[action=cancel]': {click: 'cancel'},
+        'formLevelAccess button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formLevelAccess').down('form').loadRecord(Ext.create('susencargos.model.LevelAccess'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+        Ext.getStore('LevelAccess').load();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formLevelAccess');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formLevelAccess');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idlevelaccess').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('LevelAccess').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idlevelaccess'),
+                        object: 'levelsAccess'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('LevelAccess').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -2796,7 +2668,7 @@ Ext.application({
                             msg: d.msg.body,
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.ERROR
-                        })
+                        });
                     }
                 }
             }
@@ -2905,6 +2777,19 @@ Ext.application({
             object: 'noGroupsApplication',
             autoLoad: false
         });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'LevelAccess',
+            model: 'susencargos.model.LevelAccess',
+            object: 'levelsAccess'
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'GroupsModule',
+            model: 'susencargos.model.GroupModule',
+            object: 'groupsModule',
+            autoLoad: false
+        });
         //</editor-fold>
 
         /*
@@ -2915,107 +2800,9 @@ Ext.application({
          });
          
          Ext.create('susencargos.store.MainStore', {
-         storeId: 'GroupsModule',
-         model: 'susencargos.model.GroupModule',
-         object: 'groupsModule'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
          storeId: 'Template',
          model: 'susencargos.model.Template',
          object: 'templates'
-         });
-         
-         Ext.define('susencargos.view.application.FormGroupModule', {
-         extend: 'susencargos.view.MainForm',
-         alias: 'widget.formGroupModule',
-         title: 'Editar grupo de un m\xf3dulo',
-         object: 'groupsModule',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idgroupmodule',
-         value: 0
-         }, {
-         xtype: 'hiddenfield',
-         name: 'idmodule',
-         value: 0
-         }, {
-         xtype: 'combo',
-         name: 'idgroup',
-         value: '',
-         store: 'Group',
-         valueField: 'idgroup',
-         displayField: 'name',
-         allowBlank: false,
-         fieldLabel: '* Grupo',
-         queryMode: 'local',
-         anchor: '90%',
-         typeAhead: true,
-         forceSelection: true
-         }, {
-         xtype: 'combo',
-         name: 'idlevelaccess',
-         value: '',
-         store: 'LevelAccess',
-         valueField: 'idlevelaccess',
-         displayField: 'name',
-         allowBlank: false,
-         fieldLabel: '* Nivel de acceso',
-         queryMode: 'local',
-         anchor: '90%',
-         typeAhead: true,
-         forceSelection: true
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
-         
-         Ext.define('susencargos.view.application.GroupsModule', {
-         extend: 'susencargos.view.MainGrid',
-         iconCls: 'group',
-         alias: 'widget.listGroupsModule',
-         title: 'Listado grupos asignados a un m\xf3dulo',
-         store: 'GroupsModule',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idgroupmodule'
-         }, {
-         header: 'Grupo',
-         dataIndex: 'group',
-         renderer: function (v) {
-         return v.name;
-         },
-         flex: 3
-         }, {
-         header: 'Nivel de acceso',
-         dataIndex: 'levelAccess',
-         renderer: function (v) {
-         return v.name;
-         },
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         stopSelection: false,
-         iconCls: 'edit'
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         stopSelection: false,
-         icon: 'css/remove.png',
-         iconCls: 'remove'
-         }]
          });
          
          Ext.define('susencargos.view.locker.FormChangePassword', {
@@ -3519,6 +3306,98 @@ Ext.application({
                 }],
             storeSource: 'NoGroupsApplication',
             storeFinish: 'GroupsApplication'
+        });
+
+        Ext.define('susencargos.view.application.FormGroupModule', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formGroupModule',
+            title: 'Editar grupo de un m\xf3dulo',
+            object: 'groupsModule',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idgroupmodule',
+                    value: 0
+                }, {
+                    xtype: 'hiddenfield',
+                    name: 'idmodule',
+                    value: 0
+                }, {
+                    xtype: 'combo',
+                    name: 'idgroup',
+                    value: '',
+                    store: 'Group',
+                    valueField: 'idgroup',
+                    displayField: 'name',
+                    allowBlank: false,
+                    fieldLabel: '* Grupo',
+                    queryMode: 'local',
+                    anchor: '90%',
+                    typeAhead: true,
+                    forceSelection: true
+                }, {
+                    xtype: 'combo',
+                    name: 'idlevelaccess',
+                    value: '',
+                    store: 'LevelAccess',
+                    valueField: 'idlevelaccess',
+                    displayField: 'name',
+                    allowBlank: false,
+                    fieldLabel: '* Nivel de acceso',
+                    queryMode: 'local',
+                    anchor: '90%',
+                    typeAhead: true,
+                    forceSelection: true
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+
+        Ext.define('susencargos.view.application.GroupsModule', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'group',
+            alias: 'widget.listGroupsModule',
+            title: 'Listado grupos asignados a un m\xf3dulo',
+            store: 'GroupsModule',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idgroupmodule'
+                }, {
+                    header: 'Grupo',
+                    dataIndex: 'group',
+                    renderer: function (v) {
+                        return v.name;
+                    },
+                    flex: 3
+                }, {
+                    header: 'Nivel de acceso',
+                    dataIndex: 'levelAccess',
+                    renderer: function (v) {
+                        return v.name;
+                    },
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    stopSelection: false,
+                    icon: 'css/remove.png',
+                    iconCls: 'remove'
+                }]
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Grupo">
@@ -4620,6 +4499,67 @@ Ext.application({
             fields: [{
                     xtype: 'hiddenfield',
                     name: 'idpaytype',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Niveles de access">
+        Ext.define('susencargos.view.levelAccess.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'levelAccess',
+            alias: 'widget.listLevelsAccess',
+            title: 'Listado de niveles de acceso',
+            store: 'LevelAccess',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idlevelaccess'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.levelAccess.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formLevelAccess',
+            title: 'Editar nivel de acceso',
+            object: 'levelsAccess',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idlevelaccess',
                     value: 0
                 }, {
                     xtype: 'textfield',
