@@ -67,6 +67,16 @@ if (!isset($_SESSION["user"])) {
             $obj->deleteGroup($_POST["idgroup"], $_SESSION["user"]);
             echo("{\"success\":true,\"msg\":{\"title\":\"Grupo eliminado\",\"body\":\"El grupo ha sido desvinculado del usuario con \\xe9xito\"}}");
             break;
+        case "applicationGroup":
+            $obj = new \gen\bl\Group($_POST["idgroup"]);
+            $obj->deleteApplication($_POST["idapplication"], $_SESSION["user"]);
+            echo("{\"success\":true,\"msg\":{\"title\":\"Aplicación eliminada\",\"body\":\"La aplicación ha sido desvinculada del grupo con \\xe9xito\"}}");
+            break;
+        case "groupApplication":
+            $obj = new \gen\bl\Application($_POST["idapplication"]);
+            $obj->deleteGroup($_POST["idgroup"], $_SESSION["user"]);
+            echo("{\"success\":true,\"msg\":{\"title\":\"Grupo eliminado\",\"body\":\"El grupo ha sido desvinculado de la aplicación con \\xe9xito\"}}");
+            break;
         case "statesTracking":
             $obj = new \sus\bl\StateTracking($_POST["id"]);
             $obj->delete($_SESSION["user"]);

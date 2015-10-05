@@ -100,6 +100,29 @@ class GroupP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Trae todos las aplicaciones que pertenece al grupo de la base de datos que cumplan los filtros
+     * determinados
+     * 
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters
+     * @param int $start Registro inicial
+     * @param int $limit Número de registros a mostrar
+     * @return array Listado de aplicaciones que pertenece al grupo
+     */
+    public function listApplications($filters, $sorters, $start, $limit) {
+        $list = array();
+        $rs = $this->connection->readAll(
+                "a.idapplication, a.name", "gen_group_application ga join gen_application a on ga.idapplication = a.idapplication", ("ga.idgroup = " . $this->observer->idgroup) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+        );
+        foreach ($rs as $row) {
+            $obj = new \gen\entities\ApplicationEntity($row->idapplication);
+            $obj->name = $row->name;
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
+
+    /**
      * Trae todos los usuarios que no pertenecen al grupo de la base de datos que cumplan los filtros
      * determinados
      * 
@@ -125,6 +148,29 @@ class GroupP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Trae todos las aplicaciones que no pertenecen al grupo de la base de datos que cumplan los filtros
+     * determinados
+     * 
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters
+     * @param int $start Registro inicial
+     * @param int $limit Número de registros a mostrar
+     * @return array Listado de aplicaciones que no pertenecena al grupo
+     */
+    public function listNoApplications($filters, $sorters, $start, $limit) {
+        $list = array();
+        $rs = $this->connection->readAll(
+                "idapplication, name", "gen_application", ("idapplication NOT IN (SELECT idapplication FROM gen_group_application WHERE idgroup = " . $this->observer->idgroup . ")") . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+        );
+        foreach ($rs as $row) {
+            $obj = new \gen\entities\ApplicationEntity($row->idapplication);
+            $obj->name = $row->name;
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
+
+    /**
      * Asigna un nuevo usuario al grupo en la base de datos
      * 
      * @param int $iduser Identificador del usuario a asignarle al grupo
@@ -136,6 +182,17 @@ class GroupP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Asigna una nueva applicación al grupo en la base de datos
+     * 
+     * @param int $idapplication Identificador de la applicación a asignarle al grupo
+     */
+    public function insertApplication($idapplication) {
+        $this->connection->insert("gen_group_application", array(
+            "idgroup" => $this->observer->idgroup,
+            "idapplication" => $idapplication), $this->user->iduser);
+    }
+
+    /**
      * Desvincula un usuario del grupo de la base de datos
      * 
      * @param int $iduser Identificador del usuario que se desvincula del grupo
@@ -143,6 +200,15 @@ class GroupP extends \gen\dl\LBTObjectP {
     public function deleteUser($iduser) {
         $this->connection->delete("gen_user_group", array("idgroup" => $this->observer->idgroup, "iduser" => $iduser), $this->user->iduser);
     }
-    
+
+    /**
+     * Desvincula una aplicación del grupo de la base de datos
+     * 
+     * @param int $idapplication Identificador de la aplicación que se desvincula del grupo
+     */
+    public function deleteApplication($idapplication) {
+        $this->connection->delete("gen_group_application", array("idgroup" => $this->observer->idgroup, "idapplication" => $idapplication), $this->user->iduser);
+    }
+
     //</editor-fold>
 }

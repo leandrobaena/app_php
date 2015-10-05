@@ -73,6 +73,22 @@ switch ($object) {
         $obj = new \gen\bl\Group($_GET["idgroup"]);
         $list = $obj->listNoUsers($filters, $sorters, $start, $limit);
         break;
+    case "applicationsGroup":
+        $obj = new \gen\bl\Group($_GET["idgroup"]);
+        $list = $obj->listApplications($filters, $sorters, $start, $limit);
+        break;
+    case "noApplicationsGroup":
+        $obj = new \gen\bl\Group($_GET["idgroup"]);
+        $list = $obj->listNoApplications($filters, $sorters, $start, $limit);
+        break;
+    case "groupsApplication":
+        $obj = new \gen\bl\Application($_GET["idapplication"]);
+        $list = $obj->listGroups($filters, $sorters, $start, $limit);
+        break;
+    case "noGroupsApplication":
+        $obj = new \gen\bl\Application($_GET["idapplication"]);
+        $list = $obj->listNoGroups($filters, $sorters, $start, $limit);
+        break;
     case "statesTracking":
         $obj = new \sus\bl\StateTracking(0);
         $list = $obj->readAll($filters, $sorters, $start, $limit);

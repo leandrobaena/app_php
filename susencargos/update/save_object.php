@@ -84,6 +84,16 @@ if (!isset($_SESSION["user"])) {
                 $obj->insertGroup($_POST["group"], $_SESSION["user"]);
                 echo("{\"success\":true,\"msg\":{\"title\":\"Grupo asignado al usuario\",\"body\":\"El grupo ha sido asignado al usuario con \\xe9xito\"}}");
                 break;
+            case "applicationGroup":
+                $obj = new \gen\bl\Group($_POST["idgroup"]);
+                $obj->insertApplication($_POST["idapplication"], $_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Aplicación asignada al grupo\",\"body\":\"La aplicación ha sido asignada al grupo con \\xe9xito\"}}");
+                break;
+            case "groupApplication":
+                $obj = new \gen\bl\Application($_POST["idapplication"]);
+                $obj->insertGroup($_POST["idgroup"], $_SESSION["user"]);
+                echo("{\"success\":true,\"msg\":{\"title\":\"Grupo asignado a la aplicación\",\"body\":\"El grupo ha sido asignado a la aplicación con \\xe9xito\"}}");
+                break;
             case "statesTracking":
                 $obj = new \sus\bl\StateTracking($_POST["id"]);
                 $obj->name = $_POST["name"];

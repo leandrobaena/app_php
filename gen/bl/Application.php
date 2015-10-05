@@ -92,6 +92,51 @@ class Application extends \LBTObjectBL {
     public function read() {
         $this->persistence->read();
     }
+
+    /**
+     * Trae un listado de grupos que componen la aplicación
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de grupos que componen la aplicación en formato json
+     */
+    public function listGroups($filters, $sorters, $start, $limit) {
+        return $this->persistence->listGroups($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Trae un listado de grupos que no componen la aplicación
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de grupos que no componen la aplicación en formato json
+     */
+    public function listNoGroups($filters, $sorters, $start, $limit) {
+        return $this->persistence->listNoGroups($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Asigna un grupo a esta aplicación
+     * @param int $idgroup Identificador del grupo
+     * @param int $user Usuario que asigna la aplicación al grupo
+     */
+    public function insertGroup($idgroup, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->insertGroup($idgroup);
+    }
+
+    /**
+     * Desvincula el grupo determinado de la aplicación en la base de datos
+     * @param int $idgroup Identificador del grupo que se desvincula de la aplicación
+     * @param int $user Usuario que desvincula el grupo del usuario
+     */
+    public function deleteGroup($idgroup, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->deleteGroup($idgroup);
+    }
+
     // </editor-fold>
 }
 

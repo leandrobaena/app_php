@@ -137,6 +137,51 @@ class Group extends \LBTObjectBL {
         $this->persistence->user = $user;
         $this->persistence->deleteUser($iduser);
     }
+
+    /**
+     * Trae un listado de aplicaciones que componen el grupo
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de aplicaciones que componen el grupo en formato json
+     */
+    public function listApplications($filters, $sorters, $start, $limit) {
+        return $this->persistence->listApplications($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Trae un listado de aplicaciones que no componen el grupo
+     * @param string $filters Filtros aplicados a la consulta
+     * @param string $sorters Ordenamientos aplicados a la consulta
+     * @param int $start Registro inicial a traer
+     * @param int $limit Número de registros a traer
+     * @return \utils\ListJson Listado de aplicaciones que no componen el grupo en formato json
+     */
+    public function listNoApplications($filters, $sorters, $start, $limit) {
+        return $this->persistence->listNoApplications($filters, $sorters, $start, $limit);
+    }
+
+    /**
+     * Asigna una aplicación a este grupo
+     * @param int $idapplication Identificador de la aplicación
+     * @param int $user Usuario que asigna el grupo a la aplicación
+     */
+    public function insertApplication($idapplication, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->insertApplication($idapplication);
+    }
+
+    /**
+     * Desvincula la aplicación determinada del grupo en la base de datos
+     * @param int $idapplication Identificador de la aplicación que se desvincula del grupo
+     * @param int $user Usuario que desvincula el grupo del usuario
+     */
+    public function deleteApplication($idapplication, $user) {
+        $this->persistence->user = $user;
+        $this->persistence->deleteApplication($idapplication);
+    }
+
     // </editor-fold>
 }
 

@@ -384,7 +384,7 @@ Ext.create('Ext.app.Controller', {
                                         form.getForm().findField('idpackagetype').setValue(1);
                                         form.getForm().findField('weight').setValue(30);
                                         form.getForm().findField('idpaytype').setValue(1);
-                                        form.getForm().findField('date').setValue(Ext.Date.format(new Date(),"Y-m-d"));
+                                        form.getForm().findField('date').setValue(Ext.Date.format(new Date(), "Y-m-d"));
                                     }
                                 });
                             }
@@ -2877,15 +2877,37 @@ Ext.application({
             model: 'susencargos.model.PackageType',
             object: 'packageTypes'
         });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'ApplicationsGroup',
+            model: 'susencargos.model.Application',
+            object: 'applicationsGroup',
+            autoLoad: false
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'GroupsApplication',
+            model: 'susencargos.model.Group',
+            object: 'groupsApplication',
+            autoLoad: false
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'NoApplicationsGroup',
+            model: 'susencargos.model.Application',
+            object: 'noApplicationsGroup',
+            autoLoad: false
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'NoGroupsApplication',
+            model: 'susencargos.model.Group',
+            object: 'noGroupsApplication',
+            autoLoad: false
+        });
         //</editor-fold>
 
         /*
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'ApplicationsGroup',
-         model: 'susencargos.model.Application',
-         object: 'applicationsGroup'
-         });
-         
          Ext.create('susencargos.store.MainStore', {
          storeId: 'FieldTemplate',
          model: 'susencargos.model.FieldTemplate',
@@ -2893,27 +2915,9 @@ Ext.application({
          });
          
          Ext.create('susencargos.store.MainStore', {
-         storeId: 'GroupsApplication',
-         model: 'susencargos.model.Group',
-         object: 'groupsApplication'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
          storeId: 'GroupsModule',
          model: 'susencargos.model.GroupModule',
          object: 'groupsModule'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'NoApplicationsGroup',
-         model: 'susencargos.model.Application',
-         object: 'noApplicationsGroup'
-         });
-         
-         Ext.create('susencargos.store.MainStore', {
-         storeId: 'NoGroupsApplication',
-         model: 'susencargos.model.Group',
-         object: 'noGroupsApplication'
          });
          
          Ext.create('susencargos.store.MainStore', {
@@ -2971,37 +2975,6 @@ Ext.application({
          }]
          });
          
-         Ext.define('susencargos.view.application.Groups', {
-         extend: 'susencargos.view.DeprisaItemSelector',
-         alias: 'widget.listGroupsApplication',
-         title: 'Listado grupos de la aplicaci\xf3n',
-         iconCls: 'group',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idgroup'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         header: 'Activo',
-         dataIndex: 'active',
-         filter: 'boolean',
-         renderer: function (value) {
-         if (value) {
-         return "Si";
-         } else {
-         return "No";
-         }
-         },
-         flex: 1
-         }],
-         storeSource: 'NoGroupsApplication',
-         storeFinish: 'GroupsApplication'
-         });
-         
          Ext.define('susencargos.view.application.GroupsModule', {
          extend: 'susencargos.view.MainGrid',
          iconCls: 'group',
@@ -3043,23 +3016,6 @@ Ext.application({
          icon: 'css/remove.png',
          iconCls: 'remove'
          }]
-         });
-         
-         Ext.define('susencargos.view.group.Applications', {
-         extend: 'susencargos.view.DeprisaItemSelector',
-         alias: 'widget.listApplicationsGroup',
-         title: 'Listado aplicaciones del grupo',
-         iconCls: 'apps',
-         columns: [{
-         header: 'ID',
-         dataIndex: 'idapplication'
-         }, {
-         header: 'Nombre',
-         dataIndex: 'name',
-         flex: 3
-         }],
-         storeSource: 'NoApplicationsGroup',
-         storeFinish: 'ApplicationsGroup'
          });
          
          Ext.define('susencargos.view.locker.FormChangePassword', {
@@ -3384,7 +3340,7 @@ Ext.application({
             }
         });
 
-        Ext.define('susencargos.view.DeprisaItemSelector', {
+        Ext.define('susencargos.view.MainItemSelector', {
             extend: 'Ext.window.Window',
             maximizable: true,
             modal: true,
@@ -3533,6 +3489,37 @@ Ext.application({
                     action: 'cancel'
                 }]
         });
+
+        Ext.define('susencargos.view.application.Groups', {
+            extend: 'susencargos.view.MainItemSelector',
+            alias: 'widget.listGroupsApplication',
+            title: 'Listado grupos de la aplicaci\xf3n',
+            iconCls: 'group',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idgroup'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Activo',
+                    dataIndex: 'active',
+                    filter: 'boolean',
+                    renderer: function (value) {
+                        if (value) {
+                            return "Si";
+                        } else {
+                            return "No";
+                        }
+                    },
+                    flex: 1
+                }],
+            storeSource: 'NoGroupsApplication',
+            storeFinish: 'GroupsApplication'
+        });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Grupo">
         Ext.define('susencargos.view.group.Grid', {
@@ -3635,7 +3622,7 @@ Ext.application({
         });
 
         Ext.define('susencargos.view.group.Users', {
-            extend: 'susencargos.view.DeprisaItemSelector',
+            extend: 'susencargos.view.MainItemSelector',
             iconCls: 'user',
             alias: 'widget.listUsersGroup',
             columns: [{
@@ -3669,6 +3656,22 @@ Ext.application({
             storeFinish: 'UsersGroup'
         });
 
+        Ext.define('susencargos.view.group.Applications', {
+            extend: 'susencargos.view.MainItemSelector',
+            alias: 'widget.listApplicationsGroup',
+            title: 'Listado aplicaciones del grupo',
+            iconCls: 'apps',
+            columns: [{
+                    header: 'ID',
+                    dataIndex: 'idapplication'
+                }, {
+                    header: 'Nombre',
+                    dataIndex: 'name',
+                    flex: 3
+                }],
+            storeSource: 'NoApplicationsGroup',
+            storeFinish: 'ApplicationsGroup'
+        });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Módulo">
         Ext.define('susencargos.view.application.Modules', {
@@ -3946,7 +3949,7 @@ Ext.application({
         });
 
         Ext.define('susencargos.view.user.Groups', {
-            extend: 'susencargos.view.DeprisaItemSelector',
+            extend: 'susencargos.view.MainItemSelector',
             alias: 'widget.listGroupsUser',
             iconCls: 'group',
             storeSource: 'NoGroupsUser',
@@ -4315,21 +4318,21 @@ Ext.application({
                     header: 'Cliente',
                     dataIndex: 'customer',
                     flex: 2,
-                    renderer: function(value){
+                    renderer: function (value) {
                         return value.name;
                     }
                 }, {
                     header: 'Origen',
                     dataIndex: 'citySource',
                     flex: 2,
-                    renderer: function(value){
+                    renderer: function (value) {
                         return value.name;
                     }
                 }, {
                     header: 'Destino',
                     dataIndex: 'cityDestination',
                     flex: 2,
-                    renderer: function(value){
+                    renderer: function (value) {
                         return value.name;
                     }
                 }, {
@@ -4356,14 +4359,14 @@ Ext.application({
                     header: 'Tipo de pago',
                     dataIndex: 'payType',
                     flex: 2,
-                    renderer: function(value){
+                    renderer: function (value) {
                         return value.name;
                     }
                 }, {
                     header: 'Estado remesa',
                     dataIndex: 'stateTracking',
                     flex: 2,
-                    renderer: function(value){
+                    renderer: function (value) {
                         return value.name;
                     }
                 }, {
