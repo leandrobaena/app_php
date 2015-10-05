@@ -4548,7 +4548,7 @@ Ext.application({
                             name: 'managementValue',
                             value: 0,
                             anchor: '90%',
-                            fieldLabel: 'Flete manejo'
+                            fieldLabel: 'Valor manejo'
                         }, {
                             xtype: 'numberfield',
                             hideTrigger: true,
