@@ -181,8 +181,8 @@ class MySQL extends DataBase {
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password) {
-        $sql = "SELECT iduser as id FROM gen_user WHERE email = '$email' AND `password` = MD5('$password') AND active = 1";
+    public function validate($email, $password, $idapplication) {
+        $sql = "SELECT u.iduser as id FROM gen_user u JOIN gen_user_group ug ON u.iduser = ug.iduser JOIN gen_group_application ga ON ug.idgroup = ga.idgroup WHERE u.email = '$email' AND u.`password` = MD5('$password') AND u.active = 1 AND ga.idapplication = $idapplication";
         //$sql = "CALL sp_user_validate(\"$email\",\"$password\")";
         $rs = $this->link->query($sql);
         if ($rs == null) {

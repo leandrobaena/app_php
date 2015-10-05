@@ -152,7 +152,7 @@ class MSSQL extends DataBase {
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password){
+    public function validate($email, $password, $idapplication){
         $sql = "EXEC sp_user_validate(\"$email\",\"$password\")";
         $rs = sqlsrv_query($this->link, $sql);
         if ($rs == null) {

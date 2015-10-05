@@ -49,52 +49,6 @@ class Group extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de grupos
-     * @param string $filters Filtros aplicados a la consulta
-     * @param string $sorters Ordenamientos aplicados a la consulta
-     * @param int $start Registro inicial a traer
-     * @param int $limit Número de registros a traer
-     * @return string Listado de grupos en formato json
-     */
-    public function readAll($filters, $sorters, $start, $limit) {
-        return $this->persistence->readAll($filters, $sorters, $start, $limit);
-    }
-
-    /**
-     * Crea el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea el grupo
-     */
-    public function create($user) {
-        $this->persistence->user = $user;
-        $this->persistence->insert();
-    }
-
-    /**
-     * Actualiza el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza el grupo
-     */
-    public function update($user) {
-        $this->persistence->user = $user;
-        $this->persistence->update();
-    }
-
-    /**
-     * Elimina el grupo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina el grupo
-     */
-    public function delete($user) {
-        $this->persistence->user = $user;
-        $this->persistence->delete();
-    }
-
-    /**
-     * Carga el grupo de la base de datos
-     */
-    public function read() {
-        $this->persistence->read();
-    }
-
-    /**
      * Trae un listado de usuarios que componen el grupo
      * @param string $filters Filtros aplicados a la consulta
      * @param string $sorters Ordenamientos aplicados a la consulta

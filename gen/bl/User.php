@@ -53,60 +53,15 @@ class User extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de usuarios
-     * @param string $filters Filtros aplicados a la consulta
-     * @param string $sorters Ordenamientos aplicados a la consulta
-     * @param int $start Registro inicial a traer
-     * @param int $limit Número de registros a traer
-     * @return string Listado de usuarios en formato json
-     */
-    public function readAll($filters, $sorters, $start, $limit) {
-        return $this->persistence->readAll($filters, $sorters, $start, $limit);
-    }
-
-    /**
-     * Crea el usuario en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea el usuario
-     */
-    public function create($user) {
-        $this->persistence->user = $user;
-        $this->persistence->insert();
-    }
-
-    /**
-     * Actualiza el usuario en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza el grupo
-     */
-    public function update($user) {
-        $this->persistence->user = $user;
-        $this->persistence->update();
-    }
-
-    /**
-     * Elimina el usuario en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina el grupo
-     */
-    public function delete($user) {
-        $this->persistence->user = $user;
-        $this->persistence->delete();
-    }
-
-    /**
-     * Carga el usuario de la base de datos
-     */
-    public function read() {
-        $this->persistence->read();
-    }
-
-    /**
      * Valida que el login y el password determinado corresponda a un usuario
      * con privilegios para una determinada aplicación
      * 
      * @param string $login Login ingresado por el usuario
      * @param string $password Contraseña ingresada por el usuario
+     * @param int $idapplication Identificador de la aplicación a la que se quiere loguear
      */
-    public function validate($login, $password) {
-        $this->persistence->validate($login, $password);
+    public function validate($login, $password, $idapplication) {
+        $this->persistence->validate($login, $password, $idapplication);
         return $this->entity;
     }
 

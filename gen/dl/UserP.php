@@ -100,9 +100,10 @@ class UserP extends \gen\dl\LBTObjectP {
      * 
      * @param string $login Login ingresado por el usuario
      * @param string $password Contraseña ingresada por el usuario
+     * @param int $idapplication Identificador de la aplicación a la que se quiere loguear
      */
-    public function validate($login, $password) {
-        $id = $this->connection->validate($login, $password);
+    public function validate($login, $password, $idapplication) {
+        $id = $this->connection->validate($login, $password, $idapplication);
         if ($id != 0) {
             $this->observer->iduser = $id;
             $this->read();

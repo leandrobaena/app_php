@@ -145,7 +145,7 @@ class Oracle extends DataBase {
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password) {
+    public function validate($email, $password, $idapplication) {
         $sql = "EXEC sp_user_validate(\"$email\",\"$password\")";
         $rs = $this->query($this->link, $sql);
         if ($rs == null) {

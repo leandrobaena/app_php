@@ -95,7 +95,12 @@ class ModuleP extends \gen\dl\LBTObjectP {
      */
     public function modulesByUser($idapplication, $iduser) {
         $list = array();
-        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication JOIN gen_group_application ga ON a.idapplication = ga.idapplication JOIN gen_group g ON g.idgroup = ga.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent IS NULL", "", 0, 1000);
+        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN
+                gen_application a ON m.idapplication = a.idapplication JOIN
+                gen_group_application ga ON a.idapplication = ga.idapplication JOIN
+                gen_group g ON g.idgroup = ga.idgroup JOIN
+                gen_user_group ug ON g.idgroup = ug.idgroup JOIN
+                gen_group_module gm ON g.idgroup = gm.idgroup AND gm.idmodule = m.idmodule", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent IS NULL AND gm.idlevelaccess = 1", "", 0, 1000);
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
@@ -116,7 +121,12 @@ class ModuleP extends \gen\dl\LBTObjectP {
      */
     public function submodulesByUser($idapplication, $iduser) {
         $list = array();
-        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication JOIN gen_group_application ga ON a.idapplication = ga.idapplication JOIN gen_group g ON g.idgroup = ga.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent = ".$this->observer->idmodule, "", 0, 1000);
+        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN
+                gen_application a ON m.idapplication = a.idapplication JOIN
+                gen_group_application ga ON a.idapplication = ga.idapplication JOIN
+                gen_group g ON g.idgroup = ga.idgroup JOIN
+                gen_user_group ug ON g.idgroup = ug.idgroup JOIN
+                gen_group_module gm ON g.idgroup = gm.idgroup AND gm.idmodule = m.idmodule", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent = " . $this->observer->idmodule . " AND gm.idlevelaccess = 1", "", 0, 1000);
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
@@ -128,5 +138,29 @@ class ModuleP extends \gen\dl\LBTObjectP {
         }
         return new \utils\ListJson($list, $this->total);
     }
+
+    /**
+     * Trae el id de un módulo de una aplicación dado el script que ejecuta
+     * @param string $object Script que ejecuta el módulo
+     * @param int $idapplication Identificador de la aplicación
+     * @return int Identificador del módulo que cumple el filtro
+     */
+    public function getIdModuleApplicationByScript($object, $idapplication) {
+        $rs = $this->connection->read("idmodule", "gen_module", "script = '$object' AND idapplication = $idapplication");
+        return ($rs == null ? 0 : $rs->idmodule);
+    }
+
+    /**
+     * Determina si el usuario determinado tiene el nivel de acceso determinado
+     * para este módulo
+     * 
+     * @param int $iduser Identificador del usuario
+     * @param int $idlevelaccess Identificador del nivel de acceso
+     */
+    public function haveAccess($iduser, $idlevelaccess) {
+        $rs = $this->connection->read("gm.idmodule", "gen_group_module gm JOIN gen_group g ON gm.idgroup = g.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "gm.idmodule = " . $this->observer->idmodule . " AND gm.idlevelaccess = $idlevelaccess AND ug.iduser = $iduser");
+        return ($rs == null ? false : true);
+    }
+
     //</editor-fold>
 }

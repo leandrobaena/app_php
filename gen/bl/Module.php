@@ -53,52 +53,6 @@ class Module extends \LBTObjectBL {
     //</editor-fold>
     // <editor-fold defaultstate="collapsed" desc="Métodos">
     /**
-     * Trae un listado de módulos
-     * @param string $filters Filtros aplicados a la consulta
-     * @param string $sorters Ordenamientos aplicados a la consulta
-     * @param int $start Registro inicial a traer
-     * @param int $limit Número de registros a traer
-     * @return string Listado de módulos en formato json
-     */
-    public function readAll($filters, $sorters, $start, $limit) {
-        return $this->persistence->readAll($filters, $sorters, $start, $limit);
-    }
-
-    /**
-     * Crea el módulo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea el módulo
-     */
-    public function create($user) {
-        $this->persistence->user = $user;
-        $this->persistence->insert();
-    }
-
-    /**
-     * Actualiza el módulo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza el módulo
-     */
-    public function update($user) {
-        $this->persistence->user = $user;
-        $this->persistence->update();
-    }
-
-    /**
-     * Elimina el módulo en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina el módulo
-     */
-    public function delete($user) {
-        $this->persistence->user = $user;
-        $this->persistence->delete();
-    }
-
-    /**
-     * Carga el módulo de la base de datos
-     */
-    public function read() {
-        $this->persistence->read();
-    }
-
-    /**
      * Trae el listado de módulos a los que puede acceder un determinado usuario
      * 
      * @param int $idapplication Identificador de la aplicación a la que se le
@@ -124,6 +78,27 @@ class Module extends \LBTObjectBL {
      */
     public function submodulesByUser($idapplication, $iduser) {
         return $this->persistence->submodulesByUser($idapplication, $iduser);
+    }
+
+    /**
+     * Trae el id de un módulo de una aplicación dado el script que ejecuta
+     * @param string $object Script que ejecuta el módulo
+     * @param int $idapplication Identificador de la aplicación
+     * @return int Identificador del módulo que cumple el filtro
+     */
+    public function getIdModuleApplicationByScript($object, $idapplication) {
+        return $this->persistence->getIdModuleApplicationByScript($object, $idapplication);
+    }
+
+    /**
+     * Determina si el usuario determinado tiene el nivel de acceso determinado
+     * para este módulo
+     * 
+     * @param int $iduser Identificador del usuario
+     * @param int $idlevelaccess Identificador del nivel de acceso
+     */
+    public function haveAccess($iduser, $idlevelaccess) {
+        return $this->persistence->haveAccess($iduser, $idlevelaccess);
     }
 
     // </editor-fold>

@@ -132,10 +132,11 @@ abstract class DataBase {
      * @param string $email email del usuario a validar
      * @param string $password Contraseña sin encriptar por la que se quiere
      * validar
+     * @param int $idapplication Aplicación a la cual quiere iniciar sesión
      * @return int Id del usuario utenticado o 0 si no autentica
      * @throws BDException Si hubo un error en la actualización
      */
-    public abstract function validate($email, $password);
+    public abstract function validate($email, $password, $idapplication);
     
     /**
      * Cierra la conexión a la base de datos
