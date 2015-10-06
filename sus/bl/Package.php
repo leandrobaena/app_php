@@ -29,6 +29,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property float $totalValue Valor total de la remesa
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property \sus\entities\PayTypeEntity $payType Tipo de pago de la remesa
+ * @property \sus\entities\StateTrackingEntity $stateTracking Estado de la remesa
  * @author Leandro Baena Torres
  */
 class Package extends \LBTObjectBL {
@@ -63,53 +64,6 @@ class Package extends \LBTObjectBL {
     }
 
     //</editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Métodos">
-    /**
-     * Trae un listado de remesas
-     * @param string $filters Filtros aplicados a la consulta
-     * @param string $sorters Ordenamientos aplicados a la consulta
-     * @param int $start Registro inicial a traer
-     * @param int $limit Número de registros a traer
-     * @return string Listado de remesas en formato json
-     */
-    public function readAll($filters, $sorters, $start, $limit) {
-        return $this->persistence->readAll($filters, $sorters, $start, $limit);
-    }
-
-    /**
-     * Crea la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea la remesa
-     */
-    public function create($user) {
-        $this->persistence->user = $user;
-        $this->persistence->insert();
-    }
-
-    /**
-     * Actualiza la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza la remesa
-     */
-    public function update($user) {
-        $this->persistence->user = $user;
-        $this->persistence->update();
-    }
-
-    /**
-     * Elimina la remesa en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina la remesa
-     */
-    public function delete($user) {
-        $this->persistence->user = $user;
-        $this->persistence->delete();
-    }
-
-    /**
-     * Carga la remesa de la base de datos
-     */
-    public function read() {
-        $this->persistence->read();
-    }
-    // </editor-fold>
 }
 
 ?>

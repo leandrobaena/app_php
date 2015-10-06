@@ -2259,6 +2259,8 @@ Ext.create('Ext.app.Controller', {
         'listPackages button[action=insert]': {click: 'insert'},
         'listPackages button[action=clean]': {click: 'cleanFilters'},
         'listPackages': {itemdblclick: 'editDbl'},
+        'listPackages actioncolumn[action=rotules]': {click: 'rotules'},
+        'listPackages actioncolumn[action=label]': {click: 'label'},
         'listPackages actioncolumn[action=edit]': {click: 'edit'},
         'listPackages actioncolumn[action=remove]': {click: 'remove'},
         'formPackage combo[name=idcustomer]': {select: 'changeCustomer'},
@@ -2287,6 +2289,12 @@ Ext.create('Ext.app.Controller', {
         } else {//Sobre
             form.findField('weight').setValue(1);
         }
+    },
+    rotules: function (v, r, c, i, e) {
+        window.open('rotules.php?id=' + v.getStore().getAt(c).get('idpackage'));
+    },
+    label: function (v, r, c, i, e) {
+        window.open('label.php?id=' + v.getStore().getAt(c).get('idpackage'));
     },
     edit: function (v, r, c, i, e) {
         Ext.getStore('City').load({
@@ -4270,6 +4278,22 @@ Ext.application({
                     renderer: function (value) {
                         return value.name;
                     }
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'rotules',
+                    tooltip: 'Imprimir rótulos',
+                    icon: 'css/rotule.png',
+                    stopSelection: false,
+                    iconCls: 'rotule'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'label',
+                    tooltip: 'Imprimir etiqueta',
+                    icon: 'css/label.png',
+                    stopSelection: false,
+                    iconCls: 'label'
                 }, {
                     xtype: 'actioncolumn',
                     width: 20,

@@ -46,53 +46,6 @@ class Zone extends \LBTObjectBL {
     }
 
     //</editor-fold>
-    // <editor-fold defaultstate="collapsed" desc="Métodos">
-    /**
-     * Trae un listado de zonas
-     * @param string $filters Filtros aplicados a la consulta
-     * @param string $sorters Ordenamientos aplicados a la consulta
-     * @param int $start Registro inicial a traer
-     * @param int $limit Número de registros a traer
-     * @return string Listado de zonas en formato json
-     */
-    public function readAll($filters, $sorters, $start, $limit) {
-        return $this->persistence->readAll($filters, $sorters, $start, $limit);
-    }
-
-    /**
-     * Crea la zona en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que crea la zona
-     */
-    public function create($user) {
-        $this->persistence->user = $user;
-        $this->persistence->insert();
-    }
-
-    /**
-     * Actualiza la zona en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que actualiza la zona
-     */
-    public function update($user) {
-        $this->persistence->user = $user;
-        $this->persistence->update();
-    }
-
-    /**
-     * Elimina la zona en la base de datos
-     * @param \gen\entities\UserEntity $user Usuario que elimina la zona
-     */
-    public function delete($user) {
-        $this->persistence->user = $user;
-        $this->persistence->delete();
-    }
-
-    /**
-     * Carga la zona de la base de datos
-     */
-    public function read() {
-        $this->persistence->read();
-    }
-    // </editor-fold>
 }
 
 ?>

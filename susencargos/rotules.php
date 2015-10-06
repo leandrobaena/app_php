@@ -1,0 +1,60 @@
+<?php
+
+require(__DIR__ . '/../utils/fpdf/fpdf.php');
+require_once (__DIR__ . "/../gen/bl/User.php");
+require_once (__DIR__ . "/../sus/bl/Customer.php");
+require_once (__DIR__ . "/../sus/bl/Zone.php");
+require_once (__DIR__ . "/../sus/bl/City.php");
+require_once (__DIR__ . "/../sus/bl/StateTracking.php");
+require_once (__DIR__ . "/../sus/bl/Package.php");
+
+$idpackage = 0;
+if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
+    $idpackage = $_GET["id"];
+    $package = new sus\bl\Package($idpackage);
+    $package->read();
+    $pdf = new FPDF();
+    $pdf->AliasNbPages();
+
+    for ($i = 0; $i < $package->amount; $i++) {
+        fopen("http://" . $_SERVER["HTTP_HOST"] . "/utils/barcode.php?text=$idpackage-" . ($i + 1), "r");
+        if ($i % 2 == 0) {
+            $pdf->AddPage();
+        }
+        $pdf->Rect(20, 30 + (140 * ($i % 2)), 170, 100, "D");
+        $pdf->SetXY(40, 30 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', 'B', 18);
+        $pdf->Write(10, "REMITENTE");
+
+        $pdf->SetFont('Times', '', 14);
+        $pdf->SetXY(25, 40 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->customer->name));
+        $pdf->SetXY(25, 50 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->customer->address));
+        $pdf->SetXY(25, 60 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->customer->phone));
+        $pdf->SetXY(25, 70 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->citySource->name));
+
+        $pdf->SetXY(125, 30 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', 'B', 18);
+        $pdf->Write(10, "DESTINATARIO");
+
+        $pdf->SetFont('Times', '', 14);
+        $pdf->SetXY(115, 40 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->nameTo));
+        $pdf->SetXY(115, 50 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->addressTo));
+        $pdf->SetXY(115, 60 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->phoneTo));
+        $pdf->SetXY(115, 70 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode($package->cityDestination->name));
+
+        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 90 + (140 * ($i % 2)), 60, 30);
+        $pdf->SetXY(115, 120 + (140 * ($i % 2)));
+        $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($package->amount)));
+    }
+
+    $pdf->Output();
+}
+?>

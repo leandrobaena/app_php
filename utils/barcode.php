@@ -111,8 +111,6 @@ for ($position = 1; $position <= strlen($code_string); $position++) {
     }
     $location = $cur_size;
 }
-// Draw barcode to the screen
-header('Content-type: image/png');
-imagepng($image);
+imagepng($image, "../susencargos/images/label_$text.png", 0);
 imagedestroy($image);
 ?>

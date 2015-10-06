@@ -85,6 +85,79 @@
     background-image:url(ops.png)!important;
 }
 
-.enterPackage{background-image:url(enterPackage.png)!important}.authorizedPackage{background-image:url(authorizedPackage.png)!important}.measuringSystem{background-image:url(measuringSystem.png)!important}.country{background-image:url(country.png)!important}.city{background-image:url(city.png)!important}.salePoint{background-image:url(salePoint.png)!important}.occupation{background-image:url(occupation.png)!important}.economySector{background-image:url(economySector.png)!important}.secretQuestion{background-image:url(secretQuestion.png)!important}.infoMethod{background-image:url(infoMethod.png)!important}.stateLocker{background-image:url(stateLocker.png)!important}.typePackage{background-image:url(typePackage.png)!important}.enteredPackage{background-image:url(enteredPackage.png)!important}.dispatch{background-image:url(dispatch.png)!important}.report{background-image:url(report.png)!important}.miles{background-image:url(miles.png)!important}.template{background-image:url(template.png)!important}.fieldTemplate{background-image:url(fieldTemplate.png)!important}.locker{background-image:url(locker.png)!important}.rejectionReason{background-image:url(remove.png)!important}.groupTracking{background-image:url(groupTracking.png)!important}.stateTracking{background-image:url(stateTracking.png)!important}.cms{background-image:url(cms.png)!important}.typeResource{background-image:url(typeResource.png)!important}.resource{background-image:url(resource.png)!important}.page{background-image:url(page.png)!important}.deliveryCompany{background-image:url(deliveryCompany.png)!important}.receivePackage{background-image:url(receivePackage.png)!important}.receivedPackage{background-image:url(receivedPackage.png)!important}.resultReceivePackage{max-height:400px;overflow:auto}.wareHouse{background-image:url(wareHouse.png)!important}.ubication{background-image:url(ubication.png)!important}.prealert{background-image:url(prealert.png)!important}.product{background-image:url(product.png)!important}.customer{background-image:url(customer.png)!important}.provide{background-image:url(provide.png)!important}.pending{background-image:url(pending.png)!important}.typeUbication{background-image:url(typeUbication.png)!important}.payment{background-image:url(payment.png)!important}.importantField{background-color:#BA0707;font-size:14px}.importantField label{color:#FFF}.printer{background-image:url(printer.png)!important}.requestPending{background-image:url(requestPending.png)!important}.dgPackage{background-image:url(dgPackage.png)!important}.missing{background-image:url(missing.png)!important}.admonPackage{background-image:url(typePackage.png)!important}.return{background-image:url(return.png)!important}.behavior{background-image:url(behavior.png)!important}.picking{background-image:url(picking.png)!important}.storageAbandonment{background-image:url(storageAbandonment.png)!important}.rptPackageNoAuthorized{background-image:url(rptPackageNoAuthorized.png)!important}
+.enterPackage{
+    background-image:url(enterPackage.png)!important
+}
 
-.zone{background-image:url(zone.png)!important}
+.city{
+    background-image:url(city.png)!important
+}
+
+.typePackage{
+    background-image:url(typePackage.png)!important
+}
+
+.report{
+    background-image:url(report.png)!important
+}
+
+.template{
+    background-image:url(template.png)!important
+}
+
+.fieldTemplate{
+    background-image:url(fieldTemplate.png)!important
+}
+
+.stateTracking{
+    background-image:url(stateTracking.png)!important
+}
+
+.cms{
+    background-image:url(cms.png)!important
+}
+
+.typeResource{
+    background-image:url(typeResource.png)!important
+}
+
+.resource{
+    background-image:url(resource.png)!important
+}
+
+.page{
+    background-image:url(page.png)!important
+}
+
+.wareHouse{
+    background-image:url(wareHouse.png)!important
+}
+
+.customer{
+    background-image:url(customer.png)!important
+}
+
+.importantField{
+    background-color:#BA0707;
+    font-size:14px
+}
+
+.importantField label{
+    color:#FFF
+}
+
+.zone{
+    background-image:url(zone.png)!important
+}
+
+.package{
+    background-image:url(package.png)!important
+}
+
+.rotule{
+    background-image:url(rotule.png)!important
+}
+
+.label{
+    background-image:url(label.png)!important
+}

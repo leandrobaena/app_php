@@ -56,7 +56,7 @@ class PackageP extends \gen\dl\LBTObjectP {
      */
     public function read() {
         $rs = $this->connection->read("p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
-cu.name customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
+cu.name customer, cu.address customer_address, cu.phone customer_phone, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
 p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type, p.idstatetracking, st.name state_tracking", "sus_package p JOIN
 sus_city c ON p.idcitysource = c.idcity JOIN
 sus_city c1 ON p.idcitydestination = c1.idcity JOIN
@@ -70,6 +70,8 @@ sus_state_tracking st ON p.idstatetracking = st.idstatetracking", "p.idpackage =
         $this->observer->cityDestination->name = $rs->city_destination;
         $this->observer->customer = new \sus\entities\CustomerEntity($rs->idcustomer);
         $this->observer->customer->name = $rs->customer;
+        $this->observer->customer->address = $rs->customer_address;
+        $this->observer->customer->phone = $rs->customer_phone;
         $this->observer->nameTo = $rs->nameTo;
         $this->observer->addressTo = $rs->addressTo;
         $this->observer->phoneTo = $rs->phoneTo;
@@ -165,8 +167,7 @@ sus_state_tracking st ON p.idstatetracking = st.idstatetracking", $filters, $sor
             "managementValue" => $this->observer->managementValue,
             "totalValue" => $this->observer->totalValue,
             "reference" => "'" . $this->observer->reference . "'",
-            "idpaytype" => $this->observer->payType->idpaytype,
-            "idstatetracking" => $this->observer->stateTracking->idstatetracking
+            "idpaytype" => $this->observer->payType->idpaytype
                 ), array("idpackage" => $this->observer->idpackage), $this->user->iduser
         );
     }

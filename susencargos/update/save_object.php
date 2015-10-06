@@ -147,6 +147,7 @@ if (!isset($_SESSION["user"])) {
                         $obj->totalValue = $_POST["totalValue"];
                         $obj->reference = $_POST["reference"];
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                        $obj->stateTracking = new \sus\entities\StateTrackingEntity(1);
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
                         break;
