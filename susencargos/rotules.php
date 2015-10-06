@@ -17,7 +17,11 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     $pdf->AliasNbPages();
 
     for ($i = 0; $i < $package->amount; $i++) {
-        fopen("http://" . $_SERVER["HTTP_HOST"] . "/utils/barcode.php?text=$idpackage-" . ($i + 1), "r");
+        $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
+        $path = substr($path, 0, strrpos($path, "/"));
+        $path .= "/../utils/barcode.php?text=$idpackage-" . ($i + 1);
+
+        fopen($path, "r");
         if ($i % 2 == 0) {
             $pdf->AddPage();
         }

@@ -111,6 +111,6 @@ for ($position = 1; $position <= strlen($code_string); $position++) {
     }
     $location = $cur_size;
 }
-imagepng($image, "../susencargos/images/label_$text.png", 0);
+imagepng($image, __DIR__ . "/../susencargos/images/label_$text.png", 0);
 imagedestroy($image);
 ?>
