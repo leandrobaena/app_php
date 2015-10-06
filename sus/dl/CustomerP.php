@@ -25,12 +25,27 @@ class CustomerP extends \gen\dl\LBTObjectP {
      * Inserta un nuevo cliente en la base de datos
      */
     public function insert() {
+        $taxidAux = $this->observer->taxid;
+        $taxidAux = explode("-", $taxidAux);
+        $taxidAux = $taxidAux[0];
+        $taxidAux = str_replace(".", "", $taxidAux);
+        $this->observer->user = new \gen\entities\UserEntity(
+                $this->connection->insert("gen_user", array(
+                    "login" => "'" . $this->observer->user->email . "'",
+                    "name" => "'" . $this->observer->name . "'",
+                    "active" => 1,
+                    "email" => "'" . $this->observer->user->email . "'",
+                    "password" => "'" . md5($taxidAux) . "'"
+                        ), $this->user->iduser));
+
         $this->observer->idcustomer = $this->connection->insert("sus_customer", array(
             "name" => "'" . $this->observer->name . "'",
             "taxid" => "'" . $this->observer->taxid . "'",
             "address" => "'" . $this->observer->address . "'",
             "phone" => "'" . $this->observer->phone . "'",
-            "idcity" => $this->observer->city - idcity
+            "idcity" => $this->observer->city->idcity,
+            "iduser" => $this->observer->user->iduser,
+            "contact" => "'" . $this->observer->contact . "'"
                 ), $this->user->iduser);
     }
 
@@ -38,13 +53,16 @@ class CustomerP extends \gen\dl\LBTObjectP {
      * Lee un cliente de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity", "c.idcustomer = " . $this->observer->idcustomer);
+        $rs = $this->connection->read("c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, c.iduser, u.name `user`, u.email, c.contact", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser", "c.idcustomer = " . $this->observer->idcustomer);
         $this->observer->name = $rs->name;
         $this->observer->taxid = $rs->taxid;
         $this->observer->address = $rs->address;
         $this->observer->phone = $rs->phone;
         $this->observer->city = new \sus\entities\CityEntity($rs->idcity);
         $this->observer->city->name = $rs->city;
+        $this->observer->user = new \gen\entities\UserEntity($rs->iduser);
+        $this->observer->user->name = $rs->user;
+        $this->observer->contact = $rs->contact;
     }
 
     /**
@@ -60,7 +78,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity", $filters, $sorters, $start, $limit, $this->total
+                "c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, c.iduser, u.name `user`, u.email, c.contact", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\CustomerEntity($row->idcustomer);
@@ -70,6 +88,10 @@ class CustomerP extends \gen\dl\LBTObjectP {
             $obj->phone = $row->phone;
             $obj->city = new \sus\entities\CityEntity($row->idcity);
             $obj->city->name = $row->city;
+            $obj->user = new \gen\entities\UserEntity($row->iduser);
+            $obj->user->name = $row->user;
+            $obj->user->email = $row->email;
+            $obj->contact = $row->contact;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -85,8 +107,17 @@ class CustomerP extends \gen\dl\LBTObjectP {
             "taxid" => "'" . $this->observer->taxid . "'",
             "address" => "'" . $this->observer->address . "'",
             "phone" => "'" . $this->observer->phone . "'",
-            "idcity" => $this->observer->city->idcity
+            "idcity" => $this->observer->city->idcity,
+            "contact" => "'" . $this->observer->contact . "'"
                 ), array("idcustomer" => $this->observer->idcustomer), $this->user->iduser
+        );
+
+        $this->connection->update(
+                "gen_user", array(
+            "name" => "'" . $this->observer->name . "'",
+            "login" => "'" . $this->observer->user->email . "'",
+            "email" => "'" . $this->observer->user->email . "'"
+                ), array("iduser" => $this->observer->user->iduser), $this->user->iduser
         );
     }
 

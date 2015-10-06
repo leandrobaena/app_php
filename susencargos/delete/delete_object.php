@@ -22,13 +22,23 @@ if (!isset($_SESSION["user"])) {
     if (isset($_POST["object"])) {
         $object = $_POST["object"];
         $module = new gen\bl\Module(0);
+
+        if ($object == "groupsApplication" || $object == "modules") {
+            $object = "apps";
+        }
+        if ($object == "applicationGroup" || $object == "userGroup") {
+            $object = "groups";
+        }
+        if ($object == "groupUser") {
+            $object = "users";
+        }
         $idmodule = $module->getIdModuleApplicationByScript($object, 1);
         if ($idmodule == 0) {
             echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Configuración no válida\"}}");
         } else {
             $module = new gen\bl\Module($idmodule);
             if ($module->haveAccess($_SESSION["user"]->iduser, 4)) {
-                switch ($object) {
+                switch ($_POST["object"]) {
                     case "apps":
                         $obj = new \gen\bl\Application($_POST["id"]);
                         $obj->delete($_SESSION["user"]);

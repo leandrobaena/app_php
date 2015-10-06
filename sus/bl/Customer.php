@@ -16,6 +16,8 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property string $address Dirección del cliente
  * @property string $phone Teléfono del cliente
  * @property \sus\entities\CityEntity $city Ciudad del cliente
+ * @property \gen\entities\UserEntity $user Usuario asociado al cliente
+ * @property string $contact Contacto del cliente
  * @author Leandro Baena Torres
  */
 class Customer extends \LBTObjectBL {

@@ -23,14 +23,20 @@ if (!isset($_SESSION["user"])) {
     if($object == "groupsModule" || $object == "modules"){
         $object = "apps";
     }
+    if($object == "applicationGroup" || $object == "userGroup"){
+        $object = "groups";
+    }
+    if($object == "groupUser"){
+        $object = "users";
+    }
     $module = new gen\bl\Module(0);
     $idmodule = $module->getIdModuleApplicationByScript($object, 1);
     if ($idmodule == 0) {
         echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Configuración no válida\"}}");
     } else {
         $module = new gen\bl\Module($idmodule);
-        if ($module->haveAccess($_SESSION["user"]->iduser, 2)) {
-            if ($_POST["id"] == 0) {//Inserta
+        if ($_POST["id"] == 0) {//Inserta
+            if ($module->haveAccess($_SESSION["user"]->iduser, 2)) {
                 switch ($_POST["object"]) {
                     case "apps":
                         $obj = new \gen\bl\Application($_POST["id"]);
@@ -71,6 +77,8 @@ if (!isset($_SESSION["user"])) {
                         $obj->address = $_POST["address"];
                         $obj->phone = $_POST["phone"];
                         $obj->city = new sus\entities\CityEntity($_POST["idcity"]);
+                        $obj->user->email = $_POST["email"];
+                        $obj->contact = $_POST["contact"];
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Cliente insertado\",\"body\":\"El cliente fue insertado con éxito\"}}");
                         break;
@@ -94,7 +102,7 @@ if (!isset($_SESSION["user"])) {
                         break;
                     case "groupUser":
                         $obj = new \gen\bl\User($_POST["iduser"]);
-                        $obj->insertGroup($_POST["group"], $_SESSION["user"]);
+                        $obj->insertGroup($_POST["idgroup"], $_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Grupo asignado al usuario\",\"body\":\"El grupo ha sido asignado al usuario con \\xe9xito\"}}");
                         break;
                     case "applicationGroup":
@@ -202,6 +210,8 @@ if (!isset($_SESSION["user"])) {
                         $obj->address = $_POST["address"];
                         $obj->phone = $_POST["phone"];
                         $obj->city = new sus\entities\CityEntity($_POST["idcity"]);
+                        $obj->user->email = $_POST["email"];
+                        $obj->contact = $_POST["contact"];
                         $obj->update($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Cliente actualizado\",\"body\":\"El cliente fue actualizado con éxito\"}}");
                         break;

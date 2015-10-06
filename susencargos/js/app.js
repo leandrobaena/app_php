@@ -100,6 +100,12 @@ Ext.define('susencargos.model.Customer', {
         }, {
             name: 'city',
             reference: 'susencargos.model.City'
+        }, {
+            name: 'user',
+            reference: 'susencargos.model.User'
+        }, {
+            name: 'contact',
+            type: 'string'
         }]
 });
 
@@ -1945,6 +1951,7 @@ Ext.create('Ext.app.Controller', {
                 var form = Ext.widget('formCustomer');
                 form.down('form').loadRecord(v.getStore().getAt(c));
                 form.down('form').getForm().findField('idcity').setValue(v.getStore().getAt(c).get('city').idcity);
+                form.down('form').getForm().findField('email').setValue(v.getStore().getAt(c).get('user').email);
             }
         });
     },
@@ -1958,6 +1965,7 @@ Ext.create('Ext.app.Controller', {
                 var form = Ext.widget('formCustomer');
                 form.down('form').loadRecord(r);
                 form.down('form').getForm().findField('idcity').setValue(r.get('city').idcity);
+                form.down('form').getForm().findField('email').setValue(r.get('user').email);
             }
         });
     },
@@ -3960,6 +3968,20 @@ Ext.application({
                     name: 'idcity',
                     anchor: '90%',
                     queryMode: 'local'
+                }, {
+                    xtype: 'textfield',
+                    name: 'email',
+                    vtype: 'email',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Email'
+                }, {
+                    xtype: 'textfield',
+                    name: 'contact',
+                    value: '',
+                    anchor: '90%',
+                    fieldLabel: 'Contacto'
                 }],
             buttons: [{
                     text: 'Guardar',
@@ -4517,7 +4539,7 @@ Ext.application({
                 }]
         });
         //</editor-fold>
-        //<editor-fold defaultstate="collapsed" desc="View Niveles de access">
+        //<editor-fold defaultstate="collapsed" desc="View Niveles de acceso">
         Ext.define('susencargos.view.levelAccess.Grid', {
             extend: 'susencargos.view.MainGrid',
             iconCls: 'levelAccess',

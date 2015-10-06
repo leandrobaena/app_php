@@ -4,6 +4,7 @@ namespace sus\entities;
 
 require_once (__DIR__ . "/../../utils/FormatterText.php");
 require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
+require_once (__DIR__ . "/../../gen/entities/UserEntity.php");
 require_once (__DIR__ . "/CityEntity.php");
 
 /**
@@ -15,6 +16,8 @@ require_once (__DIR__ . "/CityEntity.php");
  * @property string $address Dirección del cliente
  * @property string $phone Teléfono del cliente
  * @property CityEntity $city Ciudad a la que pertenece el cliente
+ * @property \gen\entities\UserEntity $user Usuario asociado al cliente
+ * @property string $contact Contacto del cliente
  * @author Leandro Baena Torres
  */
 class CustomerEntity extends \gen\entities\LBTObject {
@@ -32,6 +35,8 @@ class CustomerEntity extends \gen\entities\LBTObject {
         $this->address = "";
         $this->phone = "";
         $this->city = new CityEntity(0);
+        $this->user = new \gen\entities\UserEntity(0);
+        $this->contact = "";
     }
 
     //</editor-fold>
@@ -69,7 +74,9 @@ class CustomerEntity extends \gen\entities\LBTObject {
                 . "\"taxid\":\"$this->taxid\","
                 . "\"address\":\"$this->address\","
                 . "\"phone\":\"$this->phone\","
-                . "\"city\":$this->city}";
+                . "\"city\":$this->city,"
+                . "\"user\":$this->user,"
+                . "\"contact\":\"$this->contact\"}";
     }
 
     //</editor-fold>
@@ -103,6 +110,16 @@ class CustomerEntity extends \gen\entities\LBTObject {
      * @var CityEntity Ciudad del cliente
      */
     private $city;
+
+    /**
+     * @var \gen\entities\UserEntity Usuario asociado al cliente
+     */
+    private $user;
+
+    /**
+     * @var string Contacto del cliente
+     */
+    private $contact;
 
     //</editor-fold>
 }
