@@ -1,11 +1,6 @@
 <?php
 
 require(__DIR__ . '/../utils/fpdf/fpdf.php');
-require_once (__DIR__ . "/../gen/bl/User.php");
-require_once (__DIR__ . "/../sus/bl/Customer.php");
-require_once (__DIR__ . "/../sus/bl/Zone.php");
-require_once (__DIR__ . "/../sus/bl/City.php");
-require_once (__DIR__ . "/../sus/bl/StateTracking.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 
 $idpackage = 0;
@@ -54,9 +49,14 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(115, 70 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($package->cityDestination->name));
 
-        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 90 + (140 * ($i % 2)), 60, 30);
-        $pdf->SetXY(115, 120 + (140 * ($i % 2)));
+        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 80 + (140 * ($i % 2)), 60, 30);
+        $pdf->SetXY(115, 110 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', '', 10);
         $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($package->amount)));
+        $pdf->SetXY(65, 120 + (140 * ($i % 2)));
+        $pdf->Write(5, utf8_decode("Mercancía transportada por SUSencargos Logística S.A.S."));
+        $pdf->SetXY(52, 125 + (140 * ($i % 2)));
+        $pdf->Write(5, utf8_decode("Tel. 6 889 44 80 Cel. 318 532 95 79 www.susencargos.com.co Manizales"));
     }
 
     $pdf->Output();

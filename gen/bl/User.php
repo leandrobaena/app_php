@@ -59,12 +59,22 @@ class User extends \LBTObjectBL {
      * @param string $login Login ingresado por el usuario
      * @param string $password Contraseña ingresada por el usuario
      * @param int $idapplication Identificador de la aplicación a la que se quiere loguear
+     * @return \gen\entities\UserEntity Usuario que cumple las validaciones
      */
     public function validate($login, $password, $idapplication) {
         $this->persistence->validate($login, $password, $idapplication);
         return $this->entity;
     }
 
+    /**
+     * Cambia el password a un usuario
+     * 
+     * @param string $password Nueva contraseña del usuario
+     */
+    public function changePass($password) {
+        $this->persistence->changePass($password);
+    }
+    
     /**
      * Trae un listado de grupos a los que pertenece el usuario
      * @param string $filters Filtros aplicados a la consulta

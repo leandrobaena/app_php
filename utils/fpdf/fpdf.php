@@ -68,6 +68,7 @@ class FPDF {
     var $creator;            // creator
     var $AliasNbPages;       // alias for total number of pages
     var $PDFVersion;         // PDF version number
+    var $angle;              // Angle of text
 
     /*     * *****************************************************************************
      *                                                                              *
@@ -786,7 +787,12 @@ class FPDF {
         // Output text in flowing mode
         $cw = &$this->CurrentFont['cw'];
         $w = $this->w - $this->rMargin - $this->x;
-        $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        //$wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        if ($this->angle != 90 & $this->angle != 270) {
+            $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        } else {
+            $wmax = 1000;
+        }
         $s = str_replace("\r", '', $txt);
         $nb = strlen($s);
         $sep = -1;
@@ -816,7 +822,7 @@ class FPDF {
                 $sep = $i;
             }
             $l += $cw[$c];
-            if ($l > $wmax) {
+            /*if ($l > $wmax) {
                 // Automatic line break
                 if ($sep == -1) {
                     if ($this->x > $this->lMargin) {
@@ -846,9 +852,9 @@ class FPDF {
                     $wmax = ($w - 2 * $this->cMargin) * 1000 / $this->FontSize;
                 }
                 $nl++;
-            } else {
+            } else {*/
                 $i++;
-            }
+            //}
         }
         // Last chunk
         if ($i != $j) {

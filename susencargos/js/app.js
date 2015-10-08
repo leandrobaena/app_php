@@ -1609,11 +1609,7 @@ Ext.create("Ext.app.Controller", {
         "formUser button[action=save]": {click: 'save'},
         "formUser button[action=changePass]": {click: 'changePass'},
         "listGroupsUser grid#gridDestination dataview": {drop: 'insertGroup'},
-        "listGroupsUser grid#gridSource dataview": {drop: 'removeGroup'},
-        "formRecoveryPass combo[name=idrecoverymethod]": {change: 'changeRecoveryMethod'},
-        "formRecoveryPass textfield[name=email]": {blur: 'blurEmailRecoveryPass'},
-        "formRecoveryPass button[text=Continuar]": {click: 'recoveryPass'},
-        "formChangePass button[text=Cambiar]": {click: 'setNewPass'}
+        "listGroupsUser grid#gridSource dataview": {drop: 'removeGroup'}
     },
     group: function (b, f, h, d, g) {
         Ext.getStore("GroupsUser").getProxy().setExtraParam("iduser", b.getStore().getAt(h).get("iduser"));
@@ -1928,6 +1924,7 @@ Ext.create('Ext.app.Controller', {
         'listCustomers': {itemdblclick: 'editDbl'},
         'listCustomers actioncolumn[action=edit]': {click: 'edit'},
         'listCustomers actioncolumn[action=remove]': {click: 'remove'},
+        'formCustomer button[action=changePass]': {click: 'changePass'},
         'formCustomer button[action=cancel]': {click: 'cancel'},
         'formCustomer button[action=save]': {click: 'save'}
     },
@@ -1940,6 +1937,97 @@ Ext.create('Ext.app.Controller', {
     },
     cancel: function (b, e) {
         b.up('window').close();
+    },
+    changePass: function (a, c) {
+        Ext.create("Ext.window.Window", {
+            title: "Cambiar contrase\xf1a",
+            iconCls: "edit",
+            alias: "widget.formChangePass",
+            width: 300,
+            modal: true,
+            layout: "fit",
+            autoShow: true,
+            items: [{
+                    xtype: "form",
+                    url: "update/user_pass.php",
+                    defaults: {
+                        labelAlign: "right"
+                    },
+                    frame: true,
+                    items: [{
+                            xtype: 'panel',
+                            html: '* Campos obligatorios',
+                            border: 0,
+                            padding: 10
+                        }, {
+                            xtype: "hiddenfield",
+                            name: "iduser",
+                            value: a.up("form").getForm().getRecord().get('user').iduser
+                        }, {
+                            xtype: "textfield",
+                            name: "pass",
+                            itemId: "pass",
+                            vtype: "alphanum",
+                            value: "",
+                            allowBlank: false,
+                            inputType: "password",
+                            anchor: "90%",
+                            fieldLabel: "* Contrase\xf1a"
+                        }, {
+                            xtype: "textfield",
+                            name: "confirm",
+                            value: "",
+                            allowBlank: false,
+                            vtype: "password",
+                            initialPassField: "pass",
+                            inputType: "password",
+                            anchor: "90%",
+                            fieldLabel: "* Confirmaci\xf3n"
+                        }]
+                }],
+            buttons: [{
+                    text: "Guardar",
+                    handler: function (b, d) {
+                        if (b.up('window').down("form").getForm().isValid()) {
+                            b.up('window').down("form").getForm().submit({
+                                waitMsg: "Guardando ...",
+                                success: function (e, f, h) {
+                                    var g = Ext.JSON.decode(f.response.responseText);
+                                    Ext.MessageBox.show({
+                                        title: g.msg.title,
+                                        msg: g.msg.body,
+                                        buttons: Ext.Msg.OK,
+                                        icon: Ext.Msg.INFO
+                                    });
+                                    b.up("window").close();
+                                },
+                                failure: function (e, f) {
+                                    var g = Ext.JSON.decode(f.response.responseText);
+                                    Ext.MessageBox.show({
+                                        title: g.msg.title,
+                                        msg: g.msg.body,
+                                        buttons: Ext.Msg.OK,
+                                        icon: Ext.Msg.ERROR
+                                    });
+                                    b.up("window").close();
+                                }
+                            });
+                        } else {
+                            Ext.MessageBox.show({
+                                title: "Error",
+                                msg: "Ingrese los datos correctos",
+                                buttons: Ext.Msg.OK,
+                                icon: Ext.Msg.ERROR
+                            });
+                        }
+                    }
+                }, {
+                    text: "Cancelar",
+                    handler: function (b, d) {
+                        b.up("window").close();
+                    }
+                }]
+        });
     },
     edit: function (v, r, c, i, e) {
         Ext.getStore('City').load({
@@ -2819,102 +2907,6 @@ Ext.application({
          storeId: 'Template',
          model: 'susencargos.model.Template',
          object: 'templates'
-         });
-         
-         Ext.define('susencargos.view.locker.FormChangePassword', {
-         extend: 'Ext.window.Window',
-         alias: 'widget.formChangePasswordCustomer',
-         title: "Cambiar contrase\xf1a",
-         iconCls: "edit",
-         width: 600,
-         modal: true,
-         layout: "anchor",
-         autoShow: true,
-         items: [{
-         xtype: "form",
-         url: "ajax/save_object.php",
-         defaults: {
-         labelAlign: "right"
-         },
-         frame: true,
-         items: [{
-         xtype: 'hiddenfield',
-         name: 'object',
-         value: 'change_user_pass'
-         }, {
-         xtype: 'hiddenfield',
-         name: 'id',
-         value: '0'
-         }, {
-         xtype: "textfield",
-         name: "pass",
-         itemId: "pass",
-         regex: /(?!^[0-9]*$)(?!^[a-zA-Z]*$)^([a-zA-Z0-9_-]{8,})$/,
-         regexText: "La contrase\xf1a debe tener n\xfameros y letras y m\xednimo 8 caracteres",
-         vtype: "alphanum",
-         value: "",
-         allowBlank: false,
-         inputType: "password",
-         anchor: "90%",
-         fieldLabel: "* Contrase\xf1a"
-         }, {
-         xtype: "textfield",
-         name: "confirm",
-         value: "",
-         allowBlank: false,
-         vtype: "password",
-         initialPassField: "pass",
-         inputType: "password",
-         anchor: "90%",
-         fieldLabel: "* Confirmaci\xf3n"
-         }, {
-         xtype: 'panel',
-         html: '* Campos obligatorios',
-         border: 0,
-         padding: 10
-         }],
-         buttons: [{
-         text: "Guardar",
-         action: 'save',
-         handler: function (o, p) {
-         if (o.up("form").getForm().isValid()) {
-         o.up("form").getForm().submit({
-         waitMsg: "Guardando ...",
-         success: function (q, r, u) {
-         var s = Ext.JSON.decode(r.response.responseText);
-         Ext.MessageBox.show({
-         title: s.msg.title,
-         msg: s.msg.body,
-         buttons: Ext.Msg.OK,
-         icon: Ext.Msg.INFO
-         });
-         o.up("window").close()
-         },
-         failure: function (q, r) {
-         var s = Ext.JSON.decode(r.response.responseText);
-         Ext.MessageBox.show({
-         title: s.msg.title,
-         msg: s.msg.body,
-         buttons: Ext.Msg.OK,
-         icon: Ext.Msg.ERROR
-         });
-         o.up("window").close()
-         }
-         })
-         } else {
-         Ext.MessageBox.show({
-         title: "Error",
-         msg: "Ingrese los datos correctos",
-         buttons: Ext.Msg.OK,
-         icon: Ext.Msg.ERROR
-         })
-         }
-         }
-         }, {
-         text: "Cancelar",
-         action: 'cancel'
-         }]
-         }]
          });
          
          Ext.define('susencargos.view.template.Grid', {
@@ -3909,6 +3901,13 @@ Ext.application({
                         return value.name;
                     }
                 }, {
+                    header: 'Email',
+                    dataIndex: 'user',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.email;
+                    }
+                }, {
                     xtype: 'actioncolumn',
                     width: 20,
                     action: 'edit',
@@ -3992,6 +3991,9 @@ Ext.application({
                     fieldLabel: 'Contacto'
                 }],
             buttons: [{
+                    text: 'Cambiar contrase\xf1a',
+                    action: 'changePass'
+                }, {
                     text: 'Guardar',
                     action: 'save'
                 }, {

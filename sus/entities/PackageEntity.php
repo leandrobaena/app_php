@@ -4,6 +4,7 @@ namespace sus\entities;
 
 require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
 require_once (__DIR__ . "/CityEntity.php");
+require_once (__DIR__ . "/CustomerEntity.php");
 
 /**
  * Paquete o remesa transportada por susencargos

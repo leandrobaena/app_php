@@ -3,6 +3,7 @@
 namespace sus\entities;
 
 require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
+require_once (__DIR__ . "/ZoneEntity.php");
 
 /**
  * Ciudad o municipio de entrega de susencargos

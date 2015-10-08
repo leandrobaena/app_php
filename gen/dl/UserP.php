@@ -111,6 +111,18 @@ class UserP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Cambia el password a un usuario
+     * 
+     * @param string $password Nueva contraseña del usuario
+     */
+    public function changePass($password) {
+        $this->connection->update(
+                "gen_user", array(
+            "password" => "md5('$password')"), array("iduser" => $this->observer->iduser), $this->user->iduser
+        );
+    }
+
+    /**
      * Trae todos los grupos a los que pertenece el usuario de la base de datos que cumplan los filtros
      * determinados
      * 

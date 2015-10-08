@@ -206,6 +206,7 @@ if (!isset($_SESSION["user"])) {
                         break;
                     case "customers":
                         $obj = new \sus\bl\Customer($_POST["id"]);
+                        $obj->read();
                         $obj->name = $_POST["name"];
                         $obj->taxid = $_POST["taxid"];
                         $obj->address = $_POST["address"];
