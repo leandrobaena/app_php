@@ -1,0 +1,419 @@
+/*
+================================================================================
+|                                     TAGS                                     |
+================================================================================
+*/
+body {
+    background-image:url(../images/bg.jpg);
+    background-repeat:repeat-x;
+    background-color:#FFFFFF;
+    margin: 0px;
+    padding: 0px;
+}
+a {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 11px;
+    font-style: normal;
+    font-weight: bold;
+    color: #424242;
+}
+ul {
+    margin: 0px;
+    padding: 0px;
+    list-style-position: outside;
+    list-style-type: none;
+}
+li {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 11px;
+    font-style: normal;
+    font-weight: normal;
+    color: #959595;
+    background-image: url(../images/pic_ul.gif);
+    background-repeat: no-repeat;
+    width:100%;
+    line-height: 16px;
+    margin: 0px;
+    padding: 0px 0px 0px 9px;
+}
+
+/*
+================================================================================
+|                                    HEADER                                    |
+================================================================================
+*/
+#ESWpageTitle, #ESWpageTagline {
+    z-index: 100;
+}
+#ESWpageTitle {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 21px;
+    font-style: normal;
+    font-weight: normal;
+    color: #434343;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    left: 80px;
+    top: 28px;
+    width:500px;
+}
+#ESWpageTitle p{
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 21px;
+    font-style: normal;
+    font-weight: normal;
+    color: #434343;
+    text-transform:uppercase;
+    width:500px;
+}
+
+#ESWpageTagline {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    color: #DD6D0A;
+    text-transform:uppercase;
+    margin: 0px;
+    padding: 0px;
+    position: absolute;
+    left: 123px;
+    top: 51px;
+    width:500px;
+}
+#ESWpageTagline p{
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 12px;
+    font-style: normal;
+    font-weight: normal;
+    color: #DD6D0A;
+    text-transform:uppercase;
+    width:500px;
+}
+
+
+/*
+================================================================================
+|                                     MENU                                     |
+================================================================================
+*/
+#ESWuserMenuPosition {
+    position: absolute;
+    left: 5px;
+    top: 92px;
+    z-index: 100;
+    width: 256px;
+}
+#ESWuserMenu {
+    position: static;
+}
+div.ESWuserButton0 {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    background-image: url(../images/butt_off_1.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    text-align: center;
+    text-transform:uppercase;
+    color: #5E5E5E;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 5px;
+    padding-left: 8px;
+    margin: 0px;
+    margin-top:0px;
+    margin-bottom:1px;
+    cursor: pointer;
+    height:42px;
+    line-height:42px;
+    overflow:hidden;
+}
+div.ESWuserButton0:hover {
+    background-image: url(../images/butt_on_1.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+div.ESWuserButton1 {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    background-image: url(../images/butt_off_2.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+    font-size: 11px;
+    font-style: normal;
+    font-weight: bold;
+    text-align: center;
+    text-transform:uppercase;
+    color: #FFFFFF;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    padding-right: 5px;
+    padding-left: 5px;
+    margin: 0px;
+    margin-bottom:1px;
+    margin-top:0px;
+    margin-top:0px;
+    cursor: pointer;
+    height:29px;
+    line-height:29px;
+    overflow:hidden;
+}
+div.ESWuserButton1:hover {
+    background-image: url(../images/butt_on_2.png);
+    background-repeat: no-repeat;
+    background-position: 0px 0px;
+}
+/*
+================================================================================
+|                                    CONTENT                                   |
+================================================================================
+*/
+.ESWpageContent {
+    padding: 0px;
+    position: absolute;
+    width: 218px;
+    left: 36px;
+    top: 478px;
+}
+.ESWpageContent1 {
+    padding: 0px;
+    position: absolute;
+    width: 175px;
+    left: 292px;
+    top: 284px;
+}
+.ESWpageContent2 {
+    padding: 0px;
+    position: absolute;
+    width: 404px;
+    left: 292px;
+    top: 473px;
+}
+.ESWpageContent3 {
+    padding: 0px;
+    position: absolute;
+    width: 195px;
+    left: 509px;
+    top: 284px;
+}
+.ESWpageContent4 {
+    padding: 0px;
+    position: absolute;
+    width:153px;
+    left: 723px;
+    top: 283px;
+}
+.ESWpageContent5 {
+    padding: 0px;
+    position: absolute;
+    width: 365px;
+    left: 478px;
+    top: 157px;
+}
+
+.Content6 {
+    padding: 0px;
+    position: absolute;
+    width: 100px;
+    left: 240px;
+    top: 333px;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 16px;
+    font-style: normal;
+    font-weight: bold;
+    color: #FF7800;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 0px;
+}
+h1 {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 16px;
+    text-transform:uppercase;
+    font-style: normal;
+    font-weight: bold;
+} 
+p, div.ESWuserTable TD {
+    font-family: Tahoma, Arial, Helvetica, sans-serif;	
+    font-size: 11px;
+    font-style: normal;
+    font-weight: normal;
+    color: #5D5D5D;
+    margin-right: 0px;
+    margin-left: 0px;
+    margin-bottom: 0px;
+    margin-top: 0px;
+    padding: 0px;
+}
+.MyClass1 {
+    color:#424242;
+    font-weight:bold;
+}
+.MyClass2 {
+    color:#959595;
+}
+.MyClass3 {
+    font-size:7px;
+}
+.MyClass4 {
+    color:#424242;
+    font-weight:bold;
+    padding-left:65px;
+}
+.MyClass5 {
+    padding-left:65px;
+    color:#959595;
+}
+.MyClass6 {
+    font-weight:bold;
+    color:#3E3E3E;
+    padding-left:10px;
+}
+.MyClass7 {
+    color:#3E3E3E;
+    padding-left:10px;
+}
+.MyClass8 {
+    padding-left:10px;
+    color:#6A6A6A;
+}
+.MyClass9 {
+    color:#FFFFFF;
+    font-size:18px;
+}
+/*
+================================================================================
+|                                    DESIGN                                    |
+================================================================================
+*/
+#top {
+    background-image: url(../images/top.jpg);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 271px;
+    width: 898px;
+    top: 0px;
+    left: 0px;
+}
+#image1 {
+    background-image: url(../images/image1.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 42px;
+    width: 51px;
+    top: 325px;
+    left: 507px;
+}
+#image2 {
+    background-image: url(../images/image2.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 42px;
+    width: 51px;
+    top: 380px;
+    left: 507px;
+}
+#image3 {
+    background-image: url(../images/image3.png);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 69px;
+    width: 405px;
+    top: 143px;
+    left: 452px;
+}
+
+#line1 {
+    background-image: url(../images/line1.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 5px;
+    width: 264px;
+    top: 85px;
+    left: 1px;
+}
+#line2 {
+    background-image: url(../images/line2.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 4px;
+    width: 201px;
+    top: 306px;
+    left: 274px;
+}
+#line3 {
+    background-image: url(../images/line3.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 4px;
+    width: 201px;
+    top: 306px;
+    left: 498px;
+}
+#line4 {
+    background-image: url(../images/line4.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 4px;
+    width: 164px;
+    top: 306px;
+    left: 720px;
+}
+#line5 {
+    background-image: url(../images/line5.gif);
+    background-repeat: no-repeat;
+    position: absolute;
+    height: 17px;
+    width: 898px;
+    top: 581px;
+    left: 1px;
+}
+
+/* TABLE PART START */
+
+div.ESWuserTable
+{
+    height: 93px;
+}
+
+div.ESWuserTable TABLE
+{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+div.ESWuserTable TD
+{
+    border: 1px solid black;
+}
+/* TABLE PART END */
+
+.boxTracking{
+    background-image: url("../images/box_tracking_off.png");
+    background-repeat: repeat-y;
+    padding-left: 15px;
+    color: #5e5e5e;
+    cursor: pointer;
+    font-family: Tahoma,Arial,Helvetica,sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: bold;
+    height: 84px;
+    line-height: 42px;
+    margin: 0 0 1px;
+    overflow: hidden;
+    padding: 0 5px 0 8px;
+    text-align: center;
+    text-transform: uppercase;
+}
+
+.boxTracking:hover{
+    background-image: url("../images/box_tracking_on.png");
+}

@@ -33,7 +33,6 @@ class PDF extends FPDF {
     }
 
     function fill($string, $length) {
-        //return utf8_decode(sprintf("[%'." . ($length - strlen($string)) . "s]", $string));
         return utf8_decode(sprintf("%' " . $length . "s", $string));
     }
 
@@ -63,10 +62,10 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         //Origen y destino
         $pdf->Rect(90, 10 + (70 * ($i % 2)), 50, 5, "D");
         $pdf->SetXY(90, 10 + (70 * ($i % 2)));
-        $pdf->Write(5, "Origen: " . $package->citySource->name);
+        $pdf->Write(5, "Origen: " . utf8_decode($package->citySource->name));
         $pdf->Rect(140, 10 + (70 * ($i % 2)), 45, 5, "D");
         $pdf->SetXY(140, 10 + (70 * ($i % 2)));
-        $pdf->Write(5, "Destino: " . $package->cityDestination->name);
+        $pdf->Write(5, "Destino: " . utf8_decode($package->cityDestination->name));
         //Remitente
         $pdf->Rect(5, 15 + (70 * ($i % 2)), 85, 20, "D");
         $pdf->Rect(5, 15 + (70 * ($i % 2)), 5, 20, "F");
@@ -81,7 +80,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(10, 15 + (70 * ($i % 2)));
         $pdf->Write(5, "De: ");
         $pdf->SetXY(10, 20 + (70 * ($i % 2)));
-        $pdf->Write(5, $package->customer->name);
+        $pdf->Write(5, utf8_decode($package->customer->name));
         $pdf->SetXY(10, 25 + (70 * ($i % 2)));
         $pdf->Write(5, utf8_decode("Dirección: ") . $package->customer->address);
         $pdf->SetXY(10, 30 + (70 * ($i % 2)));
@@ -103,9 +102,9 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(95, 15 + (70 * ($i % 2)));
         $pdf->Write(5, "Para: ");
         $pdf->SetXY(95, 20 + (70 * ($i % 2)));
-        $pdf->Write(5, $package->nameTo);
+        $pdf->Write(5, utf8_decode($package->nameTo));
         $pdf->SetXY(95, 25 + (70 * ($i % 2)));
-        $pdf->Write(5, utf8_decode("Dirección: ") . $package->addressTo);
+        $pdf->Write(5, utf8_decode("Dirección: ") . utf8_decode($package->addressTo));
         $pdf->SetXY(95, 30 + (70 * ($i % 2)));
         $pdf->Write(5, utf8_decode("Teléfono: ") . $package->phoneTo);
         //Dice contener, observaciones, peso, volumen y no. piezas

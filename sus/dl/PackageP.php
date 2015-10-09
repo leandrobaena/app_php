@@ -46,8 +46,14 @@ class PackageP extends \gen\dl\LBTObjectP {
             "managementValue" => $this->observer->managementValue,
             "totalValue" => $this->observer->totalValue,
             "reference" => "'" . $this->observer->reference . "'",
-            "idpaytype" => $this->observer->payType->idpaytype,
-            "idstatetracking" => $this->observer->stateTracking->idstatetracking
+            "idpaytype" => $this->observer->payType->idpaytype
+                ), $this->user->iduser);
+        
+        $now = new \DateTime();
+        $this->connection->insert("sus_tracking", array(
+            "date" => "'" . $now->format("Y-m-d H:i:s") . "'",
+            "idstatetracking" => 1,
+            "idpackage" => $this->observer->idpackage
                 ), $this->user->iduser);
     }
 
@@ -57,12 +63,11 @@ class PackageP extends \gen\dl\LBTObjectP {
     public function read() {
         $rs = $this->connection->read("p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
 cu.name customer, cu.address customer_address, cu.phone customer_phone, cu.taxid customer_taxid, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type, p.idstatetracking, st.name state_tracking", "sus_package p JOIN
+p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type", "sus_package p JOIN
 sus_city c ON p.idcitysource = c.idcity JOIN
 sus_city c1 ON p.idcitydestination = c1.idcity JOIN
 sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
-sus_pay_type pt ON p.idpaytype = pt.idpaytype JOIN
-sus_state_tracking st ON p.idstatetracking = st.idstatetracking", "p.idpackage = " . $this->observer->idpackage);
+sus_pay_type pt ON p.idpaytype = pt.idpaytype", "p.idpackage = " . $this->observer->idpackage);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
         $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
         $this->observer->citySource->name = $rs->city_source;
@@ -88,8 +93,6 @@ sus_state_tracking st ON p.idstatetracking = st.idstatetracking", "p.idpackage =
         $this->observer->reference = $rs->reference;
         $this->observer->payType = new \sus\entities\PayTypeEntity($rs->idpaytype);
         $this->observer->payType->name = $rs->pay_type;
-        $this->observer->stateTracking = new \sus\entities\StateTrackingEntity($rs->idstatetracking);
-        $this->observer->stateTracking->name = $rs->state_tracking;
     }
 
     /**
@@ -107,12 +110,11 @@ sus_state_tracking st ON p.idstatetracking = st.idstatetracking", "p.idpackage =
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
 cu.name customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type, p.idstatetracking, st.name state_tracking", "sus_package p JOIN
+p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type", "sus_package p JOIN
 sus_city c ON p.idcitysource = c.idcity JOIN
 sus_city c1 ON p.idcitydestination = c1.idcity JOIN
 sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
-sus_pay_type pt ON p.idpaytype = pt.idpaytype JOIN
-sus_state_tracking st ON p.idstatetracking = st.idstatetracking", $filters, $sorters, $start, $limit, $this->total
+sus_pay_type pt ON p.idpaytype = pt.idpaytype", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -138,8 +140,6 @@ sus_state_tracking st ON p.idstatetracking = st.idstatetracking", $filters, $sor
             $obj->reference = $row->reference;
             $obj->payType = new \sus\entities\PayTypeEntity($row->idpaytype);
             $obj->payType->name = $row->pay_type;
-            $obj->stateTracking = new \sus\entities\StateTrackingEntity($row->idstatetracking);
-            $obj->stateTracking->name = $row->state_tracking;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);

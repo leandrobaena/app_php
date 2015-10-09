@@ -13,6 +13,7 @@ require_once (__DIR__ . "/../../sus/bl/PayType.php");
 require_once (__DIR__ . "/../../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../../gen/bl/LevelAccess.php");
 require_once (__DIR__ . "/../../gen/bl/GroupModule.php");
+require_once (__DIR__ . "/../../sus/bl/Tracking.php");
 
 $start = 0;
 $limit = 1000;
@@ -112,6 +113,10 @@ if (isset($_GET["object"])) {
         case "groupsModule":
             $obj = new \gen\bl\GroupModule(0);
             $list = $obj->readAll("gm.idmodule = " . $_GET["idmodule"], $sorters, $start, $limit);
+            break;
+        case "trackings":
+            $obj = new \sus\bl\Tracking(0);
+            $list = $obj->readAll("idpackage = " . $_GET["idpackage"], $sorters, $start, $limit);
             break;
     }
     echo($list);

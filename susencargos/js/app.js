@@ -205,9 +205,6 @@ Ext.define('susencargos.model.Package', {
         }, {
             name: 'payType',
             reference: 'susencargos.model.PayType'
-        }, {
-            name: 'stateTracking',
-            reference: 'susencargos.model.StateTracking'
         }]
 });
 
@@ -258,6 +255,24 @@ Ext.define('susencargos.model.GroupModule', {
         }, {
             name: 'levelAccess',
             reference: 'susencargos.model.LevelAccess'
+        }]
+});
+
+Ext.define('susencargos.model.Tracking', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idtracking',
+            type: 'int'
+        }, {
+            name: 'date',
+            type: 'date',
+            dateFormat: 'Y-m-d H:i:s'
+        }, {
+            name: 'package',
+            reference: 'susencargos.model.Package'
+        }, {
+            name: 'state',
+            reference: 'susencargos.model.StateTracking'
         }]
 });
 //</editor-fold>
@@ -2347,6 +2362,7 @@ Ext.create('Ext.app.Controller', {
         'listPackages button[action=insert]': {click: 'insert'},
         'listPackages button[action=clean]': {click: 'cleanFilters'},
         'listPackages': {itemdblclick: 'editDbl'},
+        'listPackages actioncolumn[action=tracking]': {click: 'tracking'},
         'listPackages actioncolumn[action=rotules]': {click: 'rotules'},
         'listPackages actioncolumn[action=label]': {click: 'label'},
         'listPackages actioncolumn[action=edit]': {click: 'edit'},
@@ -2377,6 +2393,28 @@ Ext.create('Ext.app.Controller', {
         } else {//Sobre
             form.findField('weight').setValue(1);
         }
+    },
+    tracking: function (v, r, c, i, e) {
+        Ext.getStore('Tracking').getProxy().setExtraParam('idpackage', v.getStore().getAt(c).get('idpackage'));
+        Ext.getStore('Tracking').load({
+            callback: function () {
+                var opened = false;
+                var content = Ext.getCmp('contenido');
+                var panel = null;
+                Ext.each(content.items.items, function (n, i, s) {
+                    if (n.alias == 'widget.listTrackings') {
+                        opened = true;
+                        panel = n;
+                    }
+                });
+                if (!opened) {
+                    panel = Ext.widget('listTrackings');
+                    content.add(panel);
+                }
+                panel.setTitle('Seguimiento de la guía ' + v.getStore().getAt(c).get('idpackage'));
+                Ext.getCmp('contenido').setActiveTab(panel);
+            }
+        });
     },
     rotules: function (v, r, c, i, e) {
         window.open('rotules.php?id=' + v.getStore().getAt(c).get('idpackage'));
@@ -2461,7 +2499,7 @@ Ext.create('Ext.app.Controller', {
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO,
                         fn: function () {
-                            Ext.getStore('City').load();
+                            Ext.getStore('Package').load();
                         }
                     });
                     b.up('window').close();
@@ -2892,6 +2930,13 @@ Ext.application({
             storeId: 'GroupsModule',
             model: 'susencargos.model.GroupModule',
             object: 'groupsModule',
+            autoLoad: false
+        });
+
+        Ext.create('susencargos.store.MainStore', {
+            storeId: 'Tracking',
+            model: 'susencargos.model.Tracking',
+            object: 'trackings',
             autoLoad: false
         });
         //</editor-fold>
@@ -4274,12 +4319,13 @@ Ext.application({
                         return value.name;
                     }
                 }, {
-                    header: 'Estado remesa',
-                    dataIndex: 'stateTracking',
-                    flex: 2,
-                    renderer: function (value) {
-                        return value.name;
-                    }
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'tracking',
+                    tooltip: 'Seguimiento',
+                    icon: 'css/tracking.png',
+                    stopSelection: false,
+                    iconCls: 'rotule'
                 }, {
                     xtype: 'actioncolumn',
                     width: 20,
@@ -4501,6 +4547,36 @@ Ext.application({
                 }, {
                     text: 'Cancelar',
                     action: 'cancel'
+                }]
+        });
+        
+        Ext.define('susencargos.view.package.Tracking', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'tracking',
+            alias: 'widget.listTrackings',
+            title: 'Seguimiento',
+            store: 'Tracking',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idtracking',
+                    felx: 1
+                }, {
+                    header: 'Fecha',
+                    dataIndex: 'date',
+                    filter: {
+                        type: 'date',
+                        fields: {lt: {text: 'Antes de'}, gt: {text: 'Depu\xe9s de '}, eq: {text: 'El d\xeda'}}, dateFormat: 'Y-m-d H:i:s'
+                    },
+                    flex: 2,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d H:i:s')
+                }, {
+                    header: 'Estado',
+                    dataIndex: 'state',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.name;
+                    }
                 }]
         });
         //</editor-fold>

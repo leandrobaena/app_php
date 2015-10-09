@@ -5,6 +5,7 @@ namespace sus\entities;
 require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
 require_once (__DIR__ . "/CityEntity.php");
 require_once (__DIR__ . "/CustomerEntity.php");
+require_once (__DIR__ . "/PayTypeEntity.php");
 
 /**
  * Paquete o remesa transportada por susencargos
@@ -28,7 +29,6 @@ require_once (__DIR__ . "/CustomerEntity.php");
  * @property float $totalValue Valor total de la remesa
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property PayTypeEntity $payType Tipo de pago de la remesa
- * @property StateTrackingEntity $stateTracking Estado de seguimiento de la remesa
  * @author Leandro Baena Torres
  */
 class PackageEntity extends \gen\entities\LBTObject {
@@ -110,8 +110,7 @@ class PackageEntity extends \gen\entities\LBTObject {
                 . "\"managementValue\":$this->managementValue,"
                 . "\"totalValue\":$this->totalValue,"
                 . "\"reference\":\"$this->reference\","
-                . "\"payType\":$this->payType,"
-                . "\"stateTracking\":$this->stateTracking}";
+                . "\"payType\":$this->payType}";
     }
 
     //</editor-fold>
@@ -210,11 +209,6 @@ class PackageEntity extends \gen\entities\LBTObject {
      * @var PayTypeEntity Tipo de pago de la remesa
      */
     private $payType;
-
-    /**
-     * @var StateTrackingEntity Estado de seguimeinto de la remesa
-     */
-    private $stateTracking;
 
     //</editor-fold>
 }
