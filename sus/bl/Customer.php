@@ -30,6 +30,15 @@ class Customer extends \LBTObjectBL {
     }
 
     // </editor-fold>
+    // <editor-fold defaultstate="collapsed" desc="Métodos">
+    /**
+     * Carga el cliente dado su identificador de usuario
+     * @param int $iduser Identificador del usaurio asociado al cliente
+     */
+    public function readByIdUser($iduser){
+        $this->persistence->readByIdUser($iduser);
+    }
+    // </editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Propiedades">
     /**
      * Trae un atributo

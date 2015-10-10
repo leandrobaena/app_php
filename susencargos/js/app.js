@@ -4260,7 +4260,7 @@ Ext.application({
                     header: 'ID',
                     filter: 'number',
                     dataIndex: 'idpackage',
-                    felx: 1
+                    flex: 1
                 }, {
                     header: 'Fecha',
                     dataIndex: 'date',
@@ -4560,7 +4560,7 @@ Ext.application({
                     header: 'ID',
                     filter: 'number',
                     dataIndex: 'idtracking',
-                    felx: 1
+                    flex: 1
                 }, {
                     header: 'Fecha',
                     dataIndex: 'date',

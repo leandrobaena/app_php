@@ -29,6 +29,9 @@ if (!isset($_SESSION["user"])) {
     if($object == "groupUser"){
         $object = "users";
     }
+    if($object == "packagesCustomer"){
+        $object = "enterPackage";
+    }
     $module = new gen\bl\Module(0);
     $idmodule = $module->getIdModuleApplicationByScript($object, 1);
     if ($idmodule == 0) {
@@ -80,6 +83,8 @@ if (!isset($_SESSION["user"])) {
                         $obj->user->email = $_POST["email"];
                         $obj->contact = $_POST["contact"];
                         $obj->create($_SESSION["user"]);
+                        $user = new \gen\bl\User($obj->user->iduser);
+                        $user->insertGroup(2, $_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Cliente insertado\",\"body\":\"El cliente fue insertado con éxito\"}}");
                         break;
                     case "zones":
@@ -133,6 +138,32 @@ if (!isset($_SESSION["user"])) {
                         $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
                         $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                         $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                        $obj->nameTo = $_POST["nameTo"];
+                        $obj->addressTo = $_POST["addressTo"];
+                        $obj->phoneTo = $_POST["phoneTo"];
+                        $obj->content = $_POST["content"];
+                        $obj->observations = $_POST["observations"];
+                        $obj->weight = $_POST["weight"];
+                        $obj->volumen = $_POST["volumen"];
+                        $obj->amount = $_POST["amount"];
+                        $obj->declaredValue = $_POST["declaredValue"];
+                        $obj->shippingValue = $_POST["shippingValue"];
+                        $obj->managementValue = $_POST["managementValue"];
+                        $obj->totalValue = $_POST["totalValue"];
+                        $obj->reference = $_POST["reference"];
+                        $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                        $obj->create($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
+                        break;
+                    case "packagesCustomer":
+                        $user = $_SESSION["user"];
+                        $customer = new sus\bl\Customer(0);
+                        $customer->readByIdUser($user->iduser);
+                        $obj = new \sus\bl\Package($_POST["id"]);
+                        $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
+                        $obj->citySource = new \sus\entities\CityEntity($customer->city->idcity);
+                        $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
+                        $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
                         $obj->nameTo = $_POST["nameTo"];
                         $obj->addressTo = $_POST["addressTo"];
                         $obj->phoneTo = $_POST["phoneTo"];

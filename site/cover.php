@@ -1,19 +1,7 @@
-<?php
-$package = "";
-
-require_once(__DIR__ . "/../sus/bl/Tracking.php");
-
-if (isset($_GET["package"]) && is_numeric($_GET["package"])) {
-    $package = $_GET["package"];
-    $tracking = new \sus\bl\Tracking(0);
-    $steps = $tracking->readAll("idpackage = $package", "date DESC", 0, 100);
-}
-?>
-
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
     <head>
-        <title>.:: SUSencargos Log&iacute;stica - Seguimiento de remesas ::.</title>
+        <title>.:: SUSencargos Log&iacute;stica - Inicio de sesi&oacute;n ::.</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="Description" content="Ofrecemos una solución integral en el proceso de recolección, transporte  terrestre, distribución urbana y regional, con  entrega puerta a puerta de sus mercancías, con estricto cumplimiento de los tiempos de entrega  establecidos en nuestra matriz de cubrimiento, con mínima manipulación de sus envío. Contamos con medios de comunicación, sistemas de seguridad  y un desarrollo tecnológico que nos permite suministrar información  oportuna sobre cada uno de sus envíos.">
         <meta name="Keywords" content="Susencargos Logistica, servicio personalizado, entrega de mercancias, recolegcción envios, cajas, transporte, caldas, dosquebradas.">
@@ -51,7 +39,7 @@ if (isset($_GET["package"]) && is_numeric($_GET["package"])) {
                 </div>
                 <img class="draggable editable" src="images/banner.png" alt="banner.png" onmousedown="return false;" style="position: absolute; top: 92px; left: 266px; z-index: 124; visibility: visible; height: 179px; width: 639px; border-width: 0px;" id="ESW_GEN_ID_11" eswid="ESW_GEN_ID_11" isflashingnow="0" ismarknow="0" cached_border="none|rgb(0, 0, 0)|0px|" oncontextmenu="return false;" />
                 <div class="ESWpageContent1 draggable editable" ismarknow="0" isflashingnow="0" cached_border="none|rgb(0, 0, 0)|0px|" style="z-index: 3; height: 118px; left: 285px; top: 285px; position: absolute; width: 395px; border-width: 0px;" id="ESW_GEN_ID_3" eswid="ESW_GEN_ID_3">
-                    <h1><font size="5">Seguimiento de remesa</font></h1>
+                    <h1><font size="5">Inicio de sesi&oacute;n</font></h1>
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
                     <p class="MyClass1"><br /></p>
@@ -59,20 +47,22 @@ if (isset($_GET["package"]) && is_numeric($_GET["package"])) {
                 </div>
                 <div id="ESWpageTagline" class="draggable editable"></div>
                 <div class="ESWpageContent draggable editable" style="z-index: 11; left: 279px; top: 350px; height: 354px; position: absolute; width: 347px; border-width: 0px;" ismarknow="0" isflashingnow="0" cached_border="none|rgb(0, 0, 0)|0px|" id="ESW_GEN_ID_7" eswid="ESW_GEN_ID_7">
-                    <h1>Remesa No.: <?php echo($package) ?></h1><br /><br />
-                    <table width="100%">
-                        <tr>
-                            <th><h2>Fecha</h2></th>
-                            <th><h2>Estado</h2></th>
-                        </tr>
-                        <?php for ($i = 0; $i < count($steps->records); $i++) { ?>
+                    <h1>Ingrese sus datos de acceso</h1><br /><br />
+                    <form method="post" action="login.php">
+                        <table width="100%">
                             <tr>
-                                <td><?php echo($steps->records[$i]->date->format("Y-m-d H:i:s")); ?></td>
-                                <td><?php echo($steps->records[$i]->state->name); ?></td>
-                            </tr><?php
-                    }
-                        ?>
-                    </table>
+                                <td><h2>Usuario:</h2></td>
+                                <td><input type="text" name="login" style="width: 100%"></td>
+                            </tr>
+                            <tr>
+                                <td><h2>Contase&ntilde;a:</h2></td>
+                                <td><input type="password" name="password" style="width: 100%"></td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" align="right"><input type="submit" value="Ingresar"></td>
+                            </tr>
+                        </table>
+                    </form>
                 </div>
                 <div class="ESWpageContent draggable editable" id="ESW_GEN_ID_2" eswid="ESW_GEN_ID_2" style="top: 852px; left: 1px; z-index: 105; visibility: visible; height: 66px; position: absolute; width: 878px; border-width: 0px;" isflashingnow="0" ismarknow="0" cached_border="none|rgb(0, 0, 0)|0px|">
                     <p style="text-align: center; "><font size="2"><b>Caldas - Colombia</b></font></p>

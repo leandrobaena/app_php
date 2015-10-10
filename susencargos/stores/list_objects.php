@@ -15,6 +15,8 @@ require_once (__DIR__ . "/../../gen/bl/LevelAccess.php");
 require_once (__DIR__ . "/../../gen/bl/GroupModule.php");
 require_once (__DIR__ . "/../../sus/bl/Tracking.php");
 
+session_start();
+
 $start = 0;
 $limit = 1000;
 $object = "";
@@ -96,7 +98,11 @@ if (isset($_GET["object"])) {
             break;
         case "packages":
             $obj = new \sus\bl\Package(0);
-            $list = $obj->readAll($filters, $sorters, $start, $limit);
+            $list = $obj->readAll($filters, ($sorters != "" ? "$sorters, date DESC" : "date DESC"), $start, $limit);
+            break;
+        case "packagesCustomer":
+            $obj = new \sus\bl\Package(0);
+            $list = $obj->readAllCustomer($_SESSION["user"]->iduser, $start, $limit);
             break;
         case "payTypes":
             $obj = new \sus\bl\PayType(0);

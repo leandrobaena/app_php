@@ -66,6 +66,26 @@ class CustomerP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Carga el cliente dado su identificador de usuario
+     * @param int $iduser Identificador del usaurio asociado al cliente
+     */
+    public function readByIdUser($iduser){
+        $rs = $this->connection->read("c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, u.name `user`, u.email, c.contact",
+                "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser",
+                "u.iduser = $iduser");
+        $this->observer->idcustomer = $rs->idcustomer;
+        $this->observer->name = $rs->name;
+        $this->observer->taxid = $rs->taxid;
+        $this->observer->address = $rs->address;
+        $this->observer->phone = $rs->phone;
+        $this->observer->city = new \sus\entities\CityEntity($rs->idcity);
+        $this->observer->city->name = $rs->city;
+        $this->observer->user = new \gen\entities\UserEntity($iduser);
+        $this->observer->user->name = $rs->user;
+        $this->observer->contact = $rs->contact;
+    }
+    
+    /**
      * Trae todos los clientes de la base de datos que cumplan los filtros
      * determinados
      * 

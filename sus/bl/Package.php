@@ -42,6 +42,18 @@ class Package extends \LBTObjectBL {
     }
 
     // </editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Métodos">
+    /**
+     * Trae todos las remesas de un determinado cliente dado su identificador de
+     * usuario
+     * 
+     * @return array Listado de remesas del cliente
+     */
+    public function readAllCustomer($iduser, $start, $limit) {
+        return $this->persistence->readAllCustomer($iduser, $start, $limit);
+    }
+
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Propiedades">
     /**
      * Trae un atributo
