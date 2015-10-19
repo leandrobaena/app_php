@@ -4581,7 +4581,7 @@ Ext.application({
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Tipos de pago">
-        Ext.define('susencargos.view.zone.Grid', {
+        Ext.define('susencargos.view.payType.Grid', {
             extend: 'susencargos.view.MainGrid',
             iconCls: 'payType',
             alias: 'widget.listPayTypes',
@@ -4615,7 +4615,7 @@ Ext.application({
                 }]
         });
 
-        Ext.define('susencargos.view.zone.Form', {
+        Ext.define('susencargos.view.payType.Form', {
             extend: 'susencargos.view.MainForm',
             alias: 'widget.formPayType',
             title: 'Editar tipo de pago',

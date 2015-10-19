@@ -1,19 +1,19 @@
 <?php
 
-require_once (__DIR__ . "/../../gen/bl/User.php");
-require_once (__DIR__ . "/../../gen/bl/Application.php");
-require_once (__DIR__ . "/../../gen/bl/Group.php");
-require_once (__DIR__ . "/../../gen/bl/Module.php");
-require_once (__DIR__ . "/../../sus/bl/Customer.php");
-require_once (__DIR__ . "/../../sus/bl/Zone.php");
-require_once (__DIR__ . "/../../sus/bl/City.php");
-require_once (__DIR__ . "/../../sus/bl/StateTracking.php");
-require_once (__DIR__ . "/../../sus/bl/Package.php");
-require_once (__DIR__ . "/../../sus/bl/PayType.php");
-require_once (__DIR__ . "/../../sus/bl/PackageType.php");
-require_once (__DIR__ . "/../../gen/bl/LevelAccess.php");
-require_once (__DIR__ . "/../../gen/bl/GroupModule.php");
-require_once (__DIR__ . "/../../sus/bl/Tracking.php");
+require_once (__DIR__ . "/../gen/bl/User.php");
+require_once (__DIR__ . "/../gen/bl/Application.php");
+require_once (__DIR__ . "/../gen/bl/Group.php");
+require_once (__DIR__ . "/../gen/bl/Module.php");
+require_once (__DIR__ . "/../gen/bl/LevelAccess.php");
+require_once (__DIR__ . "/../gen/bl/GroupModule.php");
+require_once (__DIR__ . "/../sus/bl/Customer.php");
+require_once (__DIR__ . "/../sus/bl/Zone.php");
+require_once (__DIR__ . "/../sus/bl/City.php");
+require_once (__DIR__ . "/../sus/bl/StateTracking.php");
+require_once (__DIR__ . "/../sus/bl/Package.php");
+require_once (__DIR__ . "/../sus/bl/PayType.php");
+require_once (__DIR__ . "/../sus/bl/PackageType.php");
+require_once (__DIR__ . "/../sus/bl/Tracking.php");
 
 session_start();
 
@@ -118,7 +118,7 @@ if (isset($_GET["object"])) {
             break;
         case "groupsModule":
             $obj = new \gen\bl\GroupModule(0);
-            $list = $obj->readAll("gm.idmodule = " . $_GET["idmodule"], $sorters, $start, $limit);
+            $list = $obj->readAll("idmodule = " . $_GET["idmodule"], $sorters, $start, $limit);
             break;
         case "trackings":
             $obj = new \sus\bl\Tracking(0);

@@ -53,7 +53,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
      * Lee un cliente de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, c.iduser, u.name `user`, u.email, c.contact", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser", "c.idcustomer = " . $this->observer->idcustomer);
+        $rs = $this->connection->read("name, taxid, address, phone, idcity, city, iduser, `user`, email, contact", "vw_sus_customer", "idcustomer = " . $this->observer->idcustomer);
         $this->observer->name = $rs->name;
         $this->observer->taxid = $rs->taxid;
         $this->observer->address = $rs->address;
@@ -69,10 +69,8 @@ class CustomerP extends \gen\dl\LBTObjectP {
      * Carga el cliente dado su identificador de usuario
      * @param int $iduser Identificador del usaurio asociado al cliente
      */
-    public function readByIdUser($iduser){
-        $rs = $this->connection->read("c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, u.name `user`, u.email, c.contact",
-                "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser",
-                "u.iduser = $iduser");
+    public function readByIdUser($iduser) {
+        $rs = $this->connection->read("idcustomer, name, taxid, address, phone, idcity, city, `user`, email, contact", "vw_sus_customer", "iduser = $iduser");
         $this->observer->idcustomer = $rs->idcustomer;
         $this->observer->name = $rs->name;
         $this->observer->taxid = $rs->taxid;
@@ -84,7 +82,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
         $this->observer->user->name = $rs->user;
         $this->observer->contact = $rs->contact;
     }
-    
+
     /**
      * Trae todos los clientes de la base de datos que cumplan los filtros
      * determinados
@@ -98,7 +96,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "c.idcustomer, c.name, c.taxid, c.address, c.phone, c.idcity, ci.name as city, c.iduser, u.name `user`, u.email, c.contact", "sus_customer c JOIN sus_city ci ON c.idcity = ci.idcity JOIN gen_user u ON c.iduser = u.iduser", $filters, $sorters, $start, $limit, $this->total
+                "idcustomer, name, taxid, address, phone, idcity, city, iduser, `user`, email, contact", "vw_sus_customer", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\CustomerEntity($row->idcustomer);

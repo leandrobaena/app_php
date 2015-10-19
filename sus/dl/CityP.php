@@ -35,7 +35,7 @@ class CityP extends \gen\dl\LBTObjectP {
      * Lee una ciudad de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("c.name, c.idzone, z.name zone", "sus_city c JOIN sus_zone z ON c.idzone = z.idzone", "c.idcity = " . $this->observer->idcity);
+        $rs = $this->connection->read("name, idzone, zone", "vw_sus_city", "idcity = " . $this->observer->idcity);
         $this->observer->name = $rs->name;
         $this->observer->zone = new \sus\entities\ZoneEntity($rs->idzone);
         $this->observer->zone->name = $rs->zone;
@@ -54,7 +54,7 @@ class CityP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "c.idcity, c.name, c.idzone, z.name zone", "sus_city c JOIN sus_zone z ON c.idzone = z.idzone", $filters, $sorters, $start, $limit, $this->total
+                "idcity, name, idzone, zone", "vw_sus_city", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\CityEntity($row->idcity);

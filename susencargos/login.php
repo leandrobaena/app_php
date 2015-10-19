@@ -1,6 +1,6 @@
 <?php
 
-require_once (__DIR__ . "/../gen/bl/User.php");
+require_once (__DIR__ . "/gen/bl/User.php");
 
 session_start();
 

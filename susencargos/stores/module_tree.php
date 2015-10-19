@@ -1,7 +1,7 @@
 <?php
 
-require_once (__DIR__ . "/../../gen/bl/User.php");
-require_once (__DIR__ . "/../../gen/bl/Module.php");
+require_once (__DIR__ . "/../gen/bl/User.php");
+require_once (__DIR__ . "/../gen/bl/Module.php");
 
 session_start();
 

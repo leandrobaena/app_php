@@ -1,8 +1,17 @@
+<?php
+
+session_start();
+
+if(!isset($_SESSION["user"])){
+    header("Location: cover.php");
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Nosostros ::.</title>
+        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Zona de clientes ::.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Ofrecemos una solución integral en el proceso de recolección, transporte  terrestre, distribución urbana y regional, con  entrega puerta a puerta de sus mercancías, con estricto cumplimiento de los tiempos de entrega  establecidos en nuestra matriz de cubrimiento, con mínima manipulación de sus envío. Contamos con medios de comunicación, sistemas de seguridad  y un desarrollo tecnológico que nos permite suministrar información  oportuna sobre cada uno de sus envíos." />
         <meta name="author" content="Leandro Baena Torres" />

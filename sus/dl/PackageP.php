@@ -61,13 +61,10 @@ class PackageP extends \gen\dl\LBTObjectP {
      * Lee una remesa de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
-cu.name customer, cu.address customer_address, cu.phone customer_phone, cu.taxid customer_taxid, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type", "sus_package p JOIN
-sus_city c ON p.idcitysource = c.idcity JOIN
-sus_city c1 ON p.idcitydestination = c1.idcity JOIN
-sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
-sus_pay_type pt ON p.idpaytype = pt.idpaytype", "p.idpackage = " . $this->observer->idpackage);
+        $rs = $this->connection->read("date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
+                customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
+                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type",
+                "vw_sus_package", "idpackage = " . $this->observer->idpackage);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
         $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
         $this->observer->citySource->name = $rs->city_source;
@@ -108,13 +105,9 @@ sus_pay_type pt ON p.idpaytype = pt.idpaytype", "p.idpackage = " . $this->observ
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "p.idpackage, p.date, p.idcitysource, c.name city_source, p.idcitydestination, c1.name city_destination, p.idcustomer,
-cu.name customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, pt.name pay_type", "sus_package p JOIN
-sus_city c ON p.idcitysource = c.idcity JOIN
-sus_city c1 ON p.idcitydestination = c1.idcity JOIN
-sus_customer cu ON p.idcustomer = cu.idcustomer JOIN
-sus_pay_type pt ON p.idpaytype = pt.idpaytype", $filters, $sorters, $start, $limit, $this->total
+                "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
+                customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
+                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -150,7 +143,7 @@ sus_pay_type pt ON p.idpaytype = pt.idpaytype", $filters, $sorters, $start, $lim
      */
     public function update() {
         $this->connection->update(
-                "sus_zone", array(
+                "sus_package", array(
             "date" => "'" . $this->observer->date->format("Y-m-d") . "'",
             "idcitysource" => $this->observer->citySource->idcity,
             "idcitydestination" => $this->observer->cityDestination->idcity,
