@@ -38,7 +38,8 @@ class ModuleP extends \gen\dl\LBTObjectP {
      * Lee un módulo de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("m.name, m.idparent, m.class, m.script, m.idapplication, a.name application", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication", "m.idmodule = " . $this->observer->idmodule);
+        $rs = $this->connection->read("name, idparent, class, script, idapplication, application",
+                "vw_gen_module", "idmodule = " . $this->observer->idmodule);
         $this->observer->name = $rs->name;
         $this->observer->idparent = ($rs->idparent != "" ? $rs->idparent : 0);
         $this->observer->class = $rs->class;
@@ -59,7 +60,7 @@ class ModuleP extends \gen\dl\LBTObjectP {
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
-        $rs = $this->connection->readAll("m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication, a.name application", "gen_module m JOIN gen_application a ON m.idapplication = a.idapplication", ($this->observer->idparent == 0 ? "idparent IS NULL" : "idparent = " . $this->observer->idparent) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total);
+        $rs = $this->connection->readAll("idmodule, name, idparent, class, script, idapplication, application", "vw_gen_module", ($this->observer->idparent == 0 ? "idparent IS NULL" : "idparent = " . $this->observer->idparent) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total);
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
@@ -95,12 +96,7 @@ class ModuleP extends \gen\dl\LBTObjectP {
      */
     public function modulesByUser($idapplication, $iduser) {
         $list = array();
-        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN
-                gen_application a ON m.idapplication = a.idapplication JOIN
-                gen_group_application ga ON a.idapplication = ga.idapplication JOIN
-                gen_group g ON g.idgroup = ga.idgroup JOIN
-                gen_user_group ug ON g.idgroup = ug.idgroup JOIN
-                gen_group_module gm ON g.idgroup = gm.idgroup AND gm.idmodule = m.idmodule", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent IS NULL AND gm.idlevelaccess = 1", "", 0, 1000);
+        $rs = $this->connection->readAll("idmodule, name, idparent, class, script, idapplication", "vw_gen_modules", "iduser = $iduser AND idapplication = $idapplication AND idparent IS NULL AND idlevelaccess = 1", "idmodule", 0, 1000);
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
@@ -121,12 +117,7 @@ class ModuleP extends \gen\dl\LBTObjectP {
      */
     public function submodulesByUser($idapplication, $iduser) {
         $list = array();
-        $rs = $this->connection->readAll("DISTINCT m.idmodule, m.name, m.idparent, m.class, m.script, m.idapplication", "gen_module m JOIN
-                gen_application a ON m.idapplication = a.idapplication JOIN
-                gen_group_application ga ON a.idapplication = ga.idapplication JOIN
-                gen_group g ON g.idgroup = ga.idgroup JOIN
-                gen_user_group ug ON g.idgroup = ug.idgroup JOIN
-                gen_group_module gm ON g.idgroup = gm.idgroup AND gm.idmodule = m.idmodule", "ug.iduser = $iduser AND m.idapplication = $idapplication AND idparent = " . $this->observer->idmodule . " AND gm.idlevelaccess = 1", "", 0, 1000);
+        $rs = $this->connection->readAll("idmodule, name, idparent, class, script, idapplication", "vw_gen_modules", "iduser = $iduser AND idapplication = $idapplication AND idparent = " . $this->observer->idmodule . " AND idlevelaccess = 1", "idmodule", 0, 1000);
         foreach ($rs as $row) {
             $obj = new \gen\entities\ModuleEntity($row->idmodule);
             $obj->name = $row->name;
@@ -158,7 +149,7 @@ class ModuleP extends \gen\dl\LBTObjectP {
      * @param int $idlevelaccess Identificador del nivel de acceso
      */
     public function haveAccess($iduser, $idlevelaccess) {
-        $rs = $this->connection->read("gm.idmodule", "gen_group_module gm JOIN gen_group g ON gm.idgroup = g.idgroup JOIN gen_user_group ug ON g.idgroup = ug.idgroup", "gm.idmodule = " . $this->observer->idmodule . " AND gm.idlevelaccess = $idlevelaccess AND ug.iduser = $iduser");
+        $rs = $this->connection->read("idmodule", "vw_gen_group_module", "idmodule = " . $this->observer->idmodule . " AND idlevelaccess = $idlevelaccess AND iduser = $iduser");
         return ($rs == null ? false : true);
     }
 

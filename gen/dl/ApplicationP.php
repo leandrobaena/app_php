@@ -77,11 +77,11 @@ class ApplicationP extends \gen\dl\LBTObjectP {
     public function listGroups($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "g.idgroup, g.name, g.active", "gen_group_application ga join gen_group g on ga.idgroup = g.idgroup", ("ga.idapplication = " . $this->observer->idapplication) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+                "idgroup, `group`, active", "vw_gen_group_application", ("idapplication = " . $this->observer->idapplication) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \gen\entities\GroupEntity($row->idgroup);
-            $obj->name = $row->name;
+            $obj->name = $row->group;
             $obj->active = $row->active == 1;
             array_push($list, $obj);
         }

@@ -37,7 +37,7 @@ class GroupModuleP extends \gen\dl\LBTObjectP {
      * Lee un nivel de acceso a un módulo por un grupo
      */
     public function read() {
-        $rs = $this->connection->read("gm.idgroup, g.name group, gm.idmodule, m.name module, gm.idlevelaccess, la.name level_access", "gen_group_module gm JOIN gen_group g ON gm.idgroup = g.idgroup JOIN gen_module m ON gm.idmodule = m.idmodule JOIN gen_level_access la ON gm.idlevelaccess = la.idlevelaccess", "gm.idgroupmodule = " . $this->observer->idgroupmodule);
+        $rs = $this->connection->read("idgroup, `group`, idmodule, module, idlevelaccess, level_access", "vw_gen_group_module", "idgroupmodule = " . $this->observer->idgroupmodule);
         $this->observer->group = new \gen\entities\GroupEntity($rs->idgroup);
         $this->observer->group->name = $rs->group;
         $this->observer->module = new \gen\entities\ModuleEntity($rs->idmodule);
@@ -58,7 +58,7 @@ class GroupModuleP extends \gen\dl\LBTObjectP {
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
-        $rs = $this->connection->readAll("gm.idgroupmodule, gm.idgroup, g.name `group`, gm.idmodule, m.name module, gm.idlevelaccess, la.name level_access", "gen_group_module gm JOIN gen_group g ON gm.idgroup = g.idgroup JOIN gen_module m ON gm.idmodule = m.idmodule JOIN gen_level_access la ON gm.idlevelaccess = la.idlevelaccess", $filters, $sorters, $start, $limit, $this->total);
+        $rs = $this->connection->readAll("idgroupmodule, idgroup, `group`, idmodule, module, idlevelaccess, level_access", "vw_gen_group_module", $filters, $sorters, $start, $limit, $this->total);
         foreach ($rs as $row) {
             $obj = new \gen\entities\GroupModuleEntity($row->idgroupmodule);
             $obj->group = new \gen\entities\GroupEntity($row->idgroup);

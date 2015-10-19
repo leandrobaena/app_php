@@ -103,7 +103,7 @@ class UserP extends \gen\dl\LBTObjectP {
      * @param int $idapplication Identificador de la aplicación a la que se quiere loguear
      */
     public function validate($login, $password, $idapplication) {
-        $id = $this->connection->validate($login, $password, $idapplication);
+        $id = $this->connection->validate($login, $password);
         if ($id != 0) {
             $this->observer->iduser = $id;
             $this->read();
@@ -135,12 +135,12 @@ class UserP extends \gen\dl\LBTObjectP {
     public function listGroups($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "g.idgroup, g.name, g.active", "gen_user_group ug join gen_group g on ug.idgroup = g.idgroup", ("ug.iduser = " . $this->observer->iduser) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+                "idgroup, `group`, group_active", "vw_gen_user_group", ("iduser = " . $this->observer->iduser) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \gen\entities\GroupEntity($row->idgroup);
-            $obj->name = $row->name;
-            $obj->active = ($row->active == 1);
+            $obj->name = $row->group;
+            $obj->active = ($row->group_active == 1);
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);

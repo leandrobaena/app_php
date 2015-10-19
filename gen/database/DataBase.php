@@ -136,7 +136,7 @@ abstract class DataBase {
      * @return int Id del usuario utenticado o 0 si no autentica
      * @throws BDException Si hubo un error en la actualización
      */
-    public abstract function validate($email, $password, $idapplication);
+    public abstract function validate($email, $password);
     
     /**
      * Cierra la conexión a la base de datos

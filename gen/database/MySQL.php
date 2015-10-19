@@ -11,7 +11,7 @@ require_once(__DIR__ . "/DataBase.php");
  */
 class MySQL extends DataBase {
 
-    // <editor-fold defaultstate="collapsed" desc="Contructores">
+    // <editor-fold defaultstate="collapsed" desc="Constructores">
     /**
      * @see parent::__construct()
      */
@@ -56,11 +56,7 @@ class MySQL extends DataBase {
      * @see parent::read()
      */
     public function read($fields, $table, $conditions = "") {
-        $sql = "SELECT $fields FROM $table";
-        if ($conditions != "") {
-            $sql .= " WHERE $conditions";
-        }
-        //$sql = "CALL sp_read_object(\"$fields\",\"$table\", \"$conditions\")";
+        $sql = "CALL sp_read_object(\"$fields\",\"$table\", \"$conditions\")";
         $rs = $this->link->query($sql);
         if ($rs == null) {
             throw new BDException($this->link->error, $sql, __FILE__, __LINE__);
@@ -74,19 +70,7 @@ class MySQL extends DataBase {
      * @see parent::readAll()
      */
     public function readAll($fields, $table, $filters, $sorters, $start, $limit, &$total = null) {
-        $sql = "SELECT SQL_CALC_FOUND_ROWS $fields FROM $table";
-        if ($filters != "") {
-            $sql .= " WHERE $filters";
-        }
-        if ($sorters != "") {
-            $sql .= " ORDER BY $sorters";
-        }
-        if ($limit == 0) {
-            $limit = 10000;
-        }
-        $sql .= " LIMIT $start, $limit; ";
-        $sql .= "SELECT FOUND_ROWS() AS total";
-        //$sql = "CALL sp_list_objects(\"$fields\",\"$table\", \"$filters\", \"$sorters\", $start, $limit)";
+        $sql = "CALL sp_list_objects(\"$fields\",\"$table\", \"$filters\", \"$sorters\", $start, $limit)";
         $this->link->multi_query($sql);
         $rs = $this->link->store_result();
         if ($rs == null) {
@@ -102,6 +86,7 @@ class MySQL extends DataBase {
         $obj = $rs->fetch_object();
         $total = $obj->total;
         $rs->close();
+        $this->link->next_result();
         return $list;
     }
 
@@ -119,20 +104,15 @@ class MySQL extends DataBase {
             $strFields .= $field;
             $strValues .= $value;
         }
-        $sql = "INSERT INTO $table ($strFields) VALUES ($strValues)";
-        $this->link->query($sql);
-        //$sql = "CALL sp_create_object(\"$table\", \"$strFields\", \"$strValues\", $user)";
-        $sql1 = "SELECT LAST_INSERT_ID() AS _id";
-        $this->link->query($sql1);
-        $rs = $this->link->query($sql1);
+        $sql = "CALL sp_create_object(\"$table\", \"$strFields\", \"$strValues\", $user)";
+        $rs = $this->link->query($sql);
         if ($rs == null) {
             throw new BDException($this->link->error, $sql, __FILE__, __LINE__);
         }
         $row = $rs->fetch_object();
         $id = $row->_id;
         $rs->close();
-        $sql = "INSERT INTO gen_log (`table`, `date`, `user`, `sql`) VALUES ('$table', NOW(), $user, '" . str_replace("'", "", $sql) . "')";
-        $this->link->query($sql);
+        $this->link->next_result();
         return $id;
     }
 
@@ -140,8 +120,7 @@ class MySQL extends DataBase {
      * @see parent::delete()
      */
     public function delete($table, $data, $user) {
-        $sql = "DELETE FROM $table WHERE ";
-        //$sql = "CALL sp_delete_object(\"$table\", \"";
+        $sql = "CALL sp_delete_object(\"$table\", \"";
         $first = true;
         foreach ($data as $field => $value) {
             if (!$first) {
@@ -150,17 +129,16 @@ class MySQL extends DataBase {
             $sql .= $field . " = " . $value;
             $first = false;
         }
+        $sql .= "\", $user)";
         $this->link->query($sql);
-        $sql = "INSERT INTO gen_log (`table`, `date`, `user`, `sql`) VALUES ('$table', NOW(), $user, '" . str_replace("'", "", $sql) . "')";
-        $this->link->query($sql);
+        $this->link->next_result();
     }
 
     /**
      * @see parent::update()
      */
     public function update($table, $data, $id, $user) {
-        $sql = "UPDATE $table SET ";
-        //$sql = "CALL sp_update_object(\"$table\", \"";
+        $sql = "CALL sp_update_object(\"$table\", \"";
         $primero = true;
         foreach ($data as $field => $value) {
             if (!$primero) {
@@ -169,21 +147,20 @@ class MySQL extends DataBase {
             $sql .= $field . " = " . $value;
             $primero = false;
         }
-        $sql .= " WHERE ";
+        $sql .= "\",\"";
         foreach ($id as $field => $value) {
             $sql .= $field . " = " . $value;
         }
+        $sql .= "\", $user)";
         $this->link->query($sql);
-        $sql = "INSERT INTO gen_log (`table`, `date`, `user`, `sql`) VALUES ('$table', NOW(), $user, '" . str_replace("'", "", $sql) . "')";
-        $this->link->query($sql);
+        $this->link->next_result();
     }
 
     /**
      * @see parent::validate()
      */
-    public function validate($email, $password, $idapplication) {
-        $sql = "SELECT u.iduser as id FROM gen_user u JOIN gen_user_group ug ON u.iduser = ug.iduser JOIN gen_group_application ga ON ug.idgroup = ga.idgroup WHERE u.email = '$email' AND u.`password` = MD5('$password') AND u.active = 1 AND ga.idapplication = $idapplication";
-        //$sql = "CALL sp_user_validate(\"$email\",\"$password\")";
+    public function validate($email, $password) {
+        $sql = "CALL sp_user_validate(\"$email\",\"$password\")";
         $rs = $this->link->query($sql);
         if ($rs == null) {
             throw new BDException($this->link->error, $sql, __FILE__, __LINE__);
@@ -194,6 +171,7 @@ class MySQL extends DataBase {
             } else {
                 $row = $rs->fetch_object();
                 $rs->close();
+                $this->link->next_result();
                 return $row->id;
             }
         }

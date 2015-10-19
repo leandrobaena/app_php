@@ -87,13 +87,13 @@ class GroupP extends \gen\dl\LBTObjectP {
     public function listUsers($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "u.iduser, u.login, u.name, u.active", "gen_user_group ug join gen_user u on ug.iduser = u.iduser", ("ug.idgroup = " . $this->observer->idgroup) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+                "iduser, login, `user`, user_active", "vw_gen_user_group", ("idgroup = " . $this->observer->idgroup) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \gen\entities\UserEntity($row->iduser);
             $obj->login = $row->login;
-            $obj->name = $row->name;
-            $obj->active = ($row->active == 1);
+            $obj->name = $row->user;
+            $obj->active = ($row->user_active == 1);
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -112,11 +112,11 @@ class GroupP extends \gen\dl\LBTObjectP {
     public function listApplications($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "a.idapplication, a.name", "gen_group_application ga join gen_application a on ga.idapplication = a.idapplication", ("ga.idgroup = " . $this->observer->idgroup) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
+                "idapplication, application", "vw_gen_group_application", ("idgroup = " . $this->observer->idgroup) . ($filters != "" ? " AND $filters" : ""), $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \gen\entities\ApplicationEntity($row->idapplication);
-            $obj->name = $row->name;
+            $obj->name = $row->application;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
