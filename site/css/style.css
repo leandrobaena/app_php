@@ -332,7 +332,7 @@ select.selectmenu {
 .flex-caption h3 {color: #fff; letter-spacing: 1px; margin-bottom: 8px; text-transform: uppercase;}
 .flex-caption p {margin: 0 0 15px;}
 
-.tracking {
+.trackingBox {
     top: 10px;
     background-color: #ff7800;
     color: #FFF;
@@ -344,12 +344,12 @@ select.selectmenu {
     height: 100px;
 }
 
-.tracking h4{
+.trackingBox h4{
     margin-bottom: 3px;
     color: #FFF;
 }
 
-.tracking .btn{
+.trackingBox .btn{
     background-color: #000;
 }
 

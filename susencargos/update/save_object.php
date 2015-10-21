@@ -173,9 +173,9 @@ if (!isset($_SESSION["user"])) {
                         $obj->volumen = $_POST["volumen"];
                         $obj->amount = $_POST["amount"];
                         $obj->declaredValue = $_POST["declaredValue"];
-                        $obj->shippingValue = $_POST["shippingValue"];
-                        $obj->managementValue = $_POST["managementValue"];
-                        $obj->totalValue = $_POST["totalValue"];
+                        $obj->shippingValue = 0;
+                        $obj->managementValue = 0;
+                        $obj->totalValue = 0;
                         $obj->reference = $_POST["reference"];
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
                         $obj->create($_SESSION["user"]);

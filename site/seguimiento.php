@@ -1,19 +1,18 @@
 <?php
+require_once (__DIR__ . "/intranet/sus/bl/Tracking.php");
 
-require_once (__DIR__ . "/intranet/gen/bl/User.php");
-
-session_start();
-
-if(!isset($_SESSION["user"])){
-    header("Location: cover.php");
+$tracking = 0;
+if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
+    $tracking = $_GET["tracking"];
+    $info = new \sus\bl\Tracking($tracking);
+    $steps = $info->readAll("idpackage = $tracking", "date DESC", 0, 100);
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Zona de clientes ::.</title>
+        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Servicios ::.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Ofrecemos una solución integral en el proceso de recolección, transporte  terrestre, distribución urbana y regional, con  entrega puerta a puerta de sus mercancías, con estricto cumplimiento de los tiempos de entrega  establecidos en nuestra matriz de cubrimiento, con mínima manipulación de sus envío. Contamos con medios de comunicación, sistemas de seguridad  y un desarrollo tecnológico que nos permite suministrar información  oportuna sobre cada uno de sus envíos." />
         <meta name="author" content="Leandro Baena Torres" />
@@ -23,11 +22,6 @@ if(!isset($_SESSION["user"])){
         <link href="css/flexslider.css" rel="stylesheet" />
         <link href="css/style.css" rel="stylesheet" />
         <link href="skins/default.css" rel="stylesheet" />
-        <link rel="stylesheet" href="intranet/js/extjs/build/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css" />
-        <link rel="Stylesheet" href="intranet/css/admin.css" />
-        <script src="intranet/js/extjs/build/ext-all.js"></script>
-        <script src="intranet/js/extjs/build/ext-locale-es.js"></script>
-        <script src="js/app.js"></script>
         <!--[if lt IE 9]>
                   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
                 <![endif]-->
@@ -40,8 +34,8 @@ if(!isset($_SESSION["user"])){
                     <div class="row">
                         <div class="col-lg-12">
                             <ul class="breadcrumb">
-                                <li class="active">Bienvenido: <?php echo($_SESSION["user"]->name) ?></li>
-                                <li><a href="logout.php">Cerrar sesi&oacute;n</a></li>
+                                <li><a href="index.php"><i class="fa fa-home"></i></a><i class="icon-angle-right"></i></li>
+                                <li class="active">Seguimiento de remesas</li>
                             </ul>
                         </div>
                     </div>
@@ -53,9 +47,40 @@ if(!isset($_SESSION["user"])){
                         <div class="col-lg-12">
                             <div class="big-cta">
                                 <div class="cta-text" style="text-align: justify">
-                                    <p>A continuaci&oacute;n puede observar el listado de sus remesas creadas en el sistema.</p>
-                                    <p>En la parte inferior del listado haga clic en el bot&oacute;n <b>Nueva remesa</b> para crear una nueva.</p>
-                                    <div id="listPackages"></div>
+                                    <?php
+                                    if ($tracking == 0) {
+                                        ?>
+                                        <h2>No hay informaci&oacute;n para mostrar</h2>
+                                        <p>Por favor revise el n&uacute;mero de remesa diligenciada o comun&iacute;quese con nosotros <a href="contactenos.php">aqu&iacute;</a>.<p>
+                                            <?php
+                                        } else {
+                                            if (count($steps->records) > 0) {
+                                                ?>
+                                            <h3>Informaci&oacute;n de la remesa</h3>
+                                            <table style="width: 100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Fecha</th>
+                                                        <th>Estado</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <?php
+                                                    foreach($steps->records as $s){?>
+                                                    <tr>
+                                                        <td><?php echo($s->date->format("Y-m-d H:i:s")); ?></td>
+                                                        <td><?php echo($s->state->name); ?></td>
+                                                    </tr><?php
+                                                    } ?>
+                                                </thead>
+                                            </table>
+                                                <?php
+                                            } else { ?>
+                                                <h2>No existe este n&uacute;mero de remesa</h2>
+                                                <?php
+                                            }
+                                        }
+                                        ?>
                                 </div>
                             </div>
                         </div>

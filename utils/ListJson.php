@@ -5,6 +5,7 @@ namespace utils;
 /**
  * Lista especializada para el manejo de objetos que se exportan en formato JSON
  *
+ * @property array $records Listado de registros
  * @author Leandro Baena Torres
  */
 class ListJson {

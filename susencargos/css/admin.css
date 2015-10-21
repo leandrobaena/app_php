@@ -159,7 +159,8 @@
 }
 
 .label{
-    background-image:url(label.png)!important
+    background-image:url(label.png)!important;
+    display: block !important;
 }
 
 .tracking{

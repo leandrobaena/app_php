@@ -15,7 +15,7 @@ if($script == "cover.php"){
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="index.php"><img src="img/logo.jpg" style="height: 100px" /></a>
-                <div class="tracking col-lg-12">
+                <div class="trackingBox col-lg-12">
                     <form action="seguimiento.php" method="get" id="contactform">
                         <table style="width: 100%">
                             <tr>
