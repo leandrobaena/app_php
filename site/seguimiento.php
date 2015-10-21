@@ -56,7 +56,7 @@ if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
                                         } else {
                                             if (count($steps->records) > 0) {
                                                 ?>
-                                            <h3>Informaci&oacute;n de la remesa</h3>
+                                            <h3>Informaci&oacute;n de la remesa <?php echo($tracking); ?></h3>
                                             <table style="width: 100%">
                                                 <thead>
                                                     <tr>
