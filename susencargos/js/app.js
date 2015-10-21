@@ -277,13 +277,51 @@ Ext.define('susencargos.model.Tracking', {
 });
 //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="MainStore">
-Ext.define("susencargos.store.MainStore", {
+//<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
+Ext.define("susencargos.store.MainStoreRemote", {
     extend: "Ext.data.Store",
     remoteSort: true,
-    remoteFilter: false,
+    remoteFilter: true,
     object: "",
-    autoLoad: true,
+    proxy: {
+        type: "ajax",
+        url: "stores/list_objects.php",
+        extraParams: {
+            object: ""
+        },
+        reader: {
+            type: "json",
+            root: "data",
+            successProperty: "success"
+        }
+    },
+    constructor: function (a) {
+        a = Ext.apply({
+            proxy: {
+                extraParams: {
+                    object: a.object
+                }
+            }
+        }, a);
+        this.callParent([a]);
+    },
+    listeners: {
+        load: function (b, c, a, d) {
+            if (!a) {
+                Ext.MessageBox.show({
+                    title: "Error",
+                    msg: "Sesi\xf3n expirada",
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        }
+    }
+});
+
+Ext.define("susencargos.store.MainStoreLocal", {
+    extend: "Ext.data.Store",
+    object: "",
     proxy: {
         type: "ajax",
         url: "stores/list_objects.php",
@@ -414,21 +452,21 @@ Ext.create('Ext.app.Controller', {
         this.openGrid('listLevelsAccess');
     },
     enterPackage: function () {
-        Ext.getStore('City').load({
+        Ext.getStore('CityL').load({
             params: {
                 start: 0,
                 limit: 1000
             },
             callback: function () {
-                Ext.getStore('Customer').load({
+                Ext.getStore('CustomerL').load({
                     params: {
                         start: 0,
                         limit: 1000
                     },
                     callback: function () {
-                        Ext.getStore('PayType').load({
+                        Ext.getStore('PayTypeL').load({
                             callback: function () {
-                                Ext.getStore('PackageType').load({
+                                Ext.getStore('PackageTypeL').load({
                                     callback: function () {
                                         var form = Ext.widget('formPackage').down('form');
                                         form.loadRecord(Ext.create('susencargos.model.Package'));
@@ -595,6 +633,7 @@ Ext.create('Ext.app.Controller', {
     modules: function (v, r, c, i, e) {
         Ext.getStore('Module').getProxy().setExtraParam('idapplication', v.getStore().getAt(c).get('idapplication'));
         Ext.getStore('Module').load();
+        Ext.getStore('ModuleL').getProxy().setExtraParam('idapplication', v.getStore().getAt(c).get('idapplication'));
         Ext.getStore('ModuleTree').getProxy().setExtraParam('idapplication', v.getStore().getAt(c).get('idapplication'));
         Ext.getStore('ModuleTree').load();
         var opened = false;
@@ -615,7 +654,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('Application').load();
     },
     insert: function (b, e) {
         Ext.widget('formApplication').down('form').loadRecord(Ext.create('susencargos.model.Application'));
@@ -624,7 +662,7 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.widget('formApplication').down('form').loadRecord(v.getStore().getAt(c))
+        Ext.widget('formApplication').down('form').loadRecord(v.getStore().getAt(c));
     },
     editDbl: function (g, r) {
         Ext.widget('formApplication').down('form').loadRecord(r);
@@ -762,13 +800,13 @@ Ext.create('Ext.app.Controller', {
         });
     },
     insertModule: function (b, e) {
+        Ext.getStore('ModuleL').load();
         var form = Ext.widget('formModule');
         form.down('form').loadRecord(Ext.create('susencargos.model.Module'));
         form.down('form').getForm().findField('idapplication').setValue(Ext.getStore('Module').getProxy().extraParams.idapplication);
     },
     cleanFiltersModules: function (b, e) {
         b.up('treepanel').filters.clearFilters();
-        Ext.getStore('Module').load();
     },
     editDblModule: function (g, r) {
         var form = Ext.widget('formModule');
@@ -873,9 +911,9 @@ Ext.create('Ext.app.Controller', {
         Ext.getCmp('contenido').setActiveTab(panel);
     },
     insertGroupModule: function (b, e) {
-        Ext.getStore('Group').load({
+        Ext.getStore('GroupL').load({
             callback: function () {
-                Ext.getStore('LevelAccess').load({
+                Ext.getStore('LevelAccessL').load({
                     callback: function () {
                         var form = Ext.widget('formGroupModule');
                         form.down('form').loadRecord(Ext.create('susencargos.model.GroupModule'));
@@ -887,7 +925,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFiltersGroupsModule: function (b, e) {
         b.up('treepanel').filters.clearFilters();
-        Ext.getStore('Module').load();
     },
     saveGroupModule: function (b, e) {
         if (b.up('form').getForm().isValid()) {
@@ -928,9 +965,9 @@ Ext.create('Ext.app.Controller', {
         }
     },
     editDblGroupModule: function (g, r) {
-        Ext.getStore('Group').load({
+        Ext.getStore('GroupL').load({
             callback: function () {
-                Ext.getStore('LevelAccess').load({
+                Ext.getStore('LevelAccessL').load({
                     callback: function () {
                         var form = Ext.widget('formGroupModule');
                         form.down('form').getForm().loadRecord(r);
@@ -943,9 +980,9 @@ Ext.create('Ext.app.Controller', {
         });
     },
     editGroupModule: function (v, r, c, i, e) {
-        Ext.getStore('Group').load({
+        Ext.getStore('GroupL').load({
             callback: function () {
-                Ext.getStore('LevelAccess').load({
+                Ext.getStore('LevelAccessL').load({
                     callback: function () {
                         var form = Ext.widget('formGroupModule');
                         form.down('form').getForm().loadRecord(v.getStore().getAt(c));
@@ -1030,7 +1067,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         Ext.getStore('Group').load();
-        b.up('grid').filters.clearFilters();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -1234,67 +1270,6 @@ Ext.create('Ext.app.Controller', {
                 }
             });
         });
-    },
-    insertCountry: function (n, d, dr, dp) {
-        Ext.each(d.records, function (n, i, s) {
-            Ext.Ajax.request({
-                url: 'update/save_object.php',
-                params: {
-                    idgroup: Ext.getStore('CountriesGroup').getProxy().extraParams.idgroup,
-                    object: 'countryGroup',
-                    id: 0,
-                    idcountry: n.get('idcountry')
-                },
-                success: function (t, p, o) {
-                    var d = Ext.JSON.decode(t.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO
-                    });
-                },
-                failure: function (t, p, o) {
-                    var d = Ext.JSON.decode(t.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
-                }
-            });
-        });
-    },
-    removeCountry: function (no, d, dr, dp) {
-        Ext.each(d.records, function (n, i, s) {
-            Ext.Ajax.request({
-                url: 'delete/delete_object.php',
-                params: {
-                    idgroup: Ext.getStore('CountriesGroup').getProxy().extraParams.idgroup,
-                    object: 'countryGroup',
-                    idcountry: n.get('idcountry')
-                },
-                success: function (t, p, o) {
-                    var d = Ext.JSON.decode(t.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO
-                    });
-                },
-                failure: function (t, p, o) {
-                    var d = Ext.JSON.decode(t.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
-                }
-            });
-        });
     }
 });
 
@@ -1313,7 +1288,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('StateTracking').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -1639,7 +1613,6 @@ Ext.create("Ext.app.Controller", {
     },
     cleanFilters: function (a, c) {
         a.up("grid").filters.clearFilters();
-        Ext.getStore('User').load();
     },
     cancel: function (a, c) {
         a.up("window").close();
@@ -1907,7 +1880,7 @@ Ext.create("Ext.app.Controller", {
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO,
                         fn: function () {
-                            window.location = "Ingresar.php";
+                            window.location = "cover.php";
                         }
                     });
                 },
@@ -1944,11 +1917,16 @@ Ext.create('Ext.app.Controller', {
         'formCustomer button[action=save]': {click: 'save'}
     },
     insert: function (b, e) {
-        Ext.widget('formCustomer').down('form').loadRecord(Ext.create('susencargos.model.Customer'));
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 1000,
+            callback: function () {
+                Ext.widget('formCustomer').down('form').loadRecord(Ext.create('susencargos.model.Customer'));
+            }
+        });
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('Customer').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -2045,7 +2023,7 @@ Ext.create('Ext.app.Controller', {
         });
     },
     edit: function (v, r, c, i, e) {
-        Ext.getStore('City').load({
+        Ext.getStore('CityL').load({
             params: {
                 start: 0,
                 limit: 1000
@@ -2059,7 +2037,7 @@ Ext.create('Ext.app.Controller', {
         });
     },
     editDbl: function (g, r) {
-        Ext.getStore('City').load({
+        Ext.getStore('CityL').load({
             params: {
                 start: 0,
                 limit: 1000
@@ -2160,7 +2138,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('Zone').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -2261,13 +2238,12 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('City').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.getStore('Zone').load({
+        Ext.getStore('ZoneL').load({
             callback: function () {
                 var form = Ext.widget('formCity');
                 form.down('form').loadRecord(v.getStore().getAt(c));
@@ -2276,7 +2252,7 @@ Ext.create('Ext.app.Controller', {
         });
     },
     editDbl: function (g, r) {
-        Ext.getStore('Zone').load({
+        Ext.getStore('ZoneL').load({
             callback: function () {
                 var form = Ext.widget('formCity');
                 form.down('form').loadRecord(r);
@@ -2377,7 +2353,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('City').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -2423,21 +2398,21 @@ Ext.create('Ext.app.Controller', {
         window.open('label.php?id=' + v.getStore().getAt(c).get('idpackage'));
     },
     edit: function (v, r, c, i, e) {
-        Ext.getStore('City').load({
+        Ext.getStore('CityL').load({
             params: {
                 start: 0,
                 limit: 1000
             },
             callback: function () {
-                Ext.getStore('Customer').load({
+                Ext.getStore('CustomerL').load({
                     params: {
                         start: 0,
                         limit: 1000
                     },
                     callback: function () {
-                        Ext.getStore('PayType').load({
+                        Ext.getStore('PayTypeL').load({
                             callback: function () {
-                                Ext.getStore('PackageType').load({
+                                Ext.getStore('PackageTypeL').load({
                                     callback: function () {
                                         var form = Ext.widget('formPackage');
                                         form.down('form').loadRecord(v.getStore().getAt(c));
@@ -2455,21 +2430,21 @@ Ext.create('Ext.app.Controller', {
         });
     },
     editDbl: function (g, r) {
-        Ext.getStore('City').load({
+        Ext.getStore('CityL').load({
             params: {
                 start: 0,
                 limit: 1000
             },
             callback: function () {
-                Ext.getStore('Customer').load({
+                Ext.getStore('CustomerL').load({
                     params: {
                         start: 0,
                         limit: 1000
                     },
                     callback: function () {
-                        Ext.getStore('PayType').load({
+                        Ext.getStore('PayTypeL').load({
                             callback: function () {
-                                Ext.getStore('PackageType').load({
+                                Ext.getStore('PackageTypeL').load({
                                     callback: function () {
                                         var form = Ext.widget('formCity');
                                         form.down('form').loadRecord(r);
@@ -2574,7 +2549,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('PayType').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -2675,7 +2649,6 @@ Ext.create('Ext.app.Controller', {
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('LevelAccess').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
@@ -2768,20 +2741,38 @@ Ext.application({
     name: 'susencargos',
     launch: function () {
         //<editor-fold defaultstate="collapsed" desc="Stores">
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Application',
             model: 'susencargos.model.Application',
             object: 'apps'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'ApplicationL',
+            model: 'susencargos.model.Application',
+            object: 'apps'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Group',
             model: 'susencargos.model.Group',
             object: 'groups'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'GroupL',
+            model: 'susencargos.model.Group',
+            object: 'groups'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Module',
+            model: 'susencargos.model.Module',
+            object: 'modules'
+        });
+
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'ModuleL',
             model: 'susencargos.model.Module',
             object: 'modules'
         });
@@ -2816,139 +2807,165 @@ Ext.application({
             }
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'User',
             model: 'susencargos.model.User',
             object: 'users'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Customer',
             model: 'susencargos.model.Customer',
             object: 'customers'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'CustomerL',
+            model: 'susencargos.model.Customer',
+            object: 'customers'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Zone',
             model: 'susencargos.model.Zone',
             object: 'zones'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'ZoneL',
+            model: 'susencargos.model.Zone',
+            object: 'zones'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'City',
             model: 'susencargos.model.City',
             object: 'cities'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'CityL',
+            model: 'susencargos.model.City',
+            object: 'cities'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'GroupsUser',
             model: 'susencargos.model.Group',
-            autoLoad: false,
             object: 'groupsUser'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'NoGroupsUser',
             model: 'susencargos.model.Group',
-            autoLoad: false,
             object: 'noGroupsUser'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'NoUsersGroup',
             model: 'susencargos.model.User',
-            autoLoad: false,
             object: 'noUsersGroup'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'UsersGroup',
             model: 'susencargos.model.User',
-            autoLoad: false,
             object: 'usersGroup'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'StateTracking',
             model: 'susencargos.model.StateTracking',
             object: 'statesTracking'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Package',
             model: 'susencargos.model.Package',
             object: 'packages'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'PayType',
             model: 'susencargos.model.PayType',
             object: 'payTypes'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'PayTypeL',
+            model: 'susencargos.model.PayType',
+            object: 'payTypes'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'PackageType',
             model: 'susencargos.model.PackageType',
             object: 'packageTypes'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'PackageTypeL',
+            model: 'susencargos.model.PackageType',
+            object: 'packageTypes'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'ApplicationsGroup',
             model: 'susencargos.model.Application',
-            object: 'applicationsGroup',
-            autoLoad: false
+            object: 'applicationsGroup'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'GroupsApplication',
             model: 'susencargos.model.Group',
-            object: 'groupsApplication',
-            autoLoad: false
+            object: 'groupsApplication'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'NoApplicationsGroup',
             model: 'susencargos.model.Application',
-            object: 'noApplicationsGroup',
-            autoLoad: false
+            object: 'noApplicationsGroup'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'NoGroupsApplication',
             model: 'susencargos.model.Group',
-            object: 'noGroupsApplication',
-            autoLoad: false
+            object: 'noGroupsApplication'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'LevelAccess',
             model: 'susencargos.model.LevelAccess',
             object: 'levelsAccess'
         });
 
-        Ext.create('susencargos.store.MainStore', {
-            storeId: 'GroupsModule',
-            model: 'susencargos.model.GroupModule',
-            object: 'groupsModule',
-            autoLoad: false
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'LevelAccessL',
+            model: 'susencargos.model.LevelAccess',
+            object: 'levelsAccess'
         });
 
-        Ext.create('susencargos.store.MainStore', {
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'GroupsModule',
+            model: 'susencargos.model.GroupModule',
+            object: 'groupsModule'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Tracking',
             model: 'susencargos.model.Tracking',
-            object: 'trackings',
-            autoLoad: false
+            object: 'trackings'
         });
         //</editor-fold>
 
         /*
-         Ext.create('susencargos.store.MainStore', {
+         Ext.create('susencargos.store.MainStoreRemote', {
          storeId: 'FieldTemplate',
          model: 'susencargos.model.FieldTemplate',
          object: 'fields'
          });
          
-         Ext.create('susencargos.store.MainStore', {
+         Ext.create('susencargos.store.MainStoreRemote', {
          storeId: 'Template',
          model: 'susencargos.model.Template',
          object: 'templates'
@@ -3378,10 +3395,11 @@ Ext.application({
                     xtype: 'combo',
                     name: 'idgroup',
                     value: '',
-                    store: 'Group',
+                    store: 'GroupL',
                     valueField: 'idgroup',
                     displayField: 'name',
                     allowBlank: false,
+                    autoLoadOnValue: true,
                     fieldLabel: '* Grupo',
                     queryMode: 'local',
                     anchor: '90%',
@@ -3391,8 +3409,9 @@ Ext.application({
                     xtype: 'combo',
                     name: 'idlevelaccess',
                     value: '',
-                    store: 'LevelAccess',
+                    store: 'LevelAccessL',
                     valueField: 'idlevelaccess',
+                    autoLoadOnValue: true,
                     displayField: 'name',
                     allowBlank: false,
                     fieldLabel: '* Nivel de acceso',
@@ -3539,6 +3558,7 @@ Ext.application({
                     allowBlank: false,
                     anchor: '90%',
                     fieldLabel: '* Activo',
+                    autoLoadOnValue: true,
                     store: [[false, 'No'], [true, 'Si']],
                     queryMode: 'local',
                     forceSelection: true,
@@ -3696,8 +3716,9 @@ Ext.application({
                     emptyText: '- Nuevo m\xf3dulo -',
                     value: '',
                     anchor: '90%',
-                    store: 'Module',
+                    store: 'ModuleL',
                     valueField: 'idmodule',
+                    autoLoadOnValue: true,
                     displayField: 'name',
                     fieldLabel: '* M\xf3dulo padre',
                     queryMode: 'local',
@@ -3855,6 +3876,7 @@ Ext.application({
                     allowBlank: false,
                     anchor: '90%',
                     fieldLabel: '* Activo',
+                    autoLoadOnValue: true,
                     store: [[false, 'No'], [true, 'Si']],
                     forceSelection: true,
                     queryMode: 'local',
@@ -4011,10 +4033,11 @@ Ext.application({
                 }, {
                     xtype: 'combo',
                     fieldLabel: 'Ciudad',
-                    store: 'City',
+                    store: 'CityL',
                     typeAhead: true,
                     forceSelection: true,
                     allowBlank: false,
+                    autoLoadOnValue: true,
                     valueField: 'idcity',
                     displayField: 'name',
                     name: 'idcity',
@@ -4169,11 +4192,12 @@ Ext.application({
                 }, {
                     xtype: 'combo',
                     fieldLabel: 'Ruta',
-                    store: 'Zone',
+                    store: 'ZoneL',
                     typeAhead: true,
                     forceSelection: true,
                     allowBlank: false,
                     valueField: 'idzone',
+                    autoLoadOnValue: true,
                     displayField: 'name',
                     name: 'idzone',
                     anchor: '90%',
@@ -4384,12 +4408,13 @@ Ext.application({
                         }, {
                             xtype: 'combo',
                             fieldLabel: '* Remitente',
-                            store: 'Customer',
+                            store: 'CustomerL',
                             typeAhead: true,
                             forceSelection: true,
                             allowBlank: false,
                             valueField: 'idcustomer',
                             displayField: 'name',
+                            autoLoadOnValue: true,
                             name: 'idcustomer',
                             anchor: '90%',
                             queryMode: 'local'
@@ -4404,7 +4429,8 @@ Ext.application({
                         }, {
                             xtype: 'combo',
                             fieldLabel: '* Tipo de pago',
-                            store: 'PayType',
+                            autoLoadOnValue: true,
+                            store: 'PayTypeL',
                             typeAhead: true,
                             forceSelection: true,
                             allowBlank: false,
@@ -4416,7 +4442,8 @@ Ext.application({
                         }, {
                             xtype: 'combo',
                             fieldLabel: '* Tipo de envío',
-                            store: 'PackageType',
+                            store: 'PackageTypeL',
+                            autoLoadOnValue: true,
                             typeAhead: true,
                             forceSelection: true,
                             allowBlank: false,
@@ -4428,7 +4455,8 @@ Ext.application({
                         }, {
                             xtype: 'combo',
                             fieldLabel: '* Ciudad origen',
-                            store: 'City',
+                            autoLoadOnValue: true,
+                            store: 'CityL',
                             typeAhead: true,
                             forceSelection: true,
                             allowBlank: false,
@@ -4440,7 +4468,8 @@ Ext.application({
                         }, {
                             xtype: 'combo',
                             fieldLabel: '* Ciudad destino',
-                            store: 'City',
+                            autoLoadOnValue: true,
+                            store: 'CityL',
                             typeAhead: true,
                             forceSelection: true,
                             allowBlank: false,
@@ -4549,7 +4578,7 @@ Ext.application({
                     action: 'cancel'
                 }]
         });
-        
+
         Ext.define('susencargos.view.package.Tracking', {
             extend: 'susencargos.view.MainGrid',
             iconCls: 'tracking',

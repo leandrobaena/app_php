@@ -131,7 +131,6 @@ class MySQL extends DataBase {
         }
         $sql .= "\", $user)";
         $this->link->query($sql);
-        $this->link->next_result();
     }
 
     /**
@@ -153,7 +152,6 @@ class MySQL extends DataBase {
         }
         $sql .= "\", $user)";
         $this->link->query($sql);
-        $this->link->next_result();
     }
 
     /**

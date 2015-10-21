@@ -5,6 +5,11 @@ require_once (__DIR__ . "/../gen/bl/Module.php");
 
 session_start();
 
+$idapplication = 0;
+
+if (isset($_GET["idapplication"])) {
+    $idapplication = $_GET["idapplication"];
+}
 
 $out = "";
 if ($_SESSION["user"] != null) {
@@ -23,7 +28,7 @@ if ($_SESSION["user"] != null) {
             $out .= substr($m, 0, strlen($m) - 1) . ",\"leaf\":true}";
         }
     } else {//Módulos
-        $modules = $module->readAll("", "", 0, 1000);
+        $modules = $module->readAll("idapplication = $idapplication", "", 0, 1000);
         $first = true;
         foreach ($modules->records as $m) {
             if ($first) {

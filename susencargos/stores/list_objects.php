@@ -29,6 +29,33 @@ if (isset($_GET["start"])) {
 if (isset($_GET["limit"])) {
     $limit = $_GET["limit"];
 }
+if (isset($_GET["filter"])) {
+    $arrFilters = json_decode($_GET["filter"]);
+    foreach ($arrFilters as $f) {
+        if ($filters != "") {
+            $filters .= " AND ";
+        }
+        if (isset($f->operator)) {
+            switch ($f->operator) {
+                case "eq":
+                    $filters .= "$f->property = $f->value";
+                    break;
+                case "lt":
+                    $filters .= "$f->property < $f->value";
+                    break;
+                case "gt":
+                    $filters .= "$f->property > $f->value";
+                    break;
+                case "like":
+                    $filters .= "$f->property LIKE '%$f->value%'";
+                    break;
+                case "=":
+                    $filters .= "$f->property = " . ($f->value == "true" ? 1 : 0);
+                    break;
+            }
+        }
+    }
+}
 if (isset($_GET["object"])) {
     $object = $_GET["object"];
     switch ($object) {
@@ -42,7 +69,7 @@ if (isset($_GET["object"])) {
             break;
         case "modules":
             $obj = new \gen\bl\Module(0);
-            $list = $obj->readAll($filters, $sorters, $start, $limit);
+            $list = $obj->readAll("idapplication = " . $_GET["idapplication"] . ($filters == "" ? "" : " AND " . $filters), $sorters, $start, $limit);
             break;
         case "users":
             $obj = new \gen\bl\User(0);

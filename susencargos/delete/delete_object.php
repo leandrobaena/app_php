@@ -23,7 +23,7 @@ if (!isset($_SESSION["user"])) {
         $object = $_POST["object"];
         $module = new gen\bl\Module(0);
 
-        if ($object == "groupsApplication" || $object == "modules") {
+        if ($object == "groupsModule" || $object == "modules" || $object == "groupApplication") {
             $object = "apps";
         }
         if ($object == "applicationGroup" || $object == "userGroup") {

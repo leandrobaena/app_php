@@ -20,7 +20,7 @@ if (!isset($_SESSION["user"])) {
     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Error al intentar guardar los datos\"}}");
 } else {
     $object = $_POST["object"];
-    if($object == "groupsModule" || $object == "modules"){
+    if($object == "groupsModule" || $object == "modules" || $object == "groupApplication"){
         $object = "apps";
     }
     if($object == "applicationGroup" || $object == "userGroup"){

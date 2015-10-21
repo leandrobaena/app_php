@@ -62,8 +62,8 @@ class PackageP extends \gen\dl\LBTObjectP {
      */
     public function read() {
         $rs = $this->connection->read("date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
-                customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
-                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type",
+                customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content, observations,
+                weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue, reference, idpaytype, pay_type",
                 "vw_sus_package", "idpackage = " . $this->observer->idpackage);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
         $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
@@ -106,8 +106,9 @@ class PackageP extends \gen\dl\LBTObjectP {
         $list = array();
         $rs = $this->connection->readAll(
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
-                customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
-                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
+                customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content,
+                observations, weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue,
+                reference, idpaytype, pay_type", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);

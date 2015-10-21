@@ -1,7 +1,7 @@
 <?php
 
-require(__DIR__ . '/../utils/fpdf/fpdf.php');
-require_once (__DIR__ . "/../sus/bl/Package.php");
+require_once (__DIR__ . '/utils/fpdf/fpdf.php');
+require_once (__DIR__ . "/sus/bl/Package.php");
 
 $idpackage = 0;
 if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
@@ -14,7 +14,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     for ($i = 0; $i < $package->amount; $i++) {
         $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
         $path = substr($path, 0, strrpos($path, "/"));
-        $path .= "/../utils/barcode.php?text=$idpackage-" . ($i + 1);
+        $path .= "/utils/barcode.php?text=$idpackage-" . ($i + 1);
 
         fopen($path, "r");
         if ($i % 2 == 0) {

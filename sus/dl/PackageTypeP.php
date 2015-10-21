@@ -34,7 +34,7 @@ class PackageTypeP extends \gen\dl\LBTObjectP {
      * Lee un tipo de envío de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("name", "sus_package_type", "idpackage_type = " . $this->observer->idpackagetype);
+        $rs = $this->connection->read("name", "sus_package_type", "idpackagetype = " . $this->observer->idpackagetype);
         $this->observer->name = $rs->name;
     }
 

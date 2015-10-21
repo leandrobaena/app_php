@@ -1,7 +1,7 @@
 <?php
 
-require(__DIR__ . '/../utils/fpdf/fpdf.php');
-require_once (__DIR__ . "/../sus/bl/Package.php");
+require(__DIR__ . '/utils/fpdf/fpdf.php');
+require_once (__DIR__ . "/sus/bl/Package.php");
 
 // Creación del objeto de la clase heredada
 class PDF extends FPDF {
@@ -44,7 +44,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     $package->read();
     $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
     $path = substr($path, 0, strrpos($path, "/"));
-    $path .= "/../utils/barcode.php?text=$idpackage";
+    $path .= "/utils/barcode.php?text=$idpackage";
     fopen($path, "r");
     $pdf = new PDF();
     $pdf->AddPage();
