@@ -58,7 +58,7 @@ class GroupModuleP extends \gen\dl\LBTObjectP {
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
-        $rs = $this->connection->readAll("idgroupmodule, idgroup, `group`, idmodule, module, idlevelaccess, level_access", "vw_gen_group_module", $filters, $sorters, $start, $limit, $this->total);
+        $rs = $this->connection->readAll("DISTINCT idgroupmodule, idgroup, `group`, idmodule, module, idlevelaccess, level_access", "vw_gen_group_module", $filters, $sorters, $start, $limit, $this->total);
         foreach ($rs as $row) {
             $obj = new \gen\entities\GroupModuleEntity($row->idgroupmodule);
             $obj->group = new \gen\entities\GroupEntity($row->idgroup);
