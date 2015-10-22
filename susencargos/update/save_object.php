@@ -13,6 +13,7 @@ require_once (__DIR__ . "/../sus/bl/StateTracking.php");
 require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
+require_once (__DIR__ . "/../sus/bl/Tracking.php");
 
 session_start();
 
@@ -20,16 +21,16 @@ if (!isset($_SESSION["user"])) {
     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Error al intentar guardar los datos\"}}");
 } else {
     $object = $_POST["object"];
-    if($object == "groupsModule" || $object == "modules" || $object == "groupApplication"){
+    if ($object == "groupsModule" || $object == "modules" || $object == "groupApplication") {
         $object = "apps";
     }
-    if($object == "applicationGroup" || $object == "userGroup"){
+    if ($object == "applicationGroup" || $object == "userGroup") {
         $object = "groups";
     }
-    if($object == "groupUser"){
+    if ($object == "groupUser") {
         $object = "users";
     }
-    if($object == "packagesCustomer"){
+    if ($object == "packagesCustomer") {
         $object = "enterPackage";
     }
     $module = new gen\bl\Module(0);
@@ -194,6 +195,21 @@ if (!isset($_SESSION["user"])) {
                         $obj->levelAccess = new gen\bl\LevelAccess($_POST["idlevelaccess"]);
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Nivel de accesso al módulo insertado\",\"body\":\"El nivel de acceso para el grupo fue insertado con éxito\"}}");
+                        break;
+                    case "receivePackages":
+                        $state = new \sus\entities\StateTrackingEntity(2); //Recepcionado en bodega
+                        $obj = new \sus\bl\Tracking(0);
+                        $arrTrackings = explode(",", $_POST["trackings"]);
+                        foreach ($arrTrackings as $t) {
+                            $obj->package = new \sus\entities\PackageEntity($t);
+                            $obj->state = $state;
+                            try {
+                                $obj->create($_SESSION["user"]);
+                            } catch (Exception $e) {
+                                
+                            }
+                        }
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Remesas ingresadas a bodega\",\"body\":\"Las remesas han sido ingresadas a la bodega\"}}");
                         break;
                 }
             } else {

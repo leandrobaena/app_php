@@ -26,9 +26,9 @@ class TrackingP extends \gen\dl\LBTObjectP {
      */
     public function insert() {
         $this->observer->idtracking = $this->connection->insert("sus_tracking", array(
-            "date" => "'" . $this->date->format("Y-m-d H:i:s") . "'",
-            "idpackage" => $this->package->idpackage,
-            "idstatetracking" => $this->state->idstatetracking
+            "date" => "'" . $this->observer->date->format("Y-m-d H:i:s") . "'",
+            "idpackage" => $this->observer->package->idpackage,
+            "idstatetracking" => $this->observer->state->idstatetracking
                 ), $this->user->iduser);
     }
 
@@ -36,8 +36,7 @@ class TrackingP extends \gen\dl\LBTObjectP {
      * Lee un seguimiento de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("date, idpackage, idstatetracking, state_tracking",
-                "vw_sus_tracking", "idtracking = " . $this->observer->idtracking);
+        $rs = $this->connection->read("date, idpackage, idstatetracking, state_tracking", "vw_sus_tracking", "idtracking = " . $this->observer->idtracking);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d H:i:s", $rs->date);
         $this->observer->package = new \sus\entities\PackageEntity($rs->idpackage);
         $this->observer->state = new \sus\entities\StateTrackingEntity($rs->idstatetracking);
@@ -57,8 +56,7 @@ class TrackingP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "idtracking, date, idpackage, idstatetracking, state_tracking",
-                "vw_sus_tracking", $filters, $sorters, $start, $limit, $this->total
+                "idtracking, date, idpackage, idstatetracking, state_tracking", "vw_sus_tracking", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\TrackingEntity($row->idtracking);

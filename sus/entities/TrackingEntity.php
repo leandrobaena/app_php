@@ -83,5 +83,10 @@ class TrackingEntity extends \gen\entities\LBTObject {
      */
     private $state;
 
+    /**
+     * @var \DateTime Fecha y hora en que se generó el seguimiento
+     */
+    private $date;
+
     //</editor-fold>
 }

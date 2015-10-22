@@ -275,6 +275,16 @@ Ext.define('susencargos.model.Tracking', {
             reference: 'susencargos.model.StateTracking'
         }]
 });
+
+Ext.define('susencargos.model.AuxReceivePackage', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'tracking',
+            type: 'string'
+        }],
+    idProperty: 'tracking'
+});
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -413,6 +423,7 @@ Ext.create('Ext.app.Controller', {
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
+        'menu menuitem[action=receivePackages]': {click: 'receivePackages'},
         /*Reportes*/
         'menu menuitem[action=miles]': {click: 'miles'},
         /*CMS*/
@@ -484,6 +495,9 @@ Ext.create('Ext.app.Controller', {
                 });
             }
         });
+    },
+    receivePackages: function () {
+        Ext.widget('formReceivePackage');
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -2733,6 +2747,104 @@ Ext.create('Ext.app.Controller', {
         });
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'formReceivePackage textfield[name=tracking]': { keypress: 'addTracking' },
+        'formReceivePackage button[action=cancel]': { click: 'cancel' },
+        'formReceivePackage button[action=save]': { click: 'save' },
+        'formReceivePackage form grid actioncolumn[action=remove]': { click: 'removeTracking' }
+    },
+    cancel: function (b, e) {
+        Ext.getStore('AuxReceivePackage').removeAll();
+        b.up('window').close();
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            if (Ext.getStore('AuxReceivePackage').count() > 0) {
+                var trackings = '';
+                var first = true;
+                Ext.getStore('AuxReceivePackage').each(function (r) {
+                    if (first) {
+                        first = false;
+                    } else {
+                        trackings += ",";
+                    }
+                    trackings += r.get('tracking');
+                });
+                b.up('form').getForm().findField('trackings').setValue(trackings);
+                b.up('form').getForm().findField('id').setValue(0);
+                b.up('form').getForm().submit({
+                    waitMsg: 'Guardando ...',
+                    success: function (t, p, o) {
+                        var d = Ext.JSON.decode(p.response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                        Ext.getStore('AuxReceivePackage').removeAll();
+                        b.up('window').close();
+                    },
+                    failure: function (t, p) {
+                        var d = Ext.JSON.decode(p.response.responseText);
+                        Ext.MessageBox.show({
+                            autoScroll: true,
+                            maxHeight: 400,
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.ERROR
+                        });
+                        b.up('window').close();
+                    }
+                });
+            } else {
+                Ext.MessageBox.show({
+                    title: 'Error',
+                    msg: 'Debe ingresar al menos una remesa',
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.ERROR
+                });
+            }
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    addTracking: function (t, e) {
+        if (e.getKey() === Ext.EventObject.ENTER) {
+            var auxString1 = new String(t.getValue());
+            t.setValue(auxString1.toUpperCase());
+            if (t.getValue() != "") {
+                var already = false;
+                Ext.getStore('AuxReceivePackage').each(function (r) {
+                    if (r.get("tracking") == t.getValue()) {
+                        already = true;
+                    }
+                });
+                if (!already) {
+                    Ext.getStore('AuxReceivePackage').add({ "tracking": t.getValue() });
+                }
+                t.setValue("");
+                t.up('window').down('grid').getView().focusRow(Ext.getStore('AuxReceivePackage').count() - 1);
+                t.focus();
+            }
+        }
+    },
+    removeTracking: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.getStore('AuxReceivePackage').remove(v.getStore().getAt(c));
+            }
+        });
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -2955,6 +3067,12 @@ Ext.application({
             storeId: 'Tracking',
             model: 'susencargos.model.Tracking',
             object: 'trackings'
+        });
+        
+        Ext.create('Ext.data.Store', {
+            storeId: 'AuxReceivePackage',
+            model: 'susencargos.model.AuxReceivePackage',
+            remoteSort: true
         });
         //</editor-fold>
 
@@ -4729,6 +4847,55 @@ Ext.application({
                     text: 'Cancelar',
                     action: 'cancel'
                 }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Recepción de remesas en bodega">
+        Ext.define('susencargos.view.receive_package.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formReceivePackage',
+            title: 'Recepcionar paquetes en bodega',
+            object: 'receivePackages',
+            fields: [{
+                xtype: 'hiddenfield',
+                name: 'trackings',
+                value: ''
+            }, {
+                xtype: 'textfield',
+                fieldLabel: '* No. Remesa',
+                labelWidth: 200,
+                name: 'tracking',
+                anchor: '95%',
+                enableKeyEvents: true,
+                value: ''
+            }, {
+                xtype: 'grid',
+                height: 300,
+                anchor: '100%',
+                store: 'AuxReceivePackage',
+                layout: 'fit',
+                columns: [{
+                    xtype: 'rownumberer'
+                }, {
+                    header: 'No. remesa',
+                    flex: 1,
+                    dataIndex: 'tracking'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+            }],
+            buttons: [{
+                text: 'Guardar',
+                action: 'save'
+            }, {
+                text: 'Cancelar',
+                action: 'cancel'
+            }]
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Viewport principal">
