@@ -29,7 +29,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property float $totalValue Valor total de la remesa
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property \sus\entities\PayTypeEntity $payType Tipo de pago de la remesa
- * @property \sus\entities\StateTrackingEntity $stateTracking Estado de la remesa
+ * @property \sus\entities\PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
  * @author Leandro Baena Torres
  */
 class Package extends \LBTObjectBL {

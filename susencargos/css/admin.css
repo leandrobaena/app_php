@@ -170,3 +170,7 @@
 .receivePackage{
     background-image:url(receivePackage.png)!important
 }
+
+.packageType{
+    background-image:url(packageType.png)!important
+}

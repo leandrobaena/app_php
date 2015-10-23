@@ -205,6 +205,9 @@ Ext.define('susencargos.model.Package', {
         }, {
             name: 'payType',
             reference: 'susencargos.model.PayType'
+        }, {
+            name: 'pacakgeType',
+            reference: 'susencargos.model.PackageType'
         }]
 });
 
@@ -420,6 +423,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=templates]': {click: 'templates'},
         'menu menuitem[action=levelsAccess]': {click: 'levelsAccess'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
+        'menu menuitem[action=packageTypes]': {click: 'packageTypes'},
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
@@ -455,6 +459,9 @@ Ext.create('Ext.app.Controller', {
     },
     statesTracking: function () {
         this.openGrid('listStatesTracking');
+    },
+    packageTypes: function () {
+        this.openGrid('listPackageTypes');
     },
     packages: function () {
         this.openGrid('listPackages');
@@ -2462,6 +2469,7 @@ Ext.create('Ext.app.Controller', {
                                         form.down('form').getForm().findField('idcitydestination').setValue(v.getStore().getAt(c).get('cityDestination').idcity);
                                         form.down('form').getForm().findField('idcustomer').setValue(v.getStore().getAt(c).get('customer').idcustomer);
                                         form.down('form').getForm().findField('idpaytype').setValue(v.getStore().getAt(c).get('payType').idpaytype);
+                                        form.down('form').getForm().findField('idpackagetype').setValue(v.getStore().getAt(c).get('packageType').idpackagetype);
                                     }
                                 });
                             }
@@ -2494,6 +2502,7 @@ Ext.create('Ext.app.Controller', {
                                         form.down('form').getForm().findField('idcitydestination').setValue(r.get('cityDestination').idcity);
                                         form.down('form').getForm().findField('idcustomer').setValue(r.get('customer').idcustomer);
                                         form.down('form').getForm().findField('idpaytype').setValue(r.get('payType').idpaytype);
+                                        form.down('form').getForm().findField('idpackagetype').setValue(r.get('packageType').idpackagetype);
                                     }
                                 });
                             }
@@ -2759,6 +2768,106 @@ Ext.create('Ext.app.Controller', {
                             icon: Ext.Msg.INFO,
                             fn: function () {
                                 Ext.getStore('LevelAccess').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listPackageTypes button[action=insert]': {click: 'insert'},
+        'listPackageTypes button[action=clean]': {click: 'cleanFilters'},
+        'listPackageTypes': {itemdblclick: 'editDbl'},
+        'listPackageTypes actioncolumn[action=edit]': {click: 'edit'},
+        'listPackageTypes actioncolumn[action=remove]': {click: 'remove'},
+        'formPackageType button[action=cancel]': {click: 'cancel'},
+        'formPackageType button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formPackageType').down('form').loadRecord(Ext.create('susencargos.model.PackageType'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formPackageType');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formPackageType');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idpackagetype').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('PackageType').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idpackagetype'),
+                        object: 'PackageType'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('PackageType').load();
                             }
                         });
                     },
@@ -4859,6 +4968,67 @@ Ext.application({
             fields: [{
                     xtype: 'hiddenfield',
                     name: 'idlevelaccess',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Tipos de envío o embalaje">
+        Ext.define('susencargos.view.packageType.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'packageType',
+            alias: 'widget.listPackageTypes',
+            title: 'Listado de tipos de envío',
+            store: 'PackageType',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idpackagetype'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.packageType.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formPackageType',
+            title: 'Editar tipo de envío',
+            object: 'packageTypes',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idpackagetype',
                     value: 0
                 }, {
                     xtype: 'textfield',

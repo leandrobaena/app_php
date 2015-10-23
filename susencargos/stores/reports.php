@@ -49,7 +49,8 @@ try {
             ->setCellValue("R1", "Valor manejo")
             ->setCellValue("S1", "Total")
             ->setCellValue("T1", "Referencia")
-            ->setCellValue("U1", "Tipo de pago");
+            ->setCellValue("U1", "Tipo de pago")
+            ->setCellValue("V1", "Tipo de envío");
 
     $objPHPExcel->getActiveSheet()->getStyle("A1:V1")->getFont()->setBold(true);
 
@@ -75,7 +76,8 @@ try {
                 ->setCellValue("R" . ($i + 2), $packages->records[$i]->managementValue)
                 ->setCellValue("S" . ($i + 2), $packages->records[$i]->totalValue)
                 ->setCellValue("T" . ($i + 2), $packages->records[$i]->reference)
-                ->setCellValue("U" . ($i + 2), $packages->records[$i]->payType->name);
+                ->setCellValue("U" . ($i + 2), $packages->records[$i]->payType->name)
+                ->setCellValue("V" . ($i + 2), $packages->records[$i]->packageType->name);
     }
 
     $objPHPExcel->getActiveSheet()->setTitle('Listado de remesas');

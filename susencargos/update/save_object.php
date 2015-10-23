@@ -153,6 +153,7 @@ if (!isset($_SESSION["user"])) {
                         $obj->totalValue = $_POST["totalValue"];
                         $obj->reference = $_POST["reference"];
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                        $obj->packageType = new \sus\entities\PackageTypeEntity($_POST["idpackagetype"]);
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
                         break;
@@ -179,6 +180,7 @@ if (!isset($_SESSION["user"])) {
                         $obj->totalValue = 0;
                         $obj->reference = $_POST["reference"];
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                        $obj->packageType = new \sus\entities\PackageTypeEntity($_POST["idpackagetype"]);
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
                         break;
@@ -210,6 +212,12 @@ if (!isset($_SESSION["user"])) {
                             }
                         }
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesas ingresadas a bodega\",\"body\":\"Las remesas han sido ingresadas a la bodega\"}}");
+                        break;
+                    case "packageTypes":
+                        $obj = new \sus\bl\PackageType($_POST["id"]);
+                        $obj->name = $_POST["name"];
+                        $obj->create($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío insertado\",\"body\":\"El tipo de envío fue insertado con éxito\"}}");
                         break;
                 }
             } else {
@@ -308,6 +316,7 @@ if (!isset($_SESSION["user"])) {
                         $obj->totalValue = $_POST["totalValue"];
                         $obj->reference = $_POST["reference"];
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
+                        $obj->packageType = new \sus\entities\PackageTypeEntity($_POST["idpackagetype"]);
                         $obj->update($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesa actualizada\",\"body\":\"La remesa fue actualizada con éxito\"}}");
                         break;
@@ -324,6 +333,12 @@ if (!isset($_SESSION["user"])) {
                         $obj->levelAccess = new gen\bl\LevelAccess($_POST["idlevelaccess"]);
                         $obj->update($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Nivel de accesso al módulo actualizado\",\"body\":\"El nivel de acceso para el grupo fue actualizado con éxito\"}}");
+                        break;
+                    case "packageTypes":
+                        $obj = new \sus\bl\PackageType($_POST["id"]);
+                        $obj->name = $_POST["name"];
+                        $obj->update($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío insactualizadoertado\",\"body\":\"El tipo de envío fue actualizado con éxito\"}}");
                         break;
                 }
             } else {

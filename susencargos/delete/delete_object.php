@@ -12,6 +12,7 @@ require_once (__DIR__ . "/../sus/bl/City.php");
 require_once (__DIR__ . "/../sus/bl/StateTracking.php");
 require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
+require_once (__DIR__ . "/../sus/bl/PackageType.php");
 
 session_start();
 
@@ -113,6 +114,11 @@ if (!isset($_SESSION["user"])) {
                         $obj = new \gen\bl\GroupModule($_POST["id"]);
                         $obj->delete($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Nivel de acceso para el grupo eliminado\",\"body\":\"El nivel de acceso para el grupo ha sido eliminado con \\xe9xito\"}}");
+                        break;
+                    case "packageTypes":
+                        $obj = new \sus\bl\PackageType($_POST["id"]);
+                        $obj->delete($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío eliminado\",\"body\":\"El tipo de envío ha sido eliminado con \\xe9xito\"}}");
                         break;
                 }
             } else {

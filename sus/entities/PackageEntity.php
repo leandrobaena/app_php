@@ -6,6 +6,7 @@ require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
 require_once (__DIR__ . "/CityEntity.php");
 require_once (__DIR__ . "/CustomerEntity.php");
 require_once (__DIR__ . "/PayTypeEntity.php");
+require_once (__DIR__ . "/PackageTypeEntity.php");
 
 /**
  * Paquete o remesa transportada por susencargos
@@ -29,6 +30,7 @@ require_once (__DIR__ . "/PayTypeEntity.php");
  * @property float $totalValue Valor total de la remesa
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property PayTypeEntity $payType Tipo de pago de la remesa
+ * @property PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
  * @author Leandro Baena Torres
  */
 class PackageEntity extends \gen\entities\LBTObject {
@@ -59,7 +61,7 @@ class PackageEntity extends \gen\entities\LBTObject {
         $this->totalValue = 0;
         $this->reference = "";
         $this->payType = new PayTypeEntity(0);
-        $this->stateTracking = new StateTrackingEntity(0);
+        $this->packageType = new PackageTypeEntity(0);
     }
 
     //</editor-fold>
@@ -110,7 +112,8 @@ class PackageEntity extends \gen\entities\LBTObject {
                 . "\"managementValue\":$this->managementValue,"
                 . "\"totalValue\":$this->totalValue,"
                 . "\"reference\":\"$this->reference\","
-                . "\"payType\":$this->payType}";
+                . "\"payType\":$this->payType,"
+                . "\"packageType\":$this->packageType}";
     }
 
     //</editor-fold>
@@ -209,6 +212,11 @@ class PackageEntity extends \gen\entities\LBTObject {
      * @var PayTypeEntity Tipo de pago de la remesa
      */
     private $payType;
+
+    /**
+     * @var PackageTypeEntity Tipo de envío o embalaje de la remesa
+     */
+    private $packageType;
 
     //</editor-fold>
 }
