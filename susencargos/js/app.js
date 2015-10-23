@@ -425,7 +425,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
         'menu menuitem[action=receivePackages]': {click: 'receivePackages'},
         /*Reportes*/
-        'menu menuitem[action=miles]': {click: 'miles'},
+        'menu menuitem[action=rptPackages]': {click: 'rptPackages'},
         /*CMS*/
         'menu menuitem[action=typesResource]': {click: 'typesResource'},
         /*Aplicación*/
@@ -498,6 +498,34 @@ Ext.create('Ext.app.Controller', {
     },
     receivePackages: function () {
         Ext.widget('formReceivePackage');
+    },
+    rptPackages: function () {
+        Ext.Ajax.request({
+            url: 'stores/reports.php',
+            params: {
+                object: 'packages'
+            },
+            success: function (response) {
+                var d = Ext.JSON.decode(response.responseText);
+                Ext.MessageBox.show({
+                    title: 'Reporte generado',
+                    msg: 'El reporte fue generado con éxito haga clic en el botón para descargarlo',
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.INFO,
+                    fn: function () {
+                        window.open(d.msg.body);
+                    }
+                });
+            },
+            failed: function (t, p, o) {
+                Ext.MessageBox.show({
+                    title: p.response.result.msg.title,
+                    msg: p.response.result.msg.body,
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.INFO
+                });
+            }
+        });
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -2750,10 +2778,10 @@ Ext.create('Ext.app.Controller', {
 
 Ext.create('Ext.app.Controller', {
     control: {
-        'formReceivePackage textfield[name=tracking]': { keypress: 'addTracking' },
-        'formReceivePackage button[action=cancel]': { click: 'cancel' },
-        'formReceivePackage button[action=save]': { click: 'save' },
-        'formReceivePackage form grid actioncolumn[action=remove]': { click: 'removeTracking' }
+        'formReceivePackage textfield[name=tracking]': {keypress: 'addTracking'},
+        'formReceivePackage button[action=cancel]': {click: 'cancel'},
+        'formReceivePackage button[action=save]': {click: 'save'},
+        'formReceivePackage form grid actioncolumn[action=remove]': {click: 'removeTracking'}
     },
     cancel: function (b, e) {
         Ext.getStore('AuxReceivePackage').removeAll();
@@ -2829,7 +2857,7 @@ Ext.create('Ext.app.Controller', {
                     }
                 });
                 if (!already) {
-                    Ext.getStore('AuxReceivePackage').add({ "tracking": t.getValue() });
+                    Ext.getStore('AuxReceivePackage').add({"tracking": t.getValue()});
                 }
                 t.setValue("");
                 t.up('window').down('grid').getView().focusRow(Ext.getStore('AuxReceivePackage').count() - 1);
@@ -3068,7 +3096,7 @@ Ext.application({
             model: 'susencargos.model.Tracking',
             object: 'trackings'
         });
-        
+
         Ext.create('Ext.data.Store', {
             storeId: 'AuxReceivePackage',
             model: 'susencargos.model.AuxReceivePackage',
@@ -4856,46 +4884,46 @@ Ext.application({
             title: 'Recepcionar paquetes en bodega',
             object: 'receivePackages',
             fields: [{
-                xtype: 'hiddenfield',
-                name: 'trackings',
-                value: ''
-            }, {
-                xtype: 'textfield',
-                fieldLabel: '* No. Remesa',
-                labelWidth: 200,
-                name: 'tracking',
-                anchor: '95%',
-                enableKeyEvents: true,
-                value: ''
-            }, {
-                xtype: 'grid',
-                height: 300,
-                anchor: '100%',
-                store: 'AuxReceivePackage',
-                layout: 'fit',
-                columns: [{
-                    xtype: 'rownumberer'
+                    xtype: 'hiddenfield',
+                    name: 'trackings',
+                    value: ''
                 }, {
-                    header: 'No. remesa',
-                    flex: 1,
-                    dataIndex: 'tracking'
+                    xtype: 'textfield',
+                    fieldLabel: '* No. Remesa',
+                    labelWidth: 200,
+                    name: 'tracking',
+                    anchor: '95%',
+                    enableKeyEvents: true,
+                    value: ''
                 }, {
-                    xtype: 'actioncolumn',
-                    width: 20,
-                    action: 'remove',
-                    tooltip: 'Eliminar',
-                    icon: 'css/remove.png',
-                    stopSelection: false,
-                    iconCls: 'remove'
-                }]
-            }],
+                    xtype: 'grid',
+                    height: 300,
+                    anchor: '100%',
+                    store: 'AuxReceivePackage',
+                    layout: 'fit',
+                    columns: [{
+                            xtype: 'rownumberer'
+                        }, {
+                            header: 'No. remesa',
+                            flex: 1,
+                            dataIndex: 'tracking'
+                        }, {
+                            xtype: 'actioncolumn',
+                            width: 20,
+                            action: 'remove',
+                            tooltip: 'Eliminar',
+                            icon: 'css/remove.png',
+                            stopSelection: false,
+                            iconCls: 'remove'
+                        }]
+                }],
             buttons: [{
-                text: 'Guardar',
-                action: 'save'
-            }, {
-                text: 'Cancelar',
-                action: 'cancel'
-            }]
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Viewport principal">

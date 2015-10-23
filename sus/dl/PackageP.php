@@ -119,6 +119,9 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->cityDestination->name = $row->city_destination;
             $obj->customer = new \sus\entities\CustomerEntity($row->idcustomer);
             $obj->customer->name = $row->customer;
+            $obj->customer->address = $row->customer_address;
+            $obj->customer->phone = $row->customer_phone;
+            $obj->customer->taxid = $row->customer_taxid;
             $obj->nameTo = $row->nameTo;
             $obj->addressTo = $row->addressTo;
             $obj->phoneTo = $row->phoneTo;
