@@ -29,7 +29,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(25, 40 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($package->customer->name));
         $pdf->SetXY(25, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->customer->address));
+        $pdf->Write(10, substr(utf8_decode($package->customer->address), 0, 40));
         $pdf->SetXY(25, 60 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($package->customer->phone));
         $pdf->SetXY(25, 70 + (140 * ($i % 2)));
@@ -43,7 +43,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(115, 40 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($package->nameTo));
         $pdf->SetXY(115, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->addressTo));
+        $pdf->Write(10, substr(utf8_decode($package->addressTo), 0, 40));
         $pdf->SetXY(115, 60 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($package->phoneTo));
         $pdf->SetXY(115, 70 + (140 * ($i % 2)));
