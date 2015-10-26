@@ -62,6 +62,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
         $this->observer->city->name = $rs->city;
         $this->observer->user = new \gen\entities\UserEntity($rs->iduser);
         $this->observer->user->name = $rs->user;
+        $this->observer->user->email = $rs->email;
         $this->observer->contact = $rs->contact;
     }
 
@@ -80,6 +81,7 @@ class CustomerP extends \gen\dl\LBTObjectP {
         $this->observer->city->name = $rs->city;
         $this->observer->user = new \gen\entities\UserEntity($iduser);
         $this->observer->user->name = $rs->user;
+        $this->observer->user->email = $rs->email;
         $this->observer->contact = $rs->contact;
     }
 
