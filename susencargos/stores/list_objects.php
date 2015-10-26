@@ -6,6 +6,7 @@ require_once (__DIR__ . "/../gen/bl/Group.php");
 require_once (__DIR__ . "/../gen/bl/Module.php");
 require_once (__DIR__ . "/../gen/bl/LevelAccess.php");
 require_once (__DIR__ . "/../gen/bl/GroupModule.php");
+require_once (__DIR__ . "/../gen/bl/TemplateMail.php");
 require_once (__DIR__ . "/../sus/bl/Customer.php");
 require_once (__DIR__ . "/../sus/bl/Zone.php");
 require_once (__DIR__ . "/../sus/bl/City.php");
@@ -150,6 +151,10 @@ if (isset($_GET["object"])) {
         case "trackings":
             $obj = new \sus\bl\Tracking(0);
             $list = $obj->readAll("idpackage = " . $_GET["idpackage"], $sorters, $start, $limit);
+            break;
+        case "templatesMail":
+            $obj = new \gen\bl\TemplateMail(0);
+            $list = $obj->readAll($filters, $sorters, $start, $limit);
             break;
     }
     echo($list);

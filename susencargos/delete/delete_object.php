@@ -6,6 +6,7 @@ require_once (__DIR__ . "/../gen/bl/Group.php");
 require_once (__DIR__ . "/../gen/bl/Module.php");
 require_once (__DIR__ . "/../gen/bl/LevelAccess.php");
 require_once (__DIR__ . "/../gen/bl/GroupModule.php");
+require_once (__DIR__ . "/../gen/bl/TemplateMail.php");
 require_once (__DIR__ . "/../sus/bl/Customer.php");
 require_once (__DIR__ . "/../sus/bl/Zone.php");
 require_once (__DIR__ . "/../sus/bl/City.php");
@@ -119,6 +120,11 @@ if (!isset($_SESSION["user"])) {
                         $obj = new \sus\bl\PackageType($_POST["id"]);
                         $obj->delete($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío eliminado\",\"body\":\"El tipo de envío ha sido eliminado con \\xe9xito\"}}");
+                        break;
+                    case "templatesMail":
+                        $obj = new \gen\bl\TemplateMail($_POST["id"]);
+                        $obj->delete($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo eliminada\",\"body\":\"La plantilla de correo ha sido eliminada con \\xe9xito\"}}");
                         break;
                 }
             } else {

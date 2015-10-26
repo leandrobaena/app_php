@@ -16,7 +16,7 @@
         convert_urls: false,
         relative_urls: false,
         extended_valid_elements: "b,img[class|src|border=0|alt|title|hspace|vspace|width|height|align|onmouseover|onmouseout|name]",
-        content_css: "../css/flybox.completo.css",
+        content_css: "../css/style.css",
         plugins: [
         "advlist autolink lists link image charmap print preview hr anchor pagebreak",
         "searchreplace wordcount visualblocks visualchars code fullscreen",

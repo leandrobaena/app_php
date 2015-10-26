@@ -288,6 +288,19 @@ Ext.define('susencargos.model.AuxReceivePackage', {
     idProperty: 'tracking'
 });
 
+Ext.define('susencargos.model.TemplateMail', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idtemplatemail',
+            type: 'int'
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'html',
+            type: 'string'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -424,6 +437,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=levelsAccess]': {click: 'levelsAccess'},
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
         'menu menuitem[action=packageTypes]': {click: 'packageTypes'},
+        'menu menuitem[action=templatesMail]': {click: 'templatesMail'},
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
@@ -462,6 +476,9 @@ Ext.create('Ext.app.Controller', {
     },
     packageTypes: function () {
         this.openGrid('listPackageTypes');
+    },
+    templatesMail: function () {
+        this.openGrid('listTemplatesMail');
     },
     packages: function () {
         this.openGrid('listPackages');
@@ -1424,60 +1441,33 @@ Ext.create('Ext.app.Controller', {
 
 Ext.create('Ext.app.Controller', {
     control: {
-        'listTemplates button[action=insert]': {click: 'insert'},
-        'listTemplates button[action=clean]': {click: 'cleanFilters'},
-        'listTemplates': {itemdblclick: 'editDbl'},
-        'listTemplates actioncolumn[action=fields]': {click: 'fields'},
-        'listTemplates actioncolumn[action=edit]': {click: 'edit'},
-        'listTemplates actioncolumn[action=remove]': {click: 'remove'},
-        'formTemplate button[action=cancel]': {click: 'cancel'},
-        'formTemplate button[action=save]': {click: 'save'},
-        'listFieldsTemplate button[action=insert]': {click: 'insertField'},
-        'listFieldsTemplate button[action=clean]': {click: 'cleanFiltersField'},
-        'listFieldsTemplate': {itemdblclick: 'editDblField'},
-        'listFieldsTemplate actioncolumn[action=edit]': {click: 'editField'},
-        'listFieldsTemplate actioncolumn[action=remove]': {click: 'removeField'},
-        'formFieldTemplate button[action=cancel]': {click: 'cancel'},
-        'formFieldTemplate button[action=save]': {click: 'saveField'}
-    },
-    fields: function (v, r, c, i, e) {
-        Ext.getStore('FieldTemplate').getProxy().setExtraParam('idtemplate', v.getStore().getAt(c).get('idtemplate'));
-        Ext.getStore('FieldTemplate').load();
-        var opened = false;
-        var content = Ext.getCmp('contenido');
-        var panel = null;
-        Ext.each(content.items.items, function (n, i, s) {
-            if (n.alias == 'widget.listFieldsTemplate') {
-                opened = true;
-                panel = n;
-            }
-        });
-        if (!opened) {
-            panel = Ext.widget('listFieldsTemplate');
-            content.add(panel);
-        }
-        panel.setTitle('Listado campo de la plantilla ' + v.getStore().getAt(c).get('name'));
-        Ext.getCmp('contenido').setActiveTab(panel);
+        'listTemplatesMail button[action=insert]': {click: 'insert'},
+        'listTemplatesMail button[action=clean]': {click: 'cleanFilters'},
+        'listTemplatesMail': {itemdblclick: 'editDbl'},
+        'listTemplatesMail actioncolumn[action=edit]': {click: 'edit'},
+        'listTemplatesMail actioncolumn[action=remove]': {click: 'remove'},
+        'formTemplateMail button[action=cancel]': {click: 'cancel'},
+        'formTemplateMail button[action=save]': {click: 'save'}
     },
     insert: function (b, e) {
-        Ext.widget('formTemplate').down('form').loadRecord(Ext.create('susencargos.model.Template'));
+        Ext.widget('formTemplateMail').down('form').loadRecord(Ext.create('susencargos.model.TemplateMail'));
     },
     cleanFilters: function (b, e) {
         b.up('grid').filters.clearFilters();
-        Ext.getStore('Template').load();
+        Ext.getStore('TemplateMail').load();
     },
     cancel: function (b, e) {
         b.up('window').close();
     },
     edit: function (v, r, c, i, e) {
-        Ext.widget('formTemplate').down('form').loadRecord(v.getStore().getAt(c));
+        Ext.widget('formTemplateMail').down('form').loadRecord(v.getStore().getAt(c));
     },
     editDbl: function (g, r) {
-        Ext.widget('formTemplate').down('form').loadRecord(r);
+        Ext.widget('formTemplateMail').down('form').loadRecord(r);
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid()) {
-            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idtemplate').getValue());
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idtemplatemail').getValue());
             b.up('form').getForm().submit({
                 waitMsg: 'Guardando ...',
                 success: function (t, p, o) {
@@ -1488,7 +1478,7 @@ Ext.create('Ext.app.Controller', {
                         buttons: Ext.Msg.OK,
                         icon: Ext.Msg.INFO,
                         fn: function () {
-                            Ext.getStore('Template').load();
+                            Ext.getStore('TemplateMail').load();
                         }
                     });
                     b.up('window').close();
@@ -1519,8 +1509,8 @@ Ext.create('Ext.app.Controller', {
                 Ext.Ajax.request({
                     url: 'delete/delete_object.php',
                     params: {
-                        id: v.getStore().getAt(c).get('idtemplate'),
-                        object: 'templates'
+                        id: v.getStore().getAt(c).get('idtemplatemail'),
+                        object: 'templatesMail'
                     },
                     success: function (response) {
                         var d = Ext.JSON.decode(response.responseText);
@@ -1530,93 +1520,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('Template').load();
-                            }
-                        });
-                    },
-                    failed: function (t, p, o) {
-                        Ext.MessageBox.show({
-                            title: p.response.result.msg.title,
-                            msg: p.response.result.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO
-                        });
-                    }
-                });
-            }
-        });
-    },
-    insertField: function (b, e) {
-        var form = Ext.widget('formFieldTemplate');
-        form.down('form').loadRecord(Ext.create('susencargos.model.FieldTemplate'));
-        form.down('form').getForm().findField('idtemplate').setValue(Ext.getStore('FieldTemplate').getProxy().extraParams.idtemplate);
-    },
-    cleanFiltersField: function (b, e) {
-        b.up('grid').filters.clearFilters();
-        Ext.getStore('FieldTemplate').load();
-    },
-    editField: function (v, r, c, i, e) {
-        Ext.widget('formFieldTemplate').down('form').loadRecord(v.getStore().getAt(c));
-    },
-    editDblField: function (g, r) {
-        Ext.widget('formFieldTemplate').down('form').loadRecord(r);
-    },
-    saveField: function (b, e) {
-        if (b.up('form').getForm().isValid()) {
-            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idfield').getValue());
-            b.up('form').getForm().submit({
-                waitMsg: 'Guardando ...',
-                success: function (t, p, o) {
-                    var d = Ext.JSON.decode(p.response.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.INFO,
-                        fn: function () {
-                            Ext.getStore('FieldTemplate').load();
-                        }
-                    });
-                    b.up('window').close();
-                },
-                failure: function (t, p) {
-                    var d = Ext.JSON.decode(p.response.responseText);
-                    Ext.MessageBox.show({
-                        title: d.msg.title,
-                        msg: d.msg.body,
-                        buttons: Ext.Msg.OK,
-                        icon: Ext.Msg.ERROR
-                    });
-                    b.up('window').close();
-                }
-            });
-        } else {
-            Ext.MessageBox.show({
-                title: 'Error',
-                msg: 'Ingrese los datos correctos',
-                buttons: Ext.Msg.OK,
-                icon: Ext.Msg.ERROR
-            });
-        }
-    },
-    removeField: function (v, r, c, i, e) {
-        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
-            if (o == 'yes') {
-                Ext.Ajax.request({
-                    url: 'delete/delete_object.php',
-                    params: {
-                        id: v.getStore().getAt(c).get('idfield'),
-                        object: 'fields'
-                    },
-                    success: function (response) {
-                        var d = Ext.JSON.decode(response.responseText);
-                        Ext.MessageBox.show({
-                            title: d.msg.title,
-                            msg: d.msg.body,
-                            buttons: Ext.Msg.OK,
-                            icon: Ext.Msg.INFO,
-                            fn: function () {
-                                Ext.getStore('FieldTemplate').load();
+                                Ext.getStore('TemplateMail').load();
                             }
                         });
                     },
@@ -3211,166 +3115,13 @@ Ext.application({
             model: 'susencargos.model.AuxReceivePackage',
             remoteSort: true
         });
-        //</editor-fold>
 
-        /*
-         Ext.create('susencargos.store.MainStoreRemote', {
-         storeId: 'FieldTemplate',
-         model: 'susencargos.model.FieldTemplate',
-         object: 'fields'
-         });
-         
-         Ext.create('susencargos.store.MainStoreRemote', {
-         storeId: 'Template',
-         model: 'susencargos.model.Template',
-         object: 'templates'
-         });
-         
-         Ext.define('susencargos.view.template.Grid', {
-         extend: 'susencargos.view.MainGrid',
-         iconCls: 'template',
-         alias: 'widget.listTemplates',
-         title: 'Listado de plantillas de correo',
-         store: 'Template',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idtemplate'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 1
-         }, {
-         header: 'Contenido',
-         dataIndex: 'html',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'fields',
-         tooltip: 'Campos',
-         icon: 'css/fieldTemplate.png',
-         iconCls: 'fieldTemplate',
-         stopSelection: false
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         iconCls: 'edit',
-         stopSelection: false
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         icon: 'css/remove.png',
-         iconCls: 'remove',
-         stopSelection: false
-         }]
-         });
-         
-         Ext.define('susencargos.view.template.Form', {
-         extend: 'susencargos.view.MainForm',
-         alias: 'widget.formTemplate',
-         title: 'Editar plantilla de correo',
-         object: 'templates',
-         width: 800,
-         height: 600,
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idtemplate',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }, {
-         xtype: "tinymce",
-         fieldLabel: '* Contenido',
-         name: 'html',
-         id: 'tinymce_f',
-         anchor: '90%',
-         height: 350
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
-         
-         Ext.define('susencargos.view.template.FormField', {
-         extend: 'susencargos.view.MainForm',
-         alias: 'widget.formFieldTemplate',
-         title: 'Editar campo',
-         object: 'fields',
-         fields: [{
-         xtype: 'hiddenfield',
-         name: 'idfield',
-         value: 0
-         }, {
-         xtype: 'hiddenfield',
-         name: 'idtemplate',
-         value: 0
-         }, {
-         xtype: 'textfield',
-         name: 'name',
-         value: '',
-         allowBlank: false,
-         anchor: '90%',
-         fieldLabel: '* Nombre'
-         }],
-         buttons: [{
-         text: 'Guardar',
-         action: 'save'
-         }, {
-         text: 'Cancelar',
-         action: 'cancel'
-         }]
-         });
-         
-         Ext.define('susencargos.view.template.Fields', {
-         extend: 'susencargos.view.MainGrid',
-         iconCls: 'fieldTemplate',
-         alias: 'widget.listFieldsTemplate',
-         title: 'Listado de campos',
-         store: 'FieldTemplate',
-         columns: [{
-         header: 'ID',
-         filter: 'number',
-         dataIndex: 'idfield'
-         }, {
-         header: 'Nombre',
-         filter: 'string',
-         dataIndex: 'name',
-         flex: 3
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'edit',
-         tooltip: 'Editar',
-         icon: 'css/edit.png',
-         iconCls: 'edit',
-         stopSelection: false
-         }, {
-         xtype: 'actioncolumn',
-         width: 20,
-         action: 'remove',
-         tooltip: 'Eliminar',
-         icon: 'css/remove.png',
-         iconCls: 'remove',
-         stopSelection: false
-         }]
-         });
-         */
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'TemplateMail',
+            model: 'susencargos.model.TemplateMail',
+            object: 'templatesMail'
+        });
+        //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="View Genericas">
         Ext.define('susencargos.view.MainGrid', {
@@ -5086,6 +4837,80 @@ Ext.application({
                             stopSelection: false,
                             iconCls: 'remove'
                         }]
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Plantillas de correo">
+        Ext.define('susencargos.view.templateMail.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'template',
+            alias: 'widget.listTemplatesMail',
+            title: 'Listado de plantillas de correo',
+            store: 'TemplateMail',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idtemplatemail'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 1
+                }, {
+                    header: 'Contenido',
+                    dataIndex: 'html',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    iconCls: 'edit',
+                    stopSelection: false
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    iconCls: 'remove',
+                    stopSelection: false
+                }]
+        });
+
+        Ext.define('susencargos.view.templateMail.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formTemplateMail',
+            title: 'Editar plantilla de correo',
+            object: 'templatesMail',
+            width: 800,
+            height: 600,
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idtemplatemail',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: "tinymce",
+                    fieldLabel: '* Contenido',
+                    name: 'html',
+                    id: 'tinymce_f',
+                    anchor: '90%',
+                    height: 350
                 }],
             buttons: [{
                     text: 'Guardar',

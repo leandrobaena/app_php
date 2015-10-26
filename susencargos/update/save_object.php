@@ -6,6 +6,7 @@ require_once (__DIR__ . "/../gen/bl/Group.php");
 require_once (__DIR__ . "/../gen/bl/Module.php");
 require_once (__DIR__ . "/../gen/bl/LevelAccess.php");
 require_once (__DIR__ . "/../gen/bl/GroupModule.php");
+require_once (__DIR__ . "/../gen/bl/TemplateMail.php");
 require_once (__DIR__ . "/../sus/bl/Customer.php");
 require_once (__DIR__ . "/../sus/bl/Zone.php");
 require_once (__DIR__ . "/../sus/bl/City.php");
@@ -14,7 +15,7 @@ require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Tracking.php");
-
+require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
 session_start();
 
 if (!isset($_SESSION["user"])) {
@@ -155,6 +156,22 @@ if (!isset($_SESSION["user"])) {
                         $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
                         $obj->packageType = new \sus\entities\PackageTypeEntity($_POST["idpackagetype"]);
                         $obj->create($_SESSION["user"]);
+
+                        try {
+                            $customer = new \sus\bl\Customer($_POST["idcustomer"]);
+                            $customer->read();
+                            $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
+                            $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                            $mail = new PHPMailer();
+                            $mail->setFrom("info@susencargos.co", "SUSencargos");
+                            $mail->addAddress($customer->user->email, $customer->name);
+                            $mail->Subject = utf8_decode("Remesa creada en el sistema");
+                            $mail->Body = $message;
+                            $mail->send();
+                        } catch (Exception $ex) {
+                            
+                        }
+
                         echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
                         break;
                     case "packagesCustomer":
@@ -218,6 +235,13 @@ if (!isset($_SESSION["user"])) {
                         $obj->name = $_POST["name"];
                         $obj->create($_SESSION["user"]);
                         echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío insertado\",\"body\":\"El tipo de envío fue insertado con éxito\"}}");
+                        break;
+                    case "templatesMail":
+                        $obj = new \gen\bl\TemplateMail($_POST["id"]);
+                        $obj->name = $_POST["name"];
+                        $obj->html = $_POST["html"];
+                        $obj->create($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo insertada\",\"body\":\"La plantilla de correo fue insertada con éxito\"}}");
                         break;
                 }
             } else {
@@ -338,7 +362,14 @@ if (!isset($_SESSION["user"])) {
                         $obj = new \sus\bl\PackageType($_POST["id"]);
                         $obj->name = $_POST["name"];
                         $obj->update($_SESSION["user"]);
-                        echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío insactualizadoertado\",\"body\":\"El tipo de envío fue actualizado con éxito\"}}");
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de envío actualizado\",\"body\":\"El tipo de envío fue actualizado con éxito\"}}");
+                        break;
+                    case "templatesMail":
+                        $obj = new \gen\bl\TemplateMail($_POST["id"]);
+                        $obj->name = $_POST["name"];
+                        $obj->html = $_POST["html"];
+                        $obj->update($_SESSION["user"]);
+                        echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo actualizada\",\"body\":\"La plantilla de correo fue actualizada con éxito\"}}");
                         break;
                 }
             } else {
