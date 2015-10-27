@@ -26,7 +26,7 @@ class TemplateMailP extends \gen\dl\LBTObjectP {
      */
     public function insert() {
         $this->observer->idtemplatemail = $this->connection->insert("gen_template_mail", array("name" => "'" . $this->observer->name . "'",
-            "html" => "'" . addslashes(preg_replace('/[\n|\r|\n\r|\t|\0|\x0B]/i', '', $this->observer->html)) . "'"), $this->user->iduser);
+            "html" => "'" . addslashes(preg_replace('/[\n|\r|\n\r|\t|\0|\x0B]/', '', $this->observer->html)) . "'"), $this->user->iduser);
     }
 
     /**
