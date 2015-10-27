@@ -2460,8 +2460,8 @@ Ext.create('Ext.app.Controller', {
                 Ext.Ajax.request({
                     url: 'delete/delete_object.php',
                     params: {
-                        id: v.getStore().getAt(c).get('idcity'),
-                        object: 'cities'
+                        id: v.getStore().getAt(c).get('idpackage'),
+                        object: 'packages'
                     },
                     success: function (response) {
                         var d = Ext.JSON.decode(response.responseText);
@@ -2471,7 +2471,7 @@ Ext.create('Ext.app.Controller', {
                             buttons: Ext.Msg.OK,
                             icon: Ext.Msg.INFO,
                             fn: function () {
-                                Ext.getStore('City').load();
+                                Ext.getStore('Package').load();
                             }
                         });
                     },
@@ -4368,7 +4368,7 @@ Ext.application({
                     xtype: 'actioncolumn',
                     width: 20,
                     action: 'label',
-                    tooltip: 'Imprimir etiqueta',
+                    tooltip: 'Imprimir remesa',
                     icon: 'css/label.png',
                     stopSelection: false,
                     iconCls: 'label'

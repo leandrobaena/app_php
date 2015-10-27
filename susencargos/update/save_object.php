@@ -167,7 +167,7 @@ try {
                                 $mail->setFrom("info@susencargos.co", "SUSencargos");
                                 $mail->addAddress($customer->user->email, $customer->name);
                                 $mail->Subject = utf8_decode("Remesa creada en el sistema");
-                                $mail->Body = $message;
+                                $mail->msgHTML($message);
                                 $mail->send();
                             } catch (Exception $ex) {
                                 
