@@ -266,11 +266,27 @@ try {
                             $obj = new \sus\bl\Tracking(0);
                             $arrTrackings = explode(",", $_POST["trackings"]);
                             foreach ($arrTrackings as $t) {
+                                $package = new \sus\bl\Package($t);
+                                $package->read();
+                                $customer = new \sus\bl\Customer($package->customer->idcustomer);
+                                $customer->read();
                                 $obj->package = new \sus\entities\PackageEntity($t);
                                 $obj->state = $state;
                                 try {
                                     $obj->create($_SESSION["user"]);
                                 } catch (Exception $e) {
+                                    
+                                }
+                                try {
+                                    $template = new gen\bl\TemplateMail(3); //Plantilla de remesa despachada
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                                    $mail = new PHPMailer();
+                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                    $mail->addAddress($customer->user->email, $customer->name);
+                                    $mail->Subject = utf8_decode("Remesa despachada a destino");
+                                    $mail->msgHTML($message);
+                                    $mail->send();
+                                } catch (Exception $ex) {
                                     
                                 }
                             }
