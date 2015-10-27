@@ -477,7 +477,7 @@ Ext.application({
                     xtype: 'actioncolumn',
                     width: 20,
                     action: 'label',
-                    tooltip: 'Imprimir etiqueta',
+                    tooltip: 'Imprimir remesa',
                     icon: 'intranet/css/label.png',
                     stopSelection: false,
                     iconCls: 'label'
