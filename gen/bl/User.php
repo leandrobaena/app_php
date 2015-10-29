@@ -67,6 +67,18 @@ class User extends \LBTObjectBL {
     }
 
     /**
+     * Trae los datos básicos de un usuario para envíar por correo el enlace
+     * para restaurar la contraseña de acceso al sistema
+     * 
+     * @param string $login Login ingresado por el usuario
+     * @return \gen\entities\UserEntity Usuario que tiene el login determinado
+     */
+    public function getDataForRestorePassword($login) {
+        $this->persistence->getDataForRestorePassword($login);
+        return $this->entity;
+    }
+
+    /**
      * Cambia el password a un usuario
      * 
      * @param string $password Nueva contraseña del usuario

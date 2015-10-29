@@ -111,6 +111,23 @@ class UserP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Trae los datos básicos de un usuario para envíar por correo el enlace
+     * para restaurar la contraseña de acceso al sistema
+     * 
+     * @param string $login Login ingresado por el usuario
+     * @return \gen\entities\UserEntity Usuario que tiene el login determinado
+     */
+    public function getDataForRestorePassword($login) {
+        $rs = $this->connection->read("iduser, login, name, email", "gen_user", "login = '$login'");
+        if ($rs != null) {
+            $this->observer->iduser = $rs->iduser;
+            $this->observer->login = $rs->login;
+            $this->observer->name = $rs->name;
+            $this->observer->email = $rs->email;
+        }
+    }
+
+    /**
      * Cambia el password a un usuario
      * 
      * @param string $password Nueva contraseña del usuario
