@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Inicio de sesi&oacute;n ::.</title>
+        <title>.:: SUSencargos Log&iacute;stica S.A.S. - Recuperar contrase&ntilde;a ::.</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta name="description" content="Ofrecemos una solución integral en el proceso de recolección, transporte  terrestre, distribución urbana y regional, con  entrega puerta a puerta de sus mercancías, con estricto cumplimiento de los tiempos de entrega  establecidos en nuestra matriz de cubrimiento, con mínima manipulación de sus envío. Contamos con medios de comunicación, sistemas de seguridad  y un desarrollo tecnológico que nos permite suministrar información  oportuna sobre cada uno de sus envíos." />
         <meta name="author" content="Leandro Baena Torres" />
@@ -16,8 +16,36 @@
                   <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
                 <![endif]-->
         <script>
-            function recoveryPass(){
-                window.location = "recuperar_pass.php";
+            function recoveryPass() {
+                var i = $('#login');
+                var ierror = false;
+                var emailExp = /^[^\s()<>@,;:\/]+@\w[\w\.-]+\.[a-z]{2,}$/i;
+                if (!emailExp.test(i.val())) {
+                    ierror = true;
+                }
+                if (!ierror) {
+                    $.ajax({
+                        url: 'intranet/recovery_pass.php',
+                        type: 'POST',
+                        data: {
+                            login: $('#login').val()
+                        },
+                        error: function (m) {
+                            var msj = $.parseJSON(m);
+                            $("#sendmessage").html(msj.msg.body);
+                            $("#sendmessage").toggleClass("noshow show");
+                        },
+                        success: function (m) {
+                            var msj = $.parseJSON(m);
+                            $("#sendmessage").html(msj.msg.body);
+                            $("#sendmessage").toggleClass("noshow show");
+                            i.val("");
+                        }
+                    });
+                } else {
+                    i.next('.validation').html(i.attr('data-msg')).show('blind');
+                }
+                return false;
             }
         </script>
     </head>
@@ -30,7 +58,7 @@
                         <div class="col-lg-12">
                             <ul class="breadcrumb">
                                 <li><a href="#"><i class="fa fa-home"></i></a><i class="icon-angle-right"></i></li>
-                                <li class="active">Zona de clientes</li>
+                                <li class="active">Recuperar contrase&ntilde;a</li>
                             </ul>
                         </div>
                     </div>
@@ -40,30 +68,19 @@
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-12">
-                            <h4>Digite sus datos para acceder a la zona de clientes</h4>
-                            <form id="contactform" action="login.php" method="post" class="validateform">
-                                <?php if (isset($_GET["error"])) { ?>
-                                <div id="sendmessage" class="show">
-                                        Hubo un error al intentar acceder a la zona de clientes: <?php echo($_GET["error"]) ?>
-                                    </div><?php
-                            }
-                                ?>
+                            <h4>Digite el correo con el que ingresa a la zona de clientes</h4>
+                            <form id="contactform" onsubmit="return recoveryPass()">
+                                <div id="sendmessage" class="noshow"></div>
                                 <div class="row">
                                     <div class="col-lg-4 field">
-                                        <input type="text" name="login" placeholder="* Ingrese su correo electr&oacute;nico" data-rule="email" data-msg="Ingrese un correo electr&oacute;nico v&aacute;lido" />
-                                        <div class="validation">
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-4 field">
-                                        <input type="password" name="password" placeholder="* Ingrese su contrase&ntilde;a" data-rule="maxlen:6 required" data-msg="Ingrese al menos 6 caracteres" />
+                                        <input type="text" id="login" name="login" placeholder="* Ingrese su correo electr&oacute;nico" data-rule="email" data-msg="Ingrese un correo electr&oacute;nico v&aacute;lido" />
                                         <div class="validation">
                                         </div>
                                     </div>
                                     <div class="col-lg-12 margintop10 field">
                                         <p>
-                                            <button class="btn btn-theme margintop10 pull-left" type="submit">Ingresar</button>
+                                            <button class="btn btn-theme margintop10 pull-left" type="submit">Recuperar</button>
                                             <span>&nbsp;</span>
-                                            <button class="btn btn-theme margintop10" type="button" onclick="recoveryPass()">Recordar contrase&ntilde;a</button>
                                             <span class="pull-right margintop20">* Por favor diligencie todos los campos requeridos, gracias!</span>
                                         </p>
                                     </div>
