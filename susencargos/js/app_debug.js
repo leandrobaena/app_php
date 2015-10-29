@@ -2025,6 +2025,10 @@ Ext.create('Ext.app.Controller', {
                         icon: Ext.Msg.INFO,
                         fn: function () {
                             Ext.getStore('Customer').load();
+                            Ext.getStore('CustomerL').load({
+                                start: 0,
+                                limit: 1000
+                            });
                         }
                     });
                     b.up('window').close();
@@ -2319,8 +2323,22 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     changeCustomer: function (c, i) {
-        var form = c.up('window').down('form').getForm();
-        form.findField('idcitysource').setValue(i[0].get('city').idcity);
+        if (i[0].get('idcustomer') != 0) {
+            var form = c.up('window').down('form').getForm();
+            form.findField('idcitysource').setValue(i[0].get('city').idcity);
+        } else {
+            Ext.MessageBox.confirm('Crear cliente', '¿Desea crear un nuevo cliente?', function (o) {
+                if (o == 'yes') {
+                    Ext.getStore('CityL').load({
+                        start: 0,
+                        limit: 1000,
+                        callback: function () {
+                            Ext.widget('formCustomer').down('form').loadRecord(Ext.create('susencargos.model.Customer'));
+                        }
+                    });
+                }
+            });
+        }
     },
     changePackageType: function (c, i) {
         var form = c.up('window').down('form').getForm();
@@ -3081,7 +3099,21 @@ Ext.application({
         Ext.create('susencargos.store.MainStoreLocal', {
             storeId: 'CustomerL',
             model: 'susencargos.model.Customer',
-            object: 'customers'
+            object: 'customers',
+            listeners: {
+                load: function (s) {
+                    s.insert(0, {
+                        idcustomer: 0,
+                        name: '.:: Nuevo cliente ::.',
+                        taxid: '0',
+                        address: '',
+                        phone: '',
+                        city: {idcity: 0, name: ''},
+                        user: {iduser: 0, name: ''},
+                        contact: ''
+                    });
+                }
+            }
         });
 
         Ext.create('susencargos.store.MainStoreRemote', {
