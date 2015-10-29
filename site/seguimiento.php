@@ -5,7 +5,7 @@ $tracking = 0;
 if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
     $tracking = $_GET["tracking"];
     $info = new \sus\bl\Tracking($tracking);
-    $steps = $info->readAll("idpackage = $tracking", "date DESC", 0, 100);
+    $steps = $info->readAll("idpackage = $tracking OR reference = $tracking", "date DESC", 0, 100);
 }
 ?>
 <!DOCTYPE html>
