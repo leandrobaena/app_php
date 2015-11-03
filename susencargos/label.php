@@ -40,8 +40,8 @@ class PDF extends FPDF {
 
 if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     $idpackage = $_GET["id"];
-    $package = new sus\bl\Package($idpackage);
-    $package->read();
+    $obj = new sus\bl\Package($idpackage);
+    $obj->read();
     $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
     $path = substr($path, 0, strrpos($path, "/"));
     $path .= "/utils/barcode.php?text=$idpackage";
@@ -58,17 +58,17 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         //Fecha y No. Guía
         $pdf->Rect(90, 5 + ($labelHeight * ($i % 4)), 50, 5, "D");
         $pdf->SetXY(90, 5 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, "Fecha: " . $pdf->fill($package->date->format("Y-m-d"), 45));
+        $pdf->Write(5, "Fecha: " . $pdf->fill($obj->date->format("Y-m-d"), 45));
         $pdf->Rect(140, 5 + ($labelHeight * ($i % 4)), 45, 5, "D");
         $pdf->SetXY(140, 5 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Remesa de carga No.: " . $pdf->fill($idpackage, 22));
         //Origen y destino
         $pdf->Rect(90, 10 + ($labelHeight * ($i % 4)), 50, 5, "D");
         $pdf->SetXY(90, 10 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, "Origen: " . utf8_decode($package->citySource->name));
+        $pdf->Write(5, "Origen: " . utf8_decode($obj->citySource->name));
         $pdf->Rect(140, 10 + ($labelHeight * ($i % 4)), 45, 5, "D");
         $pdf->SetXY(140, 10 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, "Destino: " . utf8_decode($package->cityDestination->name));
+        $pdf->Write(5, "Destino: " . utf8_decode($obj->cityDestination->name));
         //Remitente
         $pdf->Rect(5, 15 + ($labelHeight * ($i % 4)), 85, 20, "D");
         $pdf->Rect(5, 15 + ($labelHeight * ($i % 4)), 5, 20, "F");
@@ -82,14 +82,14 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(10, 15 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "De: ");
         $pdf->SetXY(10, 20 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode($package->customer->name));
+        $pdf->Write(5, utf8_decode($obj->customer->name));
         $pdf->SetXY(10, 25 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode("Dirección: ") . $package->customer->address);
+        $pdf->Write(5, utf8_decode("Dirección: ") . $obj->customer->address);
         $pdf->SetXY(10, 30 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode("Teléfono: ") . $pdf->fill($package->customer->phone, 25));
+        $pdf->Write(5, utf8_decode("Teléfono: ") . $pdf->fill($obj->customer->phone, 25));
         $pdf->SetXY(10, 35 + ($labelHeight * ($i % 4)));
         $pdf->SetXY(50, 30 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, "NIT/C.C: " . $pdf->fill($package->customer->taxid, 25));
+        $pdf->Write(5, "NIT/C.C: " . $pdf->fill($obj->customer->taxid, 25));
         //Destinatario
         $pdf->Rect(90, 15 + ($labelHeight * ($i % 4)), 95, 20, "D");
         $pdf->Rect(90, 15 + ($labelHeight * ($i % 4)), 5, 20, "F");
@@ -104,37 +104,37 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(95, 15 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Para: ");
         $pdf->SetXY(95, 20 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode($package->nameTo));
+        $pdf->Write(5, utf8_decode($obj->nameTo));
         $pdf->SetXY(95, 25 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode("Dirección: ") . utf8_decode($package->addressTo));
+        $pdf->Write(5, utf8_decode("Dirección: ") . utf8_decode($obj->addressTo));
         $pdf->SetXY(95, 30 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, utf8_decode("Teléfono: ") . $package->phoneTo);
+        $pdf->Write(5, utf8_decode("Teléfono: ") . $obj->phoneTo);
         //Dice contener, observaciones, peso, volumen y no. piezas
         $pdf->Rect(5, 35 + ($labelHeight * ($i % 4)), 40, 10, "D");
         $pdf->SetXY(5, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Dice contener: ");
         $pdf->SetXY(5, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->content, 50));
+        $pdf->Write(5, $pdf->fill($obj->content, 50));
         $pdf->Rect(45, 35 + ($labelHeight * ($i % 4)), 80, 10, "D");
         $pdf->SetXY(45, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Observaciones: ");
         $pdf->SetXY(45, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->observations, 107));
+        $pdf->Write(5, $pdf->fill($obj->observations, 107));
         $pdf->Rect(125, 35 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(125, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Peso (Kg.): ");
         $pdf->SetXY(125, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->weight, 21));
+        $pdf->Write(5, $pdf->fill($obj->weight, 21));
         $pdf->Rect(145, 35 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(145, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Volumen: ");
         $pdf->SetXY(145, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->volumen, 22));
+        $pdf->Write(5, $pdf->fill($obj->volumen, 22));
         $pdf->Rect(165, 35 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(165, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "No. piezas: ");
         $pdf->SetXY(165, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->amount, 22));
+        $pdf->Write(5, $pdf->fill($obj->amount, 22));
         //Firma remitente, firma destinatario, valor declarado, valor flete,
         //valor manejo, hora recepcion, fecha recepción, valor total
         $pdf->Rect(5, 45 + ($labelHeight * ($i % 4)), 60, 20, "D");
@@ -149,7 +149,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(125, 45 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Vlr declarado $: ");
         $pdf->SetXY(125, 50 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->declaredValue, 17));
+        $pdf->Write(5, $pdf->fill($obj->declaredValue, 17));
         $pdf->Rect(145, 45 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(145, 45 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Hora: ");
@@ -157,7 +157,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(165, 45 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Vlr flete $: ");
         $pdf->SetXY(165, 50 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->shippingValue, 22));
+        $pdf->Write(5, $pdf->fill($obj->shippingValue, 22));
         $pdf->Rect(125, 55 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(125, 55 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Fecha: ");
@@ -165,18 +165,18 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(145, 55 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Vlr manejo $: ");
         $pdf->SetXY(145, 60 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->managementValue, 22));
+        $pdf->Write(5, $pdf->fill($obj->managementValue, 22));
         $pdf->Rect(165, 55 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(165, 55 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, " TOTAL $");
         $pdf->SetXY(165, 60 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($package->totalValue, 22));
+        $pdf->Write(5, $pdf->fill($obj->totalValue, 22));
 
         //Lateral
         $pdf->SetFontSize(6);
         $pdf->SetXY(185, 60 + ($labelHeight * ($i % 4)));
         $pdf->rotate(90);
-        $pdf->Write(5, utf8_decode("Tipo de pago: Contado " . ($package->payType->idpaytype == 1 ? "| X |" : "     ") . " Contraentrega " . ($package->payType->idpaytype == 2 ? "| X |" : "     ") . " Crédito " . ($package->payType->idpaytype == 3 ? "| X |" : "     ")));
+        $pdf->Write(5, utf8_decode("Tipo de pago: Contado " . ($obj->payType->idpaytype == 1 ? "| X |" : "     ") . " Contraentrega " . ($obj->payType->idpaytype == 2 ? "| X |" : "     ") . " Crédito " . ($obj->payType->idpaytype == 3 ? "| X |" : "     ")));
         $pdf->rotate(0);
         
         $pdf->SetXY(190, 62 + ($labelHeight * ($i % 4)));

@@ -6,12 +6,12 @@ require_once (__DIR__ . "/sus/bl/Package.php");
 $idpackage = 0;
 if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     $idpackage = $_GET["id"];
-    $package = new sus\bl\Package($idpackage);
-    $package->read();
+    $obj = new sus\bl\Package($idpackage);
+    $obj->read();
     $pdf = new FPDF();
     $pdf->AliasNbPages();
 
-    for ($i = 0; $i < $package->amount; $i++) {
+    for ($i = 0; $i < $obj->amount; $i++) {
         $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
         $path = substr($path, 0, strrpos($path, "/"));
         $path .= "/utils/barcode.php?text=$idpackage-" . ($i + 1);
@@ -27,13 +27,13 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
 
         $pdf->SetFont('Times', '', 14);
         $pdf->SetXY(25, 40 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->customer->name));
+        $pdf->Write(10, utf8_decode($obj->customer->name));
         $pdf->SetXY(25, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, substr(utf8_decode($package->customer->address), 0, 40));
+        $pdf->Write(10, substr(utf8_decode($obj->customer->address), 0, 40));
         $pdf->SetXY(25, 60 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->customer->phone));
+        $pdf->Write(10, utf8_decode($obj->customer->phone));
         $pdf->SetXY(25, 70 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->citySource->name));
+        $pdf->Write(10, utf8_decode($obj->citySource->name));
 
         $pdf->SetXY(125, 30 + (140 * ($i % 2)));
         $pdf->SetFont('Times', 'B', 18);
@@ -41,18 +41,18 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
 
         $pdf->SetFont('Times', '', 14);
         $pdf->SetXY(115, 40 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->nameTo));
+        $pdf->Write(10, utf8_decode($obj->nameTo));
         $pdf->SetXY(115, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, substr(utf8_decode($package->addressTo), 0, 40));
+        $pdf->Write(10, substr(utf8_decode($obj->addressTo), 0, 40));
         $pdf->SetXY(115, 60 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->phoneTo));
+        $pdf->Write(10, utf8_decode($obj->phoneTo));
         $pdf->SetXY(115, 70 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($package->cityDestination->name));
+        $pdf->Write(10, utf8_decode($obj->cityDestination->name));
 
         $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 80 + (140 * ($i % 2)), 60, 30);
         $pdf->SetXY(115, 110 + (140 * ($i % 2)));
         $pdf->SetFont('Times', '', 10);
-        $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($package->amount)));
+        $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($obj->amount)));
         $pdf->SetXY(65, 120 + (140 * ($i % 2)));
         $pdf->Write(5, utf8_decode("Mercancía transportada por SUSencargos Logística S.A.S."));
         $pdf->SetXY(52, 125 + (140 * ($i % 2)));
