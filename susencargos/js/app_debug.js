@@ -446,6 +446,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=deliveryPackage]': {click: 'deliveryPackage'},
         /*Reportes*/
         'menu menuitem[action=rptPackages]': {click: 'rptPackages'},
+        'menu menuitem[action=rptCustomers]': {click: 'rptCustomers'},
         /*CMS*/
         'menu menuitem[action=typesResource]': {click: 'typesResource'},
         /*Aplicación*/
@@ -536,6 +537,34 @@ Ext.create('Ext.app.Controller', {
             url: 'stores/reports.php',
             params: {
                 object: 'packages'
+            },
+            success: function (response) {
+                var d = Ext.JSON.decode(response.responseText);
+                Ext.MessageBox.show({
+                    title: 'Reporte generado',
+                    msg: 'El reporte fue generado con éxito haga clic en el botón para descargarlo',
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.INFO,
+                    fn: function () {
+                        window.open(d.msg.body);
+                    }
+                });
+            },
+            failed: function (t, p, o) {
+                Ext.MessageBox.show({
+                    title: p.response.result.msg.title,
+                    msg: p.response.result.msg.body,
+                    buttons: Ext.Msg.OK,
+                    icon: Ext.Msg.INFO
+                });
+            }
+        });
+    },
+    rptCustomers: function () {
+        Ext.Ajax.request({
+            url: 'stores/reports.php',
+            params: {
+                object: 'customers'
             },
             success: function (response) {
                 var d = Ext.JSON.decode(response.responseText);
