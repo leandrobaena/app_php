@@ -47,7 +47,8 @@ class PackageP extends \gen\dl\LBTObjectP {
             "totalValue" => $this->observer->totalValue,
             "reference" => "'" . $this->observer->reference . "'",
             "idpaytype" => $this->observer->payType->idpaytype,
-            "idpackagetype" => $this->observer->packageType->idpackagetype
+            "idpackagetype" => $this->observer->packageType->idpackagetype,
+            "pod" => "''"
                 ), $this->user->iduser);
 
         $now = new \DateTime();
@@ -65,7 +66,7 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->read("date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content, observations,
                 weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue, reference, idpaytype, pay_type,
-                idpackagetype, package_type", "vw_sus_package", "idpackage = " . $this->observer->idpackage);
+                idpackagetype, package_type, pod", "vw_sus_package", "idpackage = " . $this->observer->idpackage);
         $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
         $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
         $this->observer->citySource->name = $rs->city_source;
@@ -93,6 +94,7 @@ class PackageP extends \gen\dl\LBTObjectP {
         $this->observer->payType->name = $rs->pay_type;
         $this->observer->packageType = new \sus\entities\PackageTypeEntity($rs->idpackagetype);
         $this->observer->packageType->name = $rs->package_type;
+        $this->observer->pod = $rs->pod;
     }
 
     /**
@@ -111,7 +113,7 @@ class PackageP extends \gen\dl\LBTObjectP {
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content,
                 observations, weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue,
-                reference, idpaytype, pay_type, idpackagetype, package_type", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
+                reference, idpaytype, pay_type, idpackagetype, package_type, pod", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -142,6 +144,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->payType->name = $row->pay_type;
             $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
             $obj->packageType->name = $row->package_type;
+            $obj->pod = $row->pod;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -171,7 +174,8 @@ class PackageP extends \gen\dl\LBTObjectP {
             "totalValue" => $this->observer->totalValue,
             "reference" => "'" . $this->observer->reference . "'",
             "idpaytype" => $this->observer->payType->idpaytype,
-            "idpackagetype" => $this->observer->packageType->idpackagetype
+            "idpackagetype" => $this->observer->packageType->idpackagetype,
+            "pod" => "'" . $this->observer->pod. "'"
                 ), array("idpackage" => $this->observer->idpackage), $this->user->iduser
         );
     }
@@ -187,7 +191,7 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, p.city_source, p.idcitydestination, p.city_destination, p.idcustomer,
                 p.customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type",
+                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod",
                 "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer",
                 "cu.iduser = $iduser", "p.date DESC", $start, $limit, $this->total
         );
@@ -217,6 +221,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->payType->name = $row->pay_type;
             $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
             $obj->packageType->name = $row->package_type;
+            $obj->pod = $row->pod;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);

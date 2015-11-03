@@ -443,7 +443,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
         'menu menuitem[action=receivePackages]': {click: 'receivePackages'},
         'menu menuitem[action=dispatchPackages]': {click: 'dispatchPackages'},
-        'menu menuitem[action=deliveryPackages]': {click: 'deliveryPackages'},
+        'menu menuitem[action=deliveryPackage]': {click: 'deliveryPackage'},
         /*Reportes*/
         'menu menuitem[action=rptPackages]': {click: 'rptPackages'},
         /*CMS*/
@@ -528,7 +528,7 @@ Ext.create('Ext.app.Controller', {
     dispatchPackages: function () {
         Ext.widget('formDispatchPackage');
     },
-    deliveryPackages: function () {
+    deliveryPackage: function () {
         Ext.widget('formDeliveryPackage');
     },
     rptPackages: function () {
@@ -3010,6 +3010,53 @@ Ext.create('Ext.app.Controller', {
         });
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'formDeliveryPackage button[action=cancel]': {click: 'cancel'},
+        'formDeliveryPackage button[action=save]': {click: 'save'}
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(0);
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        autoScroll: true,
+                        maxHeight: 400,
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -5024,6 +5071,38 @@ Ext.application({
                             stopSelection: false,
                             iconCls: 'remove'
                         }]
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Entrega de remesas a destinatario">
+        Ext.define('susencargos.view.delivery_package.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formDeliveryPackage',
+            title: 'Entregar paquete a destinatario',
+            object: 'deliveryPackage',
+            fields: [{
+                    xtype: 'textfield',
+                    fieldLabel: '* No. Remesa',
+                    labelWidth: 200,
+                    name: 'tracking',
+                    allowBlank: false,
+                    anchor: '95%',
+                    value: ''
+                }, {
+                    xtype: 'filefield',
+                    fieldLabel: 'Prueba de entrega',
+                    labelWidth: 200,
+                    name: 'pod',
+                    accept: 'image/*',
+                    anchor: '95%',
+                    value: ''
                 }],
             buttons: [{
                     text: 'Guardar',

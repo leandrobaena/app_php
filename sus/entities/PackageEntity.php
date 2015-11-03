@@ -31,6 +31,7 @@ require_once (__DIR__ . "/PackageTypeEntity.php");
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property PayTypeEntity $payType Tipo de pago de la remesa
  * @property PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
+ * @property string $pod Prueba de entrega
  * @author Leandro Baena Torres
  */
 class PackageEntity extends \gen\entities\LBTObject {
@@ -62,6 +63,7 @@ class PackageEntity extends \gen\entities\LBTObject {
         $this->reference = "";
         $this->payType = new PayTypeEntity(0);
         $this->packageType = new PackageTypeEntity(0);
+        $this->pod = "";
     }
 
     //</editor-fold>
@@ -113,7 +115,8 @@ class PackageEntity extends \gen\entities\LBTObject {
                 . "\"totalValue\":$this->totalValue,"
                 . "\"reference\":\"$this->reference\","
                 . "\"payType\":$this->payType,"
-                . "\"packageType\":$this->packageType}";
+                . "\"packageType\":$this->packageType,"
+                . "\"pod\":\"$this->pod\"}";
     }
 
     //</editor-fold>
@@ -217,6 +220,12 @@ class PackageEntity extends \gen\entities\LBTObject {
      * @var PackageTypeEntity Tipo de envío o embalaje de la remesa
      */
     private $packageType;
+
+    /**
+     * Prueba de entrega
+     * @var string
+     */
+    private $pod;
 
     //</editor-fold>
 }

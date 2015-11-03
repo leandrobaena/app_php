@@ -1,11 +1,14 @@
 <?php
 require_once (__DIR__ . "/intranet/sus/bl/Tracking.php");
+require_once (__DIR__ . "/intranet/sus/bl/Package.php");
 
 $tracking = 0;
 if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
     $tracking = $_GET["tracking"];
     $info = new \sus\bl\Tracking($tracking);
     $steps = $info->readAll("idpackage = $tracking OR reference = $tracking", "date DESC", 0, 100);
+    $package = new \sus\bl\Package($tracking);
+    $package->read();
 }
 ?>
 <!DOCTYPE html>
@@ -65,22 +68,29 @@ if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <?php
-                                                    foreach($steps->records as $s){?>
-                                                    <tr>
-                                                        <td><?php echo($s->date->format("Y-m-d H:i:s")); ?></td>
-                                                        <td><?php echo($s->state->name); ?></td>
-                                                    </tr><?php
-                                                    } ?>
-                                                </thead>
+                                                    <?php foreach ($steps->records as $s) { ?>
+                                                        <tr>
+                                                            <td><?php echo($s->date->format("Y-m-d H:i:s")); ?></td>
+                                                            <td><?php echo($s->state->name); ?></td>
+                                                        </tr><?php
+                                                    }
+                                                    if ($package->pod != "") {
+                                                        ?>
+                                                        <tr>
+                                                            <td style="vertical-align: top">Prueba de entrega</td>
+                                                            <td><img src="intranet/pod/<?php echo($package->pod); ?>" /></td>
+                                                        </tr><?php
+                                                    }
+                                                    ?>
+                                                    </thead>
                                             </table>
-                                                <?php
-                                            } else { ?>
-                                                <h2>No existe este n&uacute;mero de remesa</h2>
-                                                <?php
-                                            }
+                                        <?php } else {
+                                            ?>
+                                            <h2>No existe este n&uacute;mero de remesa</h2>
+                                            <?php
                                         }
-                                        ?>
+                                    }
+                                    ?>
                                 </div>
                             </div>
                         </div>

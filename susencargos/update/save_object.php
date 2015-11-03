@@ -292,6 +292,41 @@ try {
                             }
                             echo("{\"success\":true,\"msg\":{\"title\":\"Remesas despachadas de bodega\",\"body\":\"Las remesas han sido despachadas de la bodega\"}}");
                             break;
+                        case "deliveryPackage":
+                            $obj = new \sus\bl\Tracking(0);
+                            $state = new \sus\entities\StateTrackingEntity(4); //Entregado a destinatario
+                            $package = new \sus\bl\Package($_POST["tracking"]);
+                            $package->read();
+                            $customer = new \sus\bl\Customer($package->customer->idcustomer);
+                            $customer->read();
+                            $obj->package = $package;
+                            $obj->state = $state;
+                            try {
+                                $obj->create($_SESSION["user"]);
+                            } catch (Exception $e) {
+                                
+                            }
+                            try {
+                                $template = new gen\bl\TemplateMail(4); //Plantilla de remesa entegada a cliente
+                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                                $mail = new PHPMailer();
+                                $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                $mail->addAddress($customer->user->email, $customer->name);
+                                $mail->Subject = utf8_decode("Remesa entregada a destinatario");
+                                $mail->msgHTML($message);
+                                $mail->send();
+                            } catch (Exception $ex) {
+                                
+                            }
+                            if (isset($_FILES["pod"])) {
+                                $pod_temp = $_FILES["pod"]["tmp_name"];
+                                $ext = strtolower(substr($_FILES["pod"]["name"], strrpos($_FILES["pod"]["name"], ".")));
+                                move_uploaded_file($_FILES["pod"]["tmp_name"], __DIR__ . "/../pod/pod_" . $_POST["tracking"] . $ext);
+                                $package->pod = "pod_" . $_POST["tracking"] . $ext;
+                                $package->update($_SESSION["user"]);
+                            }
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Remesa entregada\",\"body\":\"La remesa han sido entregada al destinatario\"}}");
+                            break;
                         case "packageTypes":
                             $obj = new \sus\bl\PackageType($_POST["id"]);
                             $obj->name = $_POST["name"];

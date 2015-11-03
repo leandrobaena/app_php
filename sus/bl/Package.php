@@ -30,6 +30,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property string $reference Referencia de la remesa, generalmente código externo
  * @property \sus\entities\PayTypeEntity $payType Tipo de pago de la remesa
  * @property \sus\entities\PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
+ * @property string $pod Prueba de entrega
  * @author Leandro Baena Torres
  */
 class Package extends \LBTObjectBL {
