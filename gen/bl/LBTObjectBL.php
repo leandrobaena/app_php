@@ -15,7 +15,7 @@ abstract class LBTObjectBL {
      * @param string $sorters Ordenamientos aplicados a la consulta
      * @param int $start Registro inicial a traer
      * @param int $limit Número de registros a traer
-     * @return string Listado de entidades formato json
+     * @return \utils\ListJson Listado de entidades formato json
      */
     public function readAll($filters, $sorters, $start, $limit) {
         return $this->persistence->readAll($filters, $sorters, $start, $limit);

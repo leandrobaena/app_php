@@ -105,7 +105,7 @@ class PackageP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de remesas
+     * @return \utils\ListJson Listado de remesas
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
@@ -175,7 +175,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             "reference" => "'" . $this->observer->reference . "'",
             "idpaytype" => $this->observer->payType->idpaytype,
             "idpackagetype" => $this->observer->packageType->idpackagetype,
-            "pod" => "'" . $this->observer->pod. "'"
+            "pod" => "'" . $this->observer->pod . "'"
                 ), array("idpackage" => $this->observer->idpackage), $this->user->iduser
         );
     }
@@ -184,16 +184,62 @@ class PackageP extends \gen\dl\LBTObjectP {
      * Trae todos las remesas de un determinado cliente dado su identificador de
      * usuario
      * 
-     * @return array Listado de remesas del cliente
+     * @return \utils\ListJson Listado de remesas del cliente
      */
     public function readAllCustomer($iduser, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, p.city_source, p.idcitydestination, p.city_destination, p.idcustomer,
                 p.customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod",
-                "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer",
-                "cu.iduser = $iduser", "p.date DESC", $start, $limit, $this->total
+                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod", "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer", "cu.iduser = $iduser", "p.date DESC", $start, $limit, $this->total
+        );
+        foreach ($rs as $row) {
+            $obj = new \sus\entities\PackageEntity($row->idpackage);
+            $obj->date = \DateTime::createFromFormat("Y-m-d", $row->date);
+            $obj->citySource = new \sus\entities\CityEntity($row->idcitysource);
+            $obj->citySource->name = $row->city_source;
+            $obj->cityDestination = new \sus\entities\CityEntity($row->idcitydestination);
+            $obj->cityDestination->name = $row->city_destination;
+            $obj->customer = new \sus\entities\CustomerEntity($row->idcustomer);
+            $obj->customer->name = $row->customer;
+            $obj->nameTo = $row->nameTo;
+            $obj->addressTo = $row->addressTo;
+            $obj->phoneTo = $row->phoneTo;
+            $obj->content = $row->content;
+            $obj->observations = $row->observations;
+            $obj->weight = $row->weight;
+            $obj->volumen = $row->volumen;
+            $obj->amount = $row->amount;
+            $obj->declaredValue = $row->declaredValue;
+            $obj->shippingValue = $row->shippingValue;
+            $obj->managementValue = $row->managementValue;
+            $obj->totalValue = $row->totalValue;
+            $obj->reference = $row->reference;
+            $obj->payType = new \sus\entities\PayTypeEntity($row->idpaytype);
+            $obj->payType->name = $row->pay_type;
+            $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
+            $obj->packageType->name = $row->package_type;
+            $obj->pod = $row->pod;
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
+
+    /**
+     * Trae todos los paquetes que estén en estado creado y en bodega, que
+     * pertenezcan a la zona determinada para armar la planilla de vuelo
+     * 
+     * @param int $idzone Identificador de la zona
+     * @return \utils\ListJson
+     */
+    public function getPackagesToManifest($idzone) {
+        $list = array();
+        $rs = $this->connection->readAll(
+                "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
+                customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
+                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type, idpackagetype, package_type, pod",
+                "vw_sus_packages_manifest",
+                "idzone = $idzone", "date DESC", 0, 1000, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);

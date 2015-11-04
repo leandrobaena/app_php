@@ -48,10 +48,21 @@ class Package extends \LBTObjectBL {
      * Trae todos las remesas de un determinado cliente dado su identificador de
      * usuario
      * 
-     * @return array Listado de remesas del cliente
+     * @return \utils\ListJson Listado de remesas del cliente
      */
     public function readAllCustomer($iduser, $start, $limit) {
         return $this->persistence->readAllCustomer($iduser, $start, $limit);
+    }
+
+    /**
+     * Trae todos los paquetes que estén en estado creado y en bodega, que
+     * pertenezcan a la zona determinada para armar la planilla de vuelo
+     * 
+     * @param int $idzone Identificador de la zona
+     * @return \utils\ListJson
+     */
+    public function getPackagesToManifest($idzone) {
+        return $this->persistence->getPackagesToManifest($idzone);
     }
 
     //</editor-fold>
