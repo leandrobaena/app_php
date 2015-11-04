@@ -69,6 +69,9 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->Rect(140, 10 + ($labelHeight * ($i % 4)), 45, 5, "D");
         $pdf->SetXY(140, 10 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Destino: " . utf8_decode($obj->cityDestination->name));
+        $pdf->Rect(140, 15 + ($labelHeight * ($i % 4)), 45, 5, "D");
+        $pdf->SetXY(140, 15 + ($labelHeight * ($i % 4)));
+        $pdf->Write(5, "Referencia: " . utf8_decode($obj->reference));
         //Remitente
         $pdf->Rect(5, 15 + ($labelHeight * ($i % 4)), 85, 20, "D");
         $pdf->Rect(5, 15 + ($labelHeight * ($i % 4)), 5, 20, "F");
@@ -114,12 +117,12 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(5, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Dice contener: ");
         $pdf->SetXY(5, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($obj->content, 50));
+        $pdf->Write(5, utf8_decode($obj->content));
         $pdf->Rect(45, 35 + ($labelHeight * ($i % 4)), 80, 10, "D");
         $pdf->SetXY(45, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Observaciones: ");
         $pdf->SetXY(45, 40 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, $pdf->fill($obj->observations, 107));
+        $pdf->Write(5, utf8_decode($obj->observations));
         $pdf->Rect(125, 35 + ($labelHeight * ($i % 4)), 20, 10, "D");
         $pdf->SetXY(125, 35 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Peso (Kg.): ");
