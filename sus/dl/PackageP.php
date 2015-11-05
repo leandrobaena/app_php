@@ -230,16 +230,17 @@ class PackageP extends \gen\dl\LBTObjectP {
      * pertenezcan a la zona determinada para armar la planilla de vuelo
      * 
      * @param int $idzone Identificador de la zona
+     * @param string $date Fecha que se quiere consultar
      * @return \utils\ListJson
      */
-    public function getPackagesToManifest($idzone) {
+    public function getPackagesToManifest($idzone, $date) {
         $list = array();
         $rs = $this->connection->readAll(
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
                 shippingValue, managementValue, totalValue, reference, idpaytype, pay_type, idpackagetype, package_type, pod",
                 "vw_sus_packages_manifest",
-                "idzone = $idzone", "date DESC", 0, 1000, $this->total
+                "idzone = $idzone AND date = '$date'", "idpackage ASC", 0, 1000, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);

@@ -59,10 +59,11 @@ class Package extends \LBTObjectBL {
      * pertenezcan a la zona determinada para armar la planilla de vuelo
      * 
      * @param int $idzone Identificador de la zona
+     * @param string $date Fecha que se quiere consultar
      * @return \utils\ListJson
      */
-    public function getPackagesToManifest($idzone) {
-        return $this->persistence->getPackagesToManifest($idzone);
+    public function getPackagesToManifest($idzone, $date) {
+        return $this->persistence->getPackagesToManifest($idzone, $date);
     }
 
     //</editor-fold>

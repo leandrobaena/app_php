@@ -137,7 +137,7 @@ try {
                     $objPHPExcel->getActiveSheet()->setTitle($zones->records[$i]->name);
 
                     $package = new sus\bl\Package(0);
-                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone);
+                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone, $_POST["date"]);
 
                     $today = new DateTime();
 
@@ -160,7 +160,8 @@ try {
                             ->setCellValue("J5", "Valor c/e")
                             ->setCellValue("K5", "Observación")
                             ->mergeCells("A1:K1")
-                            ->mergeCells("A2:K2");
+                            ->mergeCells("A2:K2")
+                            ->getStyle("A1:K2")->applyFromArray(array("alignment" => array("horizontal" => PHPExcel_Style_Alignment::HORIZONTAL_CENTER)));
                     $objPHPExcel->getActiveSheet()->getStyle("A1:K5")->getFont()->setBold(true);
                     for ($j = 0; $j < count($packages->records); $j++) {
                         $objPHPExcel->getActiveSheet()

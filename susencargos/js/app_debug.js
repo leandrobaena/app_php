@@ -590,32 +590,7 @@ Ext.create('Ext.app.Controller', {
         });
     },
     rptFlightManifest: function () {
-        Ext.Ajax.request({
-            url: 'stores/reports.php',
-            params: {
-                object: 'flightManifest'
-            },
-            success: function (response) {
-                var d = Ext.JSON.decode(response.responseText);
-                Ext.MessageBox.show({
-                    title: 'Reporte generado',
-                    msg: 'El reporte fue generado con éxito haga clic en el botón para descargarlo',
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO,
-                    fn: function () {
-                        window.open(d.msg.body);
-                    }
-                });
-            },
-            failed: function (t, p, o) {
-                Ext.MessageBox.show({
-                    title: p.response.result.msg.title,
-                    msg: p.response.result.msg.body,
-                    buttons: Ext.Msg.OK,
-                    icon: Ext.Msg.INFO
-                });
-            }
-        });
+        Ext.widget('formFlightManifest').down('form');
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -3115,6 +3090,55 @@ Ext.create('Ext.app.Controller', {
         }
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'formFlightManifest button[action=cancel]': {click: 'cancel'},
+        'formFlightManifest button[action=save]': {click: 'save'}
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            Ext.Ajax.request({
+                url: 'stores/reports.php',
+                params: {
+                    object: 'flightManifest',
+                    date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(),'Y-m-d')
+                },
+                success: function (response) {
+                    var d = Ext.JSON.decode(response.responseText);
+                    Ext.MessageBox.show({
+                        title: 'Reporte generado',
+                        msg: 'El reporte fue generado con éxito haga clic en el botón para descargarlo',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            window.open(d.msg.body);
+                            b.up('window').close();
+                        }
+                    });
+                },
+                failed: function (t, p, o) {
+                    Ext.MessageBox.show({
+                        title: p.response.result.msg.title,
+                        msg: p.response.result.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -5238,6 +5262,29 @@ Ext.application({
                 }],
             buttons: [{
                     text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Planilla de vuelo">
+        Ext.define('susencargos.view.flightManifest.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formFlightManifest',
+            title: 'Seleccionar fecha de planilla de vuelo',
+            fields: [{
+                    xtype: 'datefield',
+                    name: 'date',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Fecha del envío',
+                    format: 'Y-m-d'
+                }],
+            buttons: [{
+                    text: 'Generar',
                     action: 'save'
                 }, {
                     text: 'Cancelar',
