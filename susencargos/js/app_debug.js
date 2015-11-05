@@ -2343,6 +2343,8 @@ Ext.create('Ext.app.Controller', {
         'listPackages actioncolumn[action=remove]': {click: 'remove'},
         'formPackage combo[name=idcustomer]': {select: 'changeCustomer'},
         'formPackage combo[name=idpackagetype]': {select: 'changePackageType'},
+        'formPackage numberfield[name=shippingValue]': {change: 'changeShippingValue'},
+        'formPackage numberfield[name=managementValue]': {change: 'changeManagementValue'},
         'formPackage button[action=cancel]': {click: 'cancel'},
         'formPackage button[action=save]': {click: 'save'}
     },
@@ -2379,6 +2381,22 @@ Ext.create('Ext.app.Controller', {
             form.findField('weight').setValue(30);
         } else {//Sobre
             form.findField('weight').setValue(1);
+        }
+    },
+    changeShippingValue: function (f, v, o) {
+        if (v != null) {
+            var managementValue = f.up('form').getForm().findField('managementValue').getValue();
+            if (managementValue != null) {
+                f.up('form').getForm().findField('totalValue').setValue(v + managementValue);
+            }
+        }
+    },
+    changeManagementValue: function (f, v, o) {
+        if (v != null) {
+            var shippingValue = f.up('form').getForm().findField('shippingValue').getValue();
+            if (shippingValue != null) {
+                f.up('form').getForm().findField('totalValue').setValue(v + shippingValue);
+            }
         }
     },
     tracking: function (v, r, c, i, e) {
@@ -3105,7 +3123,7 @@ Ext.create('Ext.app.Controller', {
                 url: 'stores/reports.php',
                 params: {
                     object: 'flightManifest',
-                    date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(),'Y-m-d')
+                    date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(), 'Y-m-d')
                 },
                 success: function (response) {
                     var d = Ext.JSON.decode(response.responseText);

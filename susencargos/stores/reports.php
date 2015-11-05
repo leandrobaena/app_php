@@ -149,7 +149,7 @@ try {
                             ->setCellValue("G3", "Conductor")
                             ->setCellValue("G4", "Placas")
                             ->setCellValue("A5", "No. Guía")
-                            ->setCellValue("B5", "Fact. No.")
+                            ->setCellValue("B5", "Referencia")
                             ->setCellValue("C5", "Remitente")
                             ->setCellValue("D4", "Origen")
                             ->setCellValue("E5", "Destino")
@@ -166,7 +166,7 @@ try {
                     for ($j = 0; $j < count($packages->records); $j++) {
                         $objPHPExcel->getActiveSheet()
                                 ->setCellValue("A" . ($j + 6), $packages->records[$j]->idpackage)
-                                ->setCellValue("B" . ($j + 6), "")
+                                ->setCellValue("B" . ($j + 6), $packages->records[$j]->reference)
                                 ->setCellValue("C" . ($j + 6), $packages->records[$j]->customer->name)
                                 ->setCellValue("D" . ($j + 6), $packages->records[$j]->citySource->name)
                                 ->setCellValue("E" . ($j + 6), $packages->records[$j]->cityDestination->name)
