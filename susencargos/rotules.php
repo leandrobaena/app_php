@@ -27,12 +27,24 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
 
         $pdf->SetFont('Times', '', 14);
         $pdf->SetXY(25, 40 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($obj->customer->name));
-        $pdf->SetXY(25, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, substr(utf8_decode($obj->customer->address), 0, 40));
+        if (strlen($obj->customer->name) < 25) {
+            $pdf->Write(10, utf8_decode($obj->customer->name));
+        } else {
+            $pdf->Write(10, substr(utf8_decode($obj->customer->name), 0, 25));
+            $pdf->SetXY(25, 45 + (140 * ($i % 2)));
+            $pdf->Write(10, substr(utf8_decode($obj->customer->name), 25));
+        }
         $pdf->SetXY(25, 60 + (140 * ($i % 2)));
+        if (strlen($obj->customer->address) < 25) {
+            $pdf->Write(10, utf8_decode($obj->customer->address));
+        } else {
+            $pdf->Write(10, substr(utf8_decode($obj->customer->address), 0, 25));
+            $pdf->SetXY(25, 65 + (140 * ($i % 2)));
+            $pdf->Write(10, substr(utf8_decode($obj->customer->address), 25));
+        }
+        $pdf->SetXY(25, 80 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($obj->customer->phone));
-        $pdf->SetXY(25, 70 + (140 * ($i % 2)));
+        $pdf->SetXY(25, 90 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($obj->citySource->name));
 
         $pdf->SetXY(125, 30 + (140 * ($i % 2)));
@@ -41,15 +53,27 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
 
         $pdf->SetFont('Times', '', 14);
         $pdf->SetXY(115, 40 + (140 * ($i % 2)));
-        $pdf->Write(10, utf8_decode($obj->nameTo));
-        $pdf->SetXY(115, 50 + (140 * ($i % 2)));
-        $pdf->Write(10, substr(utf8_decode($obj->addressTo), 0, 40));
+        if (strlen($obj->nameTo) < 25) {
+            $pdf->Write(10, utf8_decode($obj->nameTo));
+        } else {
+            $pdf->Write(10, substr(utf8_decode($obj->nameTo), 0, 25));
+            $pdf->SetXY(115, 45 + (140 * ($i % 2)));
+            $pdf->Write(10, substr(utf8_decode($obj->nameTo), 25));
+        }
         $pdf->SetXY(115, 60 + (140 * ($i % 2)));
+        if (strlen($obj->addressTo) < 25) {
+            $pdf->Write(10, substr(utf8_decode($obj->addressTo), 0, 40));
+        } else {
+            $pdf->Write(10, substr(utf8_decode($obj->addressTo), 0, 25));
+            $pdf->SetXY(115, 65 + (140 * ($i % 2)));
+            $pdf->Write(10, substr(utf8_decode($obj->addressTo), 25));
+        }
+        $pdf->SetXY(115, 80 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($obj->phoneTo));
-        $pdf->SetXY(115, 70 + (140 * ($i % 2)));
+        $pdf->SetXY(115, 90 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($obj->cityDestination->name));
 
-        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 80 + (140 * ($i % 2)), 60, 30);
+        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 100 + (140 * ($i % 2)), 60, 10);
         $pdf->SetXY(115, 110 + (140 * ($i % 2)));
         $pdf->SetFont('Times', '', 10);
         $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($obj->amount)));
