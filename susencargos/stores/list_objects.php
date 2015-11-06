@@ -58,6 +58,17 @@ try {
             }
         }
     }
+    if (isset($_GET["sort"])) {
+        $arrSorters = json_decode($_GET["sort"]);
+        foreach ($arrSorters as $s) {
+            if (isset($s->property)) {
+                if ($sorters != "") {
+                    $sorters .= ",";
+                }
+                $sorters .= "$s->property $s->direction";
+            }
+        }
+    }
     if (isset($_GET["object"])) {
         $object = $_GET["object"];
         switch ($object) {
@@ -127,7 +138,7 @@ try {
                 break;
             case "packages":
                 $obj = new \sus\bl\Package(0);
-                $list = $obj->readAll($filters, ($sorters != "" ? "$sorters, date DESC" : "date DESC"), $start, $limit);
+                $list = $obj->readAll($filters, ($sorters != "" ? $sorters : "idpackage DESC"), $start, $limit);
                 break;
             case "packagesCustomer":
                 $obj = new \sus\bl\Package(0);
