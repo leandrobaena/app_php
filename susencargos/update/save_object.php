@@ -303,11 +303,11 @@ try {
                         case "deliveryPackage":
                             $obj = new \sus\bl\Tracking(0);
                             $state = new \sus\entities\StateTrackingEntity(4); //Entregado a destinatario
-                            $obj = new \sus\bl\Package($_POST["tracking"]);
-                            $obj->read();
-                            $obj = new \sus\bl\Customer($obj->customer->idcustomer);
-                            $obj->read();
-                            $obj->package = $obj;
+                            $package = new \sus\bl\Package($_POST["tracking"]);
+                            $package->read();
+                            $customer = new \sus\bl\Customer($obj->customer->idcustomer);
+                            $customer->read();
+                            $obj->package = $package;
                             $obj->state = $state;
                             try {
                                 $obj->create($_SESSION["user"]);
@@ -330,8 +330,8 @@ try {
                                 $pod_temp = $_FILES["pod"]["tmp_name"];
                                 $ext = strtolower(substr($_FILES["pod"]["name"], strrpos($_FILES["pod"]["name"], ".")));
                                 move_uploaded_file($_FILES["pod"]["tmp_name"], __DIR__ . "/../pod/pod_" . $_POST["tracking"] . $ext);
-                                $obj->pod = "pod_" . $_POST["tracking"] . $ext;
-                                $obj->update($_SESSION["user"]);
+                                $package->pod = "pod_" . $_POST["tracking"] . $ext;
+                                $package->update($_SESSION["user"]);
                             }
                             echo("{\"success\":true,\"msg\":{\"title\":\"Remesa entregada\",\"body\":\"La remesa han sido entregada al destinatario\"}}");
                             break;

@@ -78,7 +78,7 @@ if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
                                                         ?>
                                                         <tr>
                                                             <td style="vertical-align: top">Prueba de entrega</td>
-                                                            <td><img src="intranet/pod/<?php echo($package->pod); ?>" /></td>
+                                                            <td><a href="intranet/pod/<?php echo($package->pod); ?>" target="_blank">Ver</a></td>
                                                         </tr><?php
                                                     }
                                                     ?>
