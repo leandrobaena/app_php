@@ -59,7 +59,7 @@ class UserP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de usuarios
+     * @return \utils\ListJson Listado de usuarios
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();

@@ -191,7 +191,7 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, p.city_source, p.idcitydestination, p.city_destination, p.idcustomer,
                 p.customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod", "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer", "cu.iduser = $iduser", "p.date DESC", $start, $limit, $this->total
+                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod", "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer", "cu.iduser = $iduser", "p.idpackage DESC", $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);

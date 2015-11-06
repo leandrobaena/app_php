@@ -52,7 +52,7 @@ class TrackingP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de seguimientos
+     * @return \utils\ListJson Listado de seguimientos
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();

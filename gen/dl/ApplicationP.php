@@ -44,7 +44,7 @@ class ApplicationP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de aplicaciones
+     * @return \utils\ListJson Listado de aplicaciones
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();

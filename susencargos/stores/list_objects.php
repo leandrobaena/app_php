@@ -15,6 +15,7 @@ require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Tracking.php");
+require_once (__DIR__ . "/../sus/bl/Receiver.php");
 
 session_start();
 
@@ -167,6 +168,17 @@ try {
             case "templatesMail":
                 $obj = new \gen\bl\TemplateMail(0);
                 $list = $obj->readAll($filters, $sorters, $start, $limit);
+                break;
+            case "receivers":
+                $obj = new \sus\bl\Receiver(0);
+                $list = $obj->readAll("idcustomer = " . $_GET["idcustomer"] . ($filters == "" ? "" : " AND " . $filters), $sorters, $start, $limit);
+                break;
+            case "receiversCustomer":
+                $user = $_SESSION["user"];
+                $customer = new sus\bl\Customer(0);
+                $customer->readByIdUser($user->iduser);
+                $obj = new \sus\bl\Receiver(0);
+                $list = $obj->readAll("idcustomer = " . $customer->idcustomer, $sorters, $start, $limit);
                 break;
         }
         echo($list);

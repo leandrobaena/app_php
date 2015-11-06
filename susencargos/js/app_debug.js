@@ -301,6 +301,30 @@ Ext.define('susencargos.model.TemplateMail', {
             type: 'string'
         }]
 });
+
+Ext.define('susencargos.model.Receiver', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idreceiver',
+            type: 'int',
+            defaultValue: 0
+        }, {
+            name: 'name',
+            type: 'string'
+        }, {
+            name: 'address',
+            type: 'string'
+        }, {
+            name: 'city',
+            reference: 'susencargos.model.City'
+        }, {
+            name: 'phone',
+            type: 'string'
+        }, {
+            name: 'customer',
+            reference: 'susencargos.model.Customer'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -1905,10 +1929,18 @@ Ext.create('Ext.app.Controller', {
         'listCustomers button[action=clean]': {click: 'cleanFilters'},
         'listCustomers': {itemdblclick: 'editDbl'},
         'listCustomers actioncolumn[action=edit]': {click: 'edit'},
+        'listCustomers actioncolumn[action=receivers]': {click: 'receivers'},
         'listCustomers actioncolumn[action=remove]': {click: 'remove'},
         'formCustomer button[action=changePass]': {click: 'changePass'},
         'formCustomer button[action=cancel]': {click: 'cancel'},
-        'formCustomer button[action=save]': {click: 'save'}
+        'formCustomer button[action=save]': {click: 'save'},
+        'listReceivers button[action=insert]': {click: 'insertReceiver'},
+        'listReceivers button[action=clean]': {click: 'cleanFiltersReceivers'},
+        'listReceivers': {itemdblclick: 'editDblReceiver'},
+        'listReceivers actioncolumn[action=edit]': {click: 'editReceiver'},
+        'listReceivers actioncolumn[action=remove]': {click: 'removeReceiver'},
+        'formReceiver button[action=cancel]': {click: 'cancel'},
+        'formReceiver button[action=save]': {click: 'saveReceiver'}
     },
     insert: function (b, e) {
         Ext.getStore('CityL').load({
@@ -2104,6 +2136,136 @@ Ext.create('Ext.app.Controller', {
                             icon: Ext.Msg.INFO,
                             fn: function () {
                                 Ext.getStore('Customer').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    },
+    receivers: function (v, r, c, i, e) {
+        Ext.getStore('Receiver').getProxy().setExtraParam('idcustomer', v.getStore().getAt(c).get('idcustomer'));
+        Ext.getStore('Receiver').load();
+        Ext.getStore('ReceiverL').getProxy().setExtraParam('idcustomer', v.getStore().getAt(c).get('idcustomer'));
+        var opened = false;
+        var content = Ext.getCmp('contenido');
+        var panel = null;
+        Ext.each(content.items.items, function (n, i, s) {
+            if (n.alias == 'widget.listReceivers') {
+                opened = true;
+                panel = n;
+            }
+        });
+        if (!opened) {
+            panel = Ext.widget('listReceivers');
+            content.add(panel);
+        }
+        panel.setTitle('Listado destinatarios del cliente ' + v.getStore().getAt(c).get('name'));
+        Ext.getCmp('contenido').setActiveTab(panel);
+    },
+    insertReceiver: function (b, e) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formReceiver');
+                form.down('form').loadRecord(Ext.create('susencargos.model.Receiver'));
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Receiver').getProxy().extraParams.idcustomer);
+            }
+        });
+    },
+    cleanFiltersReceivers: function (b, e) {
+        b.up('grid').filters.clearFilters();
+    },
+    editDblReceiver: function (g, r) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formReceiver');
+                form.down('form').getForm().loadRecord(r);
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Receiver').getProxy().extraParams.idcustomer);
+                form.down('form').getForm().findField('idcity').setValue(r.get('city').idcity);
+            }
+        });
+    },
+    editReceiver: function (v, r, c, i, e) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formReceiver');
+                form.down('form').getForm().loadRecord(v.getStore().getAt(c));
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Receiver').getProxy().extraParams.idcustomer);
+                form.down('form').getForm().findField('idcity').setValue(v.getStore().getAt(c).get('city').idcity);
+            }
+        });
+    },
+    saveReceiver: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idreceiver').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Receiver').load();
+                            Ext.getStore('ReceiverL').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    removeReceiver: function (v, c, dr, dp) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getSelectionModel().getLastSelected().get('idreceiver'),
+                        object: 'receivers'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Receiver').load();
                             }
                         });
                     },
@@ -2342,6 +2504,7 @@ Ext.create('Ext.app.Controller', {
         'listPackages actioncolumn[action=edit]': {click: 'edit'},
         'listPackages actioncolumn[action=remove]': {click: 'remove'},
         'formPackage combo[name=idcustomer]': {select: 'changeCustomer'},
+        'formPackage combo[name=idreceiver]': {select: 'changeReceiver'},
         'formPackage combo[name=idpackagetype]': {select: 'changePackageType'},
         'formPackage numberfield[name=shippingValue]': {change: 'changeShippingValue'},
         'formPackage numberfield[name=managementValue]': {change: 'changeManagementValue'},
@@ -2361,6 +2524,12 @@ Ext.create('Ext.app.Controller', {
         if (i[0].get('idcustomer') != 0) {
             var form = c.up('window').down('form').getForm();
             form.findField('idcitysource').setValue(i[0].get('city').idcity);
+            Ext.getStore('Receiver').getProxy().setExtraParam('idcustomer', i[0].get('idcustomer'));
+            Ext.getStore('ReceiverL').getProxy().setExtraParam('idcustomer', i[0].get('idcustomer'));
+            Ext.getStore('ReceiverL').load({
+                start: 0,
+                limit: 100
+            });
         } else {
             Ext.MessageBox.confirm('Crear cliente', '¿Desea crear un nuevo cliente?', function (o) {
                 if (o == 'yes') {
@@ -2369,6 +2538,28 @@ Ext.create('Ext.app.Controller', {
                         limit: 1000,
                         callback: function () {
                             Ext.widget('formCustomer').down('form').loadRecord(Ext.create('susencargos.model.Customer'));
+                        }
+                    });
+                }
+            });
+        }
+    },
+    changeReceiver: function (c, i) {
+        if (i[0].get('idreceiver') != 0) {
+            var form = c.up('window').down('form').getForm();
+            form.findField('idcitydestination').setValue(i[0].get('city').idcity);
+            form.findField('addressTo').setValue(i[0].get('address'));
+            form.findField('phoneTo').setValue(i[0].get('phone'));
+        } else {
+            Ext.MessageBox.confirm('Crear destinatario', '¿Desea crear un nuevo destinatario?', function (o) {
+                if (o == 'yes') {
+                    Ext.getStore('CityL').load({
+                        start: 0,
+                        limit: 1000,
+                        callback: function () {
+                            var form = Ext.widget('formReceiver').down('form');
+                            form.loadRecord(Ext.create('susencargos.model.Receiver'));
+                            form.getForm().findField('idcustomer').setValue(Ext.getStore('ReceiverL').getProxy().extraParams.idcustomer);
                         }
                     });
                 }
@@ -2494,7 +2685,7 @@ Ext.create('Ext.app.Controller', {
         });
     },
     save: function (b, e) {
-        if (b.up('form').getForm().isValid()) {
+        if (b.up('form').getForm().isValid() && b.up('form').getForm().findField('idcustomer').getValue() != 0 && b.up('form').getForm().findField('idreceiver').getValue() != 0) {
             b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idpackage').getValue());
             b.up('form').getForm().submit({
                 waitMsg: 'Guardando ...',
@@ -3406,6 +3597,30 @@ Ext.application({
             model: 'susencargos.model.TemplateMail',
             object: 'templatesMail'
         });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'Receiver',
+            model: 'susencargos.model.Receiver',
+            object: 'receivers'
+        });
+
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'ReceiverL',
+            model: 'susencargos.model.Receiver',
+            object: 'receivers',
+            listeners: {
+                load: function (s) {
+                    s.insert(0, {
+                        idreceiver: 0,
+                        name: '.:: Nuevo destinatario ::.',
+                        address: '',
+                        phone: '',
+                        city: {idcity: 0, name: ''},
+                        customer: {idcustomer: 0, name: ''}
+                    });
+                }
+            }
+        });
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="View Genericas">
@@ -4268,6 +4483,14 @@ Ext.application({
                 }, {
                     xtype: 'actioncolumn',
                     width: 20,
+                    action: 'receivers',
+                    tooltip: 'Destinatarios',
+                    icon: 'css/receiver.png',
+                    stopSelection: false,
+                    iconCls: 'receiver'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
                     action: 'edit',
                     tooltip: 'Editar',
                     icon: 'css/edit.png',
@@ -4353,6 +4576,114 @@ Ext.application({
                     text: 'Cambiar contrase\xf1a',
                     action: 'changePass'
                 }, {
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+
+        Ext.define('susencargos.view.customer.GridReceivers', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'receiver',
+            alias: 'widget.listReceivers',
+            title: 'Listado destinatarios',
+            store: 'Receiver',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idreceiver'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    header: 'Dirección',
+                    filter: 'string',
+                    dataIndex: 'address',
+                    flex: 3
+                }, {
+                    header: 'Teléfono',
+                    filter: 'string',
+                    dataIndex: 'phone',
+                    flex: 2
+                }, {
+                    header: 'Ciudad',
+                    dataIndex: 'city',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.name;
+                    }
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.customer.FormReceiver', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formReceiver',
+            title: 'Editar destinatario',
+            object: 'receivers',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idreceiver',
+                    value: 0
+                }, {
+                    xtype: 'hiddenfield',
+                    name: 'idcustomer',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }, {
+                    xtype: 'textfield',
+                    name: 'address',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Dirección'
+                }, {
+                    xtype: 'textfield',
+                    name: 'phone',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Teléfono'
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: 'Ciudad',
+                    store: 'CityL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    autoLoadOnValue: true,
+                    valueField: 'idcity',
+                    displayField: 'name',
+                    name: 'idcity',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }],
+            buttons: [{
                     text: 'Guardar',
                     action: 'save'
                 }, {
@@ -4758,6 +5089,19 @@ Ext.application({
                             queryMode: 'local'
                         }, {
                             xtype: 'combo',
+                            fieldLabel: '* Destinatario',
+                            store: 'ReceiverL',
+                            typeAhead: true,
+                            forceSelection: true,
+                            allowBlank: false,
+                            valueField: 'idreceiver',
+                            displayField: 'name',
+                            autoLoadOnValue: true,
+                            name: 'idreceiver',
+                            anchor: '90%',
+                            queryMode: 'local'
+                        }, {
+                            xtype: 'combo',
                             fieldLabel: '* Ciudad destino',
                             autoLoadOnValue: true,
                             store: 'CityL',
@@ -4769,13 +5113,6 @@ Ext.application({
                             name: 'idcitydestination',
                             anchor: '90%',
                             queryMode: 'local'
-                        }, {
-                            xtype: 'textfield',
-                            name: 'nameTo',
-                            value: '',
-                            allowBlank: false,
-                            anchor: '90%',
-                            fieldLabel: '* Nombre destinatario'
                         }, {
                             xtype: 'textfield',
                             name: 'addressTo',

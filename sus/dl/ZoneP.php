@@ -46,7 +46,7 @@ class ZoneP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de zonas
+     * @return \utils\ListJson Listado de zonas
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();

@@ -56,6 +56,8 @@ if(!isset($_SESSION["user"])){
                                     <p>A continuaci&oacute;n puede observar el listado de sus remesas creadas en el sistema.</p>
                                     <p>En la parte inferior del listado haga clic en el bot&oacute;n <b>Nueva remesa</b> para crear una nueva.</p>
                                     <div id="listPackages"></div>
+                                    <p>&nbsp;</p>
+                                    <div id="listReceivers"></div>
                                 </div>
                             </div>
                         </div>

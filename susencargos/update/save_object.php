@@ -15,6 +15,7 @@ require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Tracking.php");
+require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
 session_start();
 
@@ -32,8 +33,11 @@ try {
         if ($object == "groupUser") {
             $object = "users";
         }
-        if ($object == "packagesCustomer") {
+        if ($object == "packagesCustomer" || $object == "receiversCustomer") {
             $object = "enterPackage";
+        }
+        if ($object == "receivers") {
+            $object = "customers";
         }
         $module = new gen\bl\Module(0);
         $idmodule = $module->getIdModuleApplicationByScript($object, 1);
@@ -137,11 +141,13 @@ try {
                             break;
                         case "packages":
                             $obj = new \sus\bl\Package($_POST["id"]);
+                            $receiver = new sus\bl\Receiver($_POST["idreceiver"]);
+                            $receiver->read();
                             $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
                             $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
                             $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                             $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
-                            $obj->nameTo = $_POST["nameTo"];
+                            $obj->nameTo = $receiver->name;
                             $obj->addressTo = $_POST["addressTo"];
                             $obj->phoneTo = $_POST["phoneTo"];
                             $obj->content = $_POST["content"];
@@ -179,12 +185,14 @@ try {
                             $user = $_SESSION["user"];
                             $customer = new sus\bl\Customer(0);
                             $customer->readByIdUser($user->iduser);
+                            $receiver = new sus\bl\Receiver($_POST["idreceiver"]);
+                            $receiver->read();
                             $obj = new \sus\bl\Package($_POST["id"]);
                             $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
                             $obj->citySource = new \sus\entities\CityEntity($customer->city->idcity);
                             $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                             $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
-                            $obj->nameTo = $_POST["nameTo"];
+                            $obj->nameTo = $receiver->name;
                             $obj->addressTo = $_POST["addressTo"];
                             $obj->phoneTo = $_POST["phoneTo"];
                             $obj->content = $_POST["content"];
@@ -340,6 +348,29 @@ try {
                             $obj->create($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo insertada\",\"body\":\"La plantilla de correo fue insertada con éxito\"}}");
                             break;
+                        case "receivers":
+                            $obj = new \sus\bl\Receiver($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->address = $_POST["address"];
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->phone = $_POST["phone"];
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario insertado\",\"body\":\"El destinatario fue insertado con éxito\"}}");
+                            break;
+                        case "receiversCustomer":
+                            $user = $_SESSION["user"];
+                            $customer = new sus\bl\Customer(0);
+                            $customer->readByIdUser($user->iduser);
+                            $obj = new \sus\bl\Receiver($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->address = $_POST["address"];
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->phone = $_POST["phone"];
+                            $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario insertado\",\"body\":\"El destinatario fue insertado con éxito\"}}");
+                            break;
                     }
                 } else {
                     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"No tiene privilegios para efectuar esta acción\"}}");
@@ -467,6 +498,29 @@ try {
                             $obj->html = $_POST["html"];
                             $obj->update($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo actualizada\",\"body\":\"La plantilla de correo fue actualizada con éxito\"}}");
+                            break;
+                        case "receivers":
+                            $obj = new \sus\bl\Receiver($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->address = $_POST["address"];
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->phone = $_POST["phone"];
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario actualizado\",\"body\":\"El destinatario fue actualizado con éxito\"}}");
+                            break;
+                        case "receiversCustomer":
+                            $user = $_SESSION["user"];
+                            $customer = new sus\bl\Customer(0);
+                            $customer->readByIdUser($user->iduser);
+                            $obj = new \sus\bl\Receiver($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->address = $_POST["address"];
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->phone = $_POST["phone"];
+                            $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario actualizado\",\"body\":\"El destinatario fue actualizado con éxito\"}}");
                             break;
                     }
                 } else {

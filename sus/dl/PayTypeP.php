@@ -46,7 +46,7 @@ class PayTypeP extends \gen\dl\LBTObjectP {
      * @param string $sorters
      * @param int $start Registro inicial
      * @param int $limit Número de registros a mostrar
-     * @return array Listado de tipos de pago
+     * @return \utils\ListJson Listado de tipos de pago
      */
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();

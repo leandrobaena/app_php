@@ -14,6 +14,7 @@ require_once (__DIR__ . "/../sus/bl/StateTracking.php");
 require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
+require_once (__DIR__ . "/../sus/bl/Receiver.php");
 
 session_start();
 try {
@@ -33,6 +34,12 @@ try {
             }
             if ($object == "groupUser") {
                 $object = "users";
+            }
+            if ($object == "receivers") {
+                $object = "customers";
+            }
+            if ($object == "receiversCustomer") {
+                $object = "enterPackage";
             }
             $idmodule = $module->getIdModuleApplicationByScript($object, 1);
             if ($idmodule == 0) {
@@ -125,6 +132,12 @@ try {
                             $obj = new \gen\bl\TemplateMail($_POST["id"]);
                             $obj->delete($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Plantilla de correo eliminada\",\"body\":\"La plantilla de correo ha sido eliminada con \\xe9xito\"}}");
+                            break;
+                        case "receivers":
+                        case "receiversCustomer":
+                            $obj = new \sus\bl\Receiver($_POST["id"]);
+                            $obj->delete($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario eliminado\",\"body\":\"El destinatario ha sido eliminado con \\xe9xito\"}}");
                             break;
                     }
                 } else {
