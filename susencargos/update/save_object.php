@@ -305,7 +305,7 @@ try {
                             $state = new \sus\entities\StateTrackingEntity(4); //Entregado a destinatario
                             $package = new \sus\bl\Package($_POST["tracking"]);
                             $package->read();
-                            $customer = new \sus\bl\Customer($obj->customer->idcustomer);
+                            $customer = new \sus\bl\Customer($package->customer->idcustomer);
                             $customer->read();
                             $obj->package = $package;
                             $obj->state = $state;
@@ -326,7 +326,7 @@ try {
                             } catch (Exception $ex) {
                                 
                             }
-                            if (isset($_FILES["pod"])) {
+                            if (isset($_FILES["pod"]) && $_FILES["pod"]["size"] > 0) {
                                 $pod_temp = $_FILES["pod"]["tmp_name"];
                                 $ext = strtolower(substr($_FILES["pod"]["name"], strrpos($_FILES["pod"]["name"], ".")));
                                 move_uploaded_file($_FILES["pod"]["tmp_name"], __DIR__ . "/../pod/pod_" . $_POST["tracking"] . $ext);
