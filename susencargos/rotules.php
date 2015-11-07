@@ -73,7 +73,22 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->SetXY(115, 90 + (140 * ($i % 2)));
         $pdf->Write(10, utf8_decode($obj->cityDestination->name));
 
+        $pdf->SetXY(25, 100 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', '', 10);
+        $pdf->Write(10, utf8_decode("Remesa:"));
+        $pdf->SetXY(40, 100 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', 'B', 18);
+        $pdf->Write(10, utf8_decode($idpackage));
+
         $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 100 + (140 * ($i % 2)), 60, 10);
+
+        $pdf->SetXY(130, 100 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', '', 10);
+        $pdf->Write(10, utf8_decode("Ref:"));
+        $pdf->SetXY(137, 100 + (140 * ($i % 2)));
+        $pdf->SetFont('Times', 'B', 16);
+        $pdf->Write(10, utf8_decode($obj->reference));
+
         $pdf->SetXY(115, 110 + (140 * ($i % 2)));
         $pdf->SetFont('Times', '', 10);
         $pdf->Write(10, utf8_decode("Pieza " . ($i + 1) . " de " . ($obj->amount)));
