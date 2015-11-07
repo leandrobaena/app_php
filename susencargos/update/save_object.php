@@ -245,7 +245,7 @@ try {
                             foreach ($arrTrackings as $t) {
                                 $package = new \sus\bl\Package($t);
                                 $package->read();
-                                $customer = new \sus\bl\Customer($obj->customer->idcustomer);
+                                $customer = new \sus\bl\Customer($package->customer->idcustomer);
                                 $customer->read();
                                 $obj->package = new \sus\entities\PackageEntity($t);
                                 $obj->state = $state;
