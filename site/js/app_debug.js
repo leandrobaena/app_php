@@ -286,18 +286,18 @@ Ext.create('Ext.app.Controller', {
     },
     changePackageType: function (c, i) {
         var form = c.up('window').down('form').getForm();
-        if (i[0].get('idpackagetype') == 1) {//Caja
+        if (c.getValue() == 1) {//Caja
             form.findField('weight').setValue(30);
         } else {//Sobre
             form.findField('weight').setValue(1);
         }
     },
     changeReceiver: function (c, i) {
-        if (i[0].get('idreceiver') != 0) {
+        if (c.getValue() != 0) {
             var form = c.up('window').down('form').getForm();
-            form.findField('idcitydestination').setValue(i[0].get('city').idcity);
-            form.findField('addressTo').setValue(i[0].get('address'));
-            form.findField('phoneTo').setValue(i[0].get('phone'));
+            form.findField('idcitydestination').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('city').idcity);
+            form.findField('addressTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('address'));
+            form.findField('phoneTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('phone'));
         } else {
             Ext.MessageBox.confirm('Crear destinatario', '¿Desea crear un nuevo destinatario?', function (o) {
                 if (o == 'yes') {
