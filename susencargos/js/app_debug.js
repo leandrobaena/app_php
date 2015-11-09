@@ -325,6 +325,18 @@ Ext.define('susencargos.model.Receiver', {
             reference: 'susencargos.model.Customer'
         }]
 });
+
+Ext.define('susencargos.model.Seller', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idseller',
+            type: 'int',
+            defaultValue: 0
+        }, {
+            name: 'name',
+            type: 'string'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -462,6 +474,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=statesTracking]': {click: 'statesTracking'},
         'menu menuitem[action=packageTypes]': {click: 'packageTypes'},
         'menu menuitem[action=templatesMail]': {click: 'templatesMail'},
+        'menu menuitem[action=sellers]': {click: 'sellers'},
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
@@ -508,6 +521,9 @@ Ext.create('Ext.app.Controller', {
     },
     templatesMail: function () {
         this.openGrid('listTemplatesMail');
+    },
+    sellers: function () {
+        this.openGrid('listSellers');
     },
     packages: function () {
         this.openGrid('listPackages');
@@ -3413,6 +3429,106 @@ Ext.create('Ext.app.Controller', {
         }
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listSellers button[action=insert]': {click: 'insert'},
+        'listSellers button[action=clean]': {click: 'cleanFilters'},
+        'listSellers': {itemdblclick: 'editDbl'},
+        'listSellers actioncolumn[action=edit]': {click: 'edit'},
+        'listSellers actioncolumn[action=remove]': {click: 'remove'},
+        'formSeller button[action=cancel]': {click: 'cancel'},
+        'formSeller button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.widget('formSeller').down('form').loadRecord(Ext.create('susencargos.model.Seller'));
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        var form = Ext.widget('formSeller');
+        form.down('form').loadRecord(v.getStore().getAt(c));
+    },
+    editDbl: function (g, r) {
+        var form = Ext.widget('formSeller');
+        form.down('form').loadRecord(r);
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idseller').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Seller').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idseller'),
+                        object: 'sellers'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Seller').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -3685,6 +3801,12 @@ Ext.application({
                     });
                 }
             }
+        });
+        
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'Seller',
+            model: 'susencargos.model.Seller',
+            object: 'sellers'
         });
         //</editor-fold>
 
@@ -5757,6 +5879,67 @@ Ext.application({
                 }],
             buttons: [{
                     text: 'Generar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Vendedores">
+        Ext.define('susencargos.view.seller.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'seller',
+            alias: 'widget.listSellers',
+            title: 'Listado vendedores',
+            store: 'Seller',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idseller'
+                }, {
+                    header: 'Nombre',
+                    filter: 'string',
+                    dataIndex: 'name',
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.seller.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formSeller',
+            title: 'Editar vendedor',
+            object: 'sellers',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idseller',
+                    value: 0
+                }, {
+                    xtype: 'textfield',
+                    name: 'name',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
                     action: 'save'
                 }, {
                     text: 'Cancelar',

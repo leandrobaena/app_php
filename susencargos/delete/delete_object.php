@@ -15,6 +15,7 @@ require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
+require_once (__DIR__ . "/../sus/bl/Seller.php");
 
 session_start();
 try {
@@ -138,6 +139,11 @@ try {
                             $obj = new \sus\bl\Receiver($_POST["id"]);
                             $obj->delete($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario eliminado\",\"body\":\"El destinatario ha sido eliminado con \\xe9xito\"}}");
+                            break;
+                        case "sellers":
+                            $obj = new \sus\bl\Seller($_POST["id"]);
+                            $obj->delete($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor eliminado\",\"body\":\"El vendedor ha sido eliminado con \\xe9xito\"}}");
                             break;
                     }
                 } else {

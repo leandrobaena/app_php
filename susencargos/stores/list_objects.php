@@ -16,6 +16,7 @@ require_once (__DIR__ . "/../sus/bl/PayType.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Tracking.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
+require_once (__DIR__ . "/../sus/bl/Seller.php");
 
 session_start();
 
@@ -179,6 +180,10 @@ try {
                 $customer->readByIdUser($user->iduser);
                 $obj = new \sus\bl\Receiver(0);
                 $list = $obj->readAll("idcustomer = " . $customer->idcustomer, $sorters, $start, $limit);
+                break;
+            case "sellers":
+                $obj = new \sus\bl\Seller(0);
+                $list = $obj->readAll($filters, $sorters, $start, $limit);
                 break;
         }
         echo($list);

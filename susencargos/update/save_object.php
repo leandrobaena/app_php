@@ -17,6 +17,7 @@ require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Tracking.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
+require_once (__DIR__ . "/../sus/bl/Seller.php");
 session_start();
 
 try {
@@ -371,6 +372,12 @@ try {
                             $obj->create($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario insertado\",\"body\":\"El destinatario fue insertado con éxito\"}}");
                             break;
+                        case "sellers":
+                            $obj = new \sus\bl\Seller($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor insertado\",\"body\":\"El vendedor fue insertado con éxito\"}}");
+                            break;
                     }
                 } else {
                     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"No tiene privilegios para efectuar esta acción\"}}");
@@ -523,6 +530,12 @@ try {
                             $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
                             $obj->update($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Destinatario actualizado\",\"body\":\"El destinatario fue actualizado con éxito\"}}");
+                            break;
+                        case "sellers":
+                            $obj = new \sus\bl\Seller($_POST["id"]);
+                            $obj->name = $_POST["name"];
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor actualizado\",\"body\":\"El vendedor fue actualizado con éxito\"}}");
                             break;
                     }
                 } else {
