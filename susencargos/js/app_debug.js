@@ -472,6 +472,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=rptPackages]': {click: 'rptPackages'},
         'menu menuitem[action=rptCustomers]': {click: 'rptCustomers'},
         'menu menuitem[action=rptFlightManifest]': {click: 'rptFlightManifest'},
+        'menu menuitem[action=rptBilling]': {click: 'rptBilling'},
         /*CMS*/
         'menu menuitem[action=typesResource]': {click: 'typesResource'},
         /*Aplicación*/
@@ -614,7 +615,17 @@ Ext.create('Ext.app.Controller', {
         });
     },
     rptFlightManifest: function () {
-        Ext.widget('formFlightManifest').down('form');
+        Ext.widget('formFlightManifest');
+    },
+    rptBilling: function () {
+        Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
+            callback: function (s, r, ok, op, opt) {
+                Ext.getStore('CustomerL').removeAt(0);
+                Ext.widget('formBilling');
+            }
+        });
     },
     changePass: function () {
         Ext.create('Ext.window.Window', {
@@ -3348,6 +3359,57 @@ Ext.create('Ext.app.Controller', {
         }
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'formBilling button[action=cancel]': {click: 'cancel'},
+        'formBilling button[action=save]': {click: 'save'}
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            Ext.Ajax.request({
+                url: 'stores/reports.php',
+                params: {
+                    object: 'billing',
+                    idcustomer: b.up('form').getForm().findField('idcustomer').getValue(),
+                    from: Ext.Date.format(b.up('form').getForm().findField('from').getValue(), 'Y-m-d'),
+                    to: Ext.Date.format(b.up('form').getForm().findField('to').getValue(), 'Y-m-d')
+                },
+                success: function (response) {
+                    var d = Ext.JSON.decode(response.responseText);
+                    Ext.MessageBox.show({
+                        title: 'Reporte generado',
+                        msg: 'El reporte fue generado con éxito haga clic en el botón para descargarlo',
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            window.open(d.msg.body);
+                            b.up('window').close();
+                        }
+                    });
+                },
+                failed: function (t, p, o) {
+                    Ext.MessageBox.show({
+                        title: p.response.result.msg.title,
+                        msg: p.response.result.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO
+                    });
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -5637,6 +5699,58 @@ Ext.application({
                     anchor: '90%',
                     fieldLabel: '* Fecha del envío',
                     format: 'Y-m-d'
+                }],
+            buttons: [{
+                    text: 'Generar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Facturación">
+        Ext.define('susencargos.view.flightManifest.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formBilling',
+            title: 'Seleccionar cliente',
+            fields: [{
+                    xtype: 'combo',
+                    fieldLabel: '* Cliente',
+                    store: 'CustomerL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idcustomer',
+                    displayField: 'name',
+                    autoLoadOnValue: true,
+                    name: 'idcustomer',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'datefield',
+                    name: 'from',
+                    anchor: '95%',
+                    itemId: 'startdt',
+                    vtype: 'daterange',
+                    endDateField: 'enddt',
+                    altFormats: 'Y-m-d',
+                    format: 'Y-m-d',
+                    submitFormat: 'Y-m-d',
+                    allowBlank: false,
+                    fieldLabel: '* Fecha inicio'
+                }, {
+                    xtype: 'datefield',
+                    name: 'to',
+                    itemId: 'enddt',
+                    anchor: '95%',
+                    vtype: 'daterange',
+                    startDateField: 'startdt',
+                    altFormats: 'Y-m-d',
+                    format: 'Y-m-d',
+                    submitFormat: 'Y-m-d',
+                    allowBlank: false,
+                    fieldLabel: '* Fecha fin'
                 }],
             buttons: [{
                     text: 'Generar',

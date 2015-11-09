@@ -201,9 +201,9 @@ try {
                             $obj->volumen = $_POST["volumen"];
                             $obj->amount = $_POST["amount"];
                             $obj->declaredValue = $_POST["declaredValue"];
-                            $obj->shippingValue = 0;
-                            $obj->managementValue = 0;
-                            $obj->totalValue = 0;
+                            $obj->shippingValue = $_POST["shippingValue"];
+                            $obj->managementValue = $_POST["managementValue"];
+                            $obj->totalValue = $_POST["totalValue"];
                             $obj->reference = $_POST["reference"];
                             $obj->payType = new \sus\entities\PayTypeEntity($_POST["idpaytype"]);
                             $obj->packageType = new \sus\entities\PackageTypeEntity($_POST["idpackagetype"]);
@@ -449,12 +449,14 @@ try {
                             echo("{\"success\":true,\"msg\":{\"title\":\"Tipo de pago actualizado\",\"body\":\"El tipo de pago fue actualizado con éxito\"}}");
                             break;
                         case "packages":
+                            $receiver = new sus\bl\Receiver($_POST["idreceiver"]);
+                            $receiver->read();
                             $obj = new \sus\bl\Package($_POST["id"]);
                             $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
                             $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
                             $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                             $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
-                            $obj->nameTo = $_POST["nameTo"];
+                            $obj->nameTo = $receiver->name;
                             $obj->addressTo = $_POST["addressTo"];
                             $obj->phoneTo = $_POST["phoneTo"];
                             $obj->content = $_POST["content"];

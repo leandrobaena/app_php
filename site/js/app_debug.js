@@ -252,6 +252,8 @@ Ext.create('Ext.app.Controller', {
         'formPackage combo[name=idreceiver]': {select: 'changeReceiver'},
         'formPackage button[action=cancel]': {click: 'cancel'},
         'formPackage button[action=save]': {click: 'save'},
+        'formPackage numberfield[name=shippingValue]': {change: 'changeShippingValue'},
+        'formPackage numberfield[name=managementValue]': {change: 'changeManagementValue'},
         'listReceivers button[action=insert]': {click: 'insertReceiver'},
         'listReceivers': {itemdblclick: 'editDblReceiver'},
         'listReceivers actioncolumn[action=edit]': {click: 'editReceiver'},
@@ -350,6 +352,22 @@ Ext.create('Ext.app.Controller', {
                 buttons: Ext.Msg.OK,
                 icon: Ext.Msg.ERROR
             });
+        }
+    },
+    changeShippingValue: function (f, v, o) {
+        if (v != null) {
+            var managementValue = f.up('form').getForm().findField('managementValue').getValue();
+            if (managementValue != null) {
+                f.up('form').getForm().findField('totalValue').setValue(v + managementValue);
+            }
+        }
+    },
+    changeManagementValue: function (f, v, o) {
+        if (v != null) {
+            var shippingValue = f.up('form').getForm().findField('shippingValue').getValue();
+            if (shippingValue != null) {
+                f.up('form').getForm().findField('totalValue').setValue(v + shippingValue);
+            }
         }
     },
     rotules: function (v, r, c, i, e) {
@@ -816,6 +834,28 @@ Ext.application({
                             value: 400000,
                             anchor: '90%',
                             fieldLabel: '* Valor declarado'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'shippingValue',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Valor del flete'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'managementValue',
+                            value: 0,
+                            anchor: '90%',
+                            fieldLabel: 'Valor manejo'
+                        }, {
+                            xtype: 'numberfield',
+                            hideTrigger: true,
+                            name: 'totalValue',
+                            value: 30,
+                            readOnly: true,
+                            anchor: '90%',
+                            fieldLabel: 'Valor total'
                         }, {
                             xtype: 'textfield',
                             name: 'reference',
