@@ -2532,11 +2532,11 @@ Ext.create('Ext.app.Controller', {
         b.up('window').close();
     },
     changeCustomer: function (c, i) {
-        if (i[0].get('idcustomer') != 0) {
+        if (c.getValue() != 0) {
             var form = c.up('window').down('form').getForm();
-            form.findField('idcitysource').setValue(i[0].get('city').idcity);
-            Ext.getStore('Receiver').getProxy().setExtraParam('idcustomer', i[0].get('idcustomer'));
-            Ext.getStore('ReceiverL').getProxy().setExtraParam('idcustomer', i[0].get('idcustomer'));
+            form.findField('idcitysource').setValue(Ext.getStore('CustomerL').findRecord('idcustomer', c.getValue()).get('city').idcity);
+            Ext.getStore('Receiver').getProxy().setExtraParam('idcustomer', c.getValue());
+            Ext.getStore('ReceiverL').getProxy().setExtraParam('idcustomer', c.getValue());
             Ext.getStore('ReceiverL').load({
                 start: 0,
                 limit: 100
@@ -2556,11 +2556,12 @@ Ext.create('Ext.app.Controller', {
         }
     },
     changeReceiver: function (c, i) {
-        if (i[0].get('idreceiver') != 0) {
+        if (c.getValue() != 0) {
             var form = c.up('window').down('form').getForm();
-            form.findField('idcitydestination').setValue(i[0].get('city').idcity);
-            form.findField('addressTo').setValue(i[0].get('address'));
-            form.findField('phoneTo').setValue(i[0].get('phone'));
+            var receiver = Ext.getStore('ReceiverL').findRecord('idreceiver', c.getValue());
+            form.findField('idcitydestination').setValue(receiver.get('city').idcity);
+            form.findField('addressTo').setValue(receiver.get('address'));
+            form.findField('phoneTo').setValue(receiver.get('phone'));
         } else {
             Ext.MessageBox.confirm('Crear destinatario', '¿Desea crear un nuevo destinatario?', function (o) {
                 if (o == 'yes') {
@@ -2579,7 +2580,7 @@ Ext.create('Ext.app.Controller', {
     },
     changePackageType: function (c, i) {
         var form = c.up('window').down('form').getForm();
-        if (i[0].get('idpackagetype') == 1) {//Caja
+        if (c.getValue() == 1) {//Caja
             form.findField('weight').setValue(30);
         } else {//Sobre
             form.findField('weight').setValue(1);
@@ -2651,6 +2652,7 @@ Ext.create('Ext.app.Controller', {
                                         form.down('form').getForm().findField('idcitysource').setValue(v.getStore().getAt(c).get('citySource').idcity);
                                         form.down('form').getForm().findField('idcitydestination').setValue(v.getStore().getAt(c).get('cityDestination').idcity);
                                         form.down('form').getForm().findField('idcustomer').setValue(v.getStore().getAt(c).get('customer').idcustomer);
+                                        form.down('form').getForm().findField('idcustomer').fireEvent('select', form.down('form').getForm().findField('idcustomer'));
                                         form.down('form').getForm().findField('idpaytype').setValue(v.getStore().getAt(c).get('payType').idpaytype);
                                         form.down('form').getForm().findField('idpackagetype').setValue(v.getStore().getAt(c).get('packageType').idpackagetype);
                                     }
@@ -2684,6 +2686,7 @@ Ext.create('Ext.app.Controller', {
                                         form.down('form').getForm().findField('idcitysource').setValue(r.get('citySource').idcity);
                                         form.down('form').getForm().findField('idcitydestination').setValue(r.get('cityDestination').idcity);
                                         form.down('form').getForm().findField('idcustomer').setValue(r.get('customer').idcustomer);
+                                        form.down('form').getForm().findField('idcustomer').fireEvent('select', form.down('form').getForm().findField('idcustomer'));
                                         form.down('form').getForm().findField('idpaytype').setValue(r.get('payType').idpaytype);
                                         form.down('form').getForm().findField('idpackagetype').setValue(r.get('packageType').idpackagetype);
                                     }
