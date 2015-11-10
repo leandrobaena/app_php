@@ -525,19 +525,7 @@ Ext.application({
         Ext.create('susencargos.store.MainStore', {
             storeId: 'Receiver',
             model: 'susencargos.model.Receiver',
-            object: 'receiversCustomer',
-            listeners: {
-                load: function (s) {
-                    s.insert(0, {
-                        idreceiver: 0,
-                        name: '.:: Nuevo destinatario ::.',
-                        address: '',
-                        phone: '',
-                        city: {idcity: 0, name: ''},
-                        customer: {idcustomer: 0, name: ''}
-                    });
-                }
-            }
+            object: 'receiversCustomer'
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Genéricas">
@@ -759,7 +747,6 @@ Ext.application({
                             fieldLabel: '* Destinatario',
                             store: 'Receiver',
                             typeAhead: true,
-                            forceSelection: true,
                             allowBlank: false,
                             valueField: 'idreceiver',
                             displayField: 'name',
