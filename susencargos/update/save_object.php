@@ -142,13 +142,25 @@ try {
                             break;
                         case "packages":
                             $obj = new \sus\bl\Package($_POST["id"]);
-                            $receiver = new sus\bl\Receiver($_POST["idreceiver"]);
-                            $receiver->read();
+                            $nameTo = $_POST["idreceiver"];
+                            if (is_numeric($nameTo)) {
+                                $receiver = new sus\bl\Receiver($nameTo);
+                                $receiver->read();
+                                $nameTo = $receiver->name;
+                            } else {
+                                $receiver = new sus\bl\Receiver(0);
+                                $receiver->name = $nameTo;
+                                $receiver->address = $_POST["addressTo"];
+                                $receiver->city = new \sus\entities\CityEntity($_POST["idcitydestination"]);
+                                $receiver->phone = $_POST["phoneTo"];
+                                $receiver->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                                $receiver->create($_SESSION["user"]);
+                            }
                             $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
                             $obj->citySource = new \sus\entities\CityEntity($_POST["idcitysource"]);
                             $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                             $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
-                            $obj->nameTo = $receiver->name;
+                            $obj->nameTo = $nameTo;
                             $obj->addressTo = $_POST["addressTo"];
                             $obj->phoneTo = $_POST["phoneTo"];
                             $obj->content = $_POST["content"];
@@ -186,14 +198,26 @@ try {
                             $user = $_SESSION["user"];
                             $customer = new sus\bl\Customer(0);
                             $customer->readByIdUser($user->iduser);
-                            $receiver = new sus\bl\Receiver($_POST["idreceiver"]);
-                            $receiver->read();
+                            $nameTo = $_POST["idreceiver"];
+                            if (is_numeric($nameTo)) {
+                                $receiver = new sus\bl\Receiver($nameTo);
+                                $receiver->read();
+                                $nameTo = $receiver->name;
+                            } else {
+                                $receiver = new sus\bl\Receiver(0);
+                                $receiver->name = $nameTo;
+                                $receiver->address = $_POST["addressTo"];
+                                $receiver->city = new \sus\entities\CityEntity($_POST["idcitydestination"]);
+                                $receiver->phone = $_POST["phoneTo"];
+                                $receiver->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
+                                $receiver->create($_SESSION["user"]);
+                            }
                             $obj = new \sus\bl\Package($_POST["id"]);
                             $obj->date = DateTime::createFromFormat("Y-m-d", $_POST["date"]);
                             $obj->citySource = new \sus\entities\CityEntity($customer->city->idcity);
                             $obj->cityDestination = new \sus\entities\CityEntity($_POST["idcitydestination"]);
                             $obj->customer = new \sus\entities\CustomerEntity($customer->idcustomer);
-                            $obj->nameTo = $receiver->name;
+                            $obj->nameTo = $nameTo;
                             $obj->addressTo = $_POST["addressTo"];
                             $obj->phoneTo = $_POST["phoneTo"];
                             $obj->content = $_POST["content"];

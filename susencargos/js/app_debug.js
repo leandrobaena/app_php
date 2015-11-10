@@ -3788,19 +3788,7 @@ Ext.application({
         Ext.create('susencargos.store.MainStoreLocal', {
             storeId: 'ReceiverL',
             model: 'susencargos.model.Receiver',
-            object: 'receivers',
-            listeners: {
-                load: function (s) {
-                    s.insert(0, {
-                        idreceiver: 0,
-                        name: '.:: Nuevo destinatario ::.',
-                        address: '',
-                        phone: '',
-                        city: {idcity: 0, name: ''},
-                        customer: {idcustomer: 0, name: ''}
-                    });
-                }
-            }
+            object: 'receivers'
         });
         
         Ext.create('susencargos.store.MainStoreRemote', {
@@ -5279,7 +5267,6 @@ Ext.application({
                             fieldLabel: '* Destinatario',
                             store: 'ReceiverL',
                             typeAhead: true,
-                            forceSelection: true,
                             allowBlank: false,
                             valueField: 'idreceiver',
                             displayField: 'name',
@@ -5835,7 +5822,7 @@ Ext.application({
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Facturación">
-        Ext.define('susencargos.view.flightManifest.Form', {
+        Ext.define('susencargos.view.billing.Form', {
             extend: 'susencargos.view.MainForm',
             alias: 'widget.formBilling',
             title: 'Seleccionar cliente',
