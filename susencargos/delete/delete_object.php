@@ -16,6 +16,7 @@ require_once (__DIR__ . "/../sus/bl/Package.php");
 require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
+require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
 
 session_start();
 try {
@@ -41,6 +42,9 @@ try {
             }
             if ($object == "receiversCustomer") {
                 $object = "enterPackage";
+            }
+            if ($object == "sellersCustomer") {
+                $object = "sellers";
             }
             $idmodule = $module->getIdModuleApplicationByScript($object, 1);
             if ($idmodule == 0) {
@@ -144,6 +148,11 @@ try {
                             $obj = new \sus\bl\Seller($_POST["id"]);
                             $obj->delete($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor eliminado\",\"body\":\"El vendedor ha sido eliminado con \\xe9xito\"}}");
+                            break;
+                        case "sellersCustomer":
+                            $obj = new \sus\bl\SellerCustomer($_POST["id"]);
+                            $obj->delete($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Prcentaje de comisión eliminado\",\"body\":\"El porcentaje de comisión ha sido eliminado con \\xe9xito\"}}");
                             break;
                     }
                 } else {

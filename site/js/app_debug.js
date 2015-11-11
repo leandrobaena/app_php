@@ -262,13 +262,17 @@ Ext.create('Ext.app.Controller', {
         'formReceiver button[action=save]': {click: 'saveReceiver'}
     },
     insert: function (b, e) {
-        Ext.getStore('City').load({
-            params: {
-                start: 0,
-                limit: 1000
-            },
+        Ext.getStore('Receiver').load({
+            start: 0,
+            limit: 1000,
             callback: function () {
-                Ext.widget('formPackage').down('form').loadRecord(Ext.create('susencargos.model.Package'));
+                Ext.getStore('City').load({
+                    start: 0,
+                    limit: 1000,
+                    callback: function () {
+                        Ext.widget('formPackage').down('form').loadRecord(Ext.create('susencargos.model.Package'));
+                    }
+                });
             }
         });
     },
@@ -295,9 +299,9 @@ Ext.create('Ext.app.Controller', {
     changeReceiver: function (c, i) {
         if (c.getValue() != 0) {
             var form = c.up('window').down('form').getForm();
-            form.findField('idcitydestination').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('city').idcity);
-            form.findField('addressTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('address'));
-            form.findField('phoneTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver',c.getValue()).get('phone'));
+            form.findField('idcitydestination').setValue(Ext.getStore('Receiver').findRecord('idreceiver', c.getValue()).get('city').idcity);
+            form.findField('addressTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver', c.getValue()).get('address'));
+            form.findField('phoneTo').setValue(Ext.getStore('Receiver').findRecord('idreceiver', c.getValue()).get('phone'));
         } else {
             Ext.MessageBox.confirm('Crear destinatario', '¿Desea crear un nuevo destinatario?', function (o) {
                 if (o == 'yes') {

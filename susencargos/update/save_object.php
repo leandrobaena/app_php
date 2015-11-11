@@ -18,6 +18,7 @@ require_once (__DIR__ . "/../sus/bl/Tracking.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
+require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
 session_start();
 
 try {
@@ -39,6 +40,9 @@ try {
         }
         if ($object == "receivers") {
             $object = "customers";
+        }
+        if ($object == "sellersCustomer") {
+            $object = "sellers";
         }
         $module = new gen\bl\Module(0);
         $idmodule = $module->getIdModuleApplicationByScript($object, 1);
@@ -402,6 +406,14 @@ try {
                             $obj->create($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor insertado\",\"body\":\"El vendedor fue insertado con éxito\"}}");
                             break;
+                        case "sellersCustomer":
+                            $obj = new \sus\bl\SellerCustomer($_POST["id"]);
+                            $obj->seller = new sus\bl\Seller($_POST["idseller"]);
+                            $obj->customer = new sus\bl\Customer($_POST["idcustomer"]);
+                            $obj->percent = $_POST["percent"];
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Porcentaje de comisión insertado\",\"body\":\"El porcentaje de comisión fue insertado con éxito\"}}");
+                            break;
                     }
                 } else {
                     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"No tiene privilegios para efectuar esta acción\"}}");
@@ -560,6 +572,14 @@ try {
                             $obj->name = $_POST["name"];
                             $obj->update($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Vendedor actualizado\",\"body\":\"El vendedor fue actualizado con éxito\"}}");
+                            break;
+                        case "sellersCustomer":
+                            $obj = new \sus\bl\SellerCustomer($_POST["id"]);
+                            $obj->seller = new sus\bl\Seller($_POST["idseller"]);
+                            $obj->customer = new sus\bl\Customer($_POST["idcustomer"]);
+                            $obj->percent = $_POST["percent"];
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Porcentaje de comisión actualizado\",\"body\":\"El porcentaje de comisión fue actualizado con éxito\"}}");
                             break;
                     }
                 } else {
