@@ -3576,6 +3576,8 @@ Ext.create('Ext.app.Controller', {
     },
     insertCustomer: function (b, e) {
         Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
             callback: function () {
                 Ext.getStore('CustomerL').removeAt(0);
                 var form = Ext.widget('formSellerCustomer').down('form');
@@ -3587,6 +3589,8 @@ Ext.create('Ext.app.Controller', {
     },
     editCustomer: function (v, r, c, i, e) {
         Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
             callback: function () {
                 Ext.getStore('CustomerL').removeAt(0);
                 var form = Ext.widget('formSellerCustomer');
@@ -3598,6 +3602,8 @@ Ext.create('Ext.app.Controller', {
     },
     editDblCustomer: function (g, r) {
         Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
             callback: function () {
                 Ext.getStore('CustomerL').removeAt(0);
                 var form = Ext.widget('formSellerCustomer');
