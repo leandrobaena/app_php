@@ -58,7 +58,7 @@ try {
 
                 for ($i = 0; $i < count($records->records); $i++) {
                     $objPHPExcel->getActiveSheet(0)
-                            ->setCellValue("A" . ($i + 2), $records->records[$i]->idpackage)
+                            ->setCellValue("A" . ($i + 2), $records->records[$i]->consecutive)
                             ->setCellValue("B" . ($i + 2), $records->records[$i]->date->format("Y-m-d"))
                             ->setCellValue("C" . ($i + 2), $records->records[$i]->citySource->name)
                             ->setCellValue("D" . ($i + 2), $records->records[$i]->cityDestination->name)
@@ -148,7 +148,7 @@ try {
                             ->setCellValue("B3", $today->format("Y-m-d"))
                             ->setCellValue("G3", "Conductor")
                             ->setCellValue("G4", "Placas")
-                            ->setCellValue("A5", "No. Guía")
+                            ->setCellValue("A5", "No. Remesa")
                             ->setCellValue("B5", "Referencia")
                             ->setCellValue("C5", "Remitente")
                             ->setCellValue("D4", "Origen")
@@ -165,7 +165,7 @@ try {
                     $objPHPExcel->getActiveSheet()->getStyle("A1:K5")->getFont()->setBold(true);
                     for ($j = 0; $j < count($packages->records); $j++) {
                         $objPHPExcel->getActiveSheet()
-                                ->setCellValue("A" . ($j + 6), $packages->records[$j]->idpackage)
+                                ->setCellValue("A" . ($j + 6), $packages->records[$j]->consecutive)
                                 ->setCellValue("B" . ($j + 6), $packages->records[$j]->reference)
                                 ->setCellValue("C" . ($j + 6), $packages->records[$j]->customer->name)
                                 ->setCellValue("D" . ($j + 6), $packages->records[$j]->citySource->name)
@@ -206,7 +206,7 @@ try {
                         ->getStyle("A1:K1")->getFont()->setBold(true);
                 for ($j = 0; $j < count($packages->records); $j++) {
                     $objPHPExcel->getActiveSheet()
-                            ->setCellValue("A" . ($j + 2), $packages->records[$j]->idpackage)
+                            ->setCellValue("A" . ($j + 2), $packages->records[$j]->consecutive)
                             ->setCellValue("B" . ($j + 2), $packages->records[$j]->reference)
                             ->setCellValue("C" . ($j + 2), $packages->records[$j]->citySource->name)
                             ->setCellValue("D" . ($j + 2), $packages->records[$j]->cityDestination->name)
