@@ -185,7 +185,7 @@ try {
                                 $customer = new \sus\bl\Customer($_POST["idcustomer"]);
                                 $customer->read();
                                 $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->idpackage));
+                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
                                 $mail = new PHPMailer();
                                 $mail->setFrom("info@susencargos.co", "SUSencargos");
                                 $mail->addAddress($customer->user->email, $customer->name);
@@ -196,7 +196,7 @@ try {
                                 
                             }
 
-                            echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número $obj->consecutive\"}}");
                             break;
                         case "packagesCustomer":
                             $user = $_SESSION["user"];
@@ -240,7 +240,7 @@ try {
 
                             try {
                                 $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->idpackage));
+                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
                                 $mail = new PHPMailer();
                                 $mail->setFrom("info@susencargos.co", "SUSencargos");
                                 $mail->addAddress($customer->user->email, $customer->name);
@@ -251,7 +251,7 @@ try {
                                 
                             }
 
-                            echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número " . $obj->idpackage . "\"}}");
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Remesa insertada\",\"body\":\"La remesa fue insertada con éxito con el número $obj->consecutive\"}}");
                             break;
                         case "levelsAccess":
                             $obj = new \gen\bl\LevelAccess($_POST["id"]);
@@ -272,11 +272,11 @@ try {
                             $obj = new \sus\bl\Tracking(0);
                             $arrTrackings = explode(",", $_POST["trackings"]);
                             foreach ($arrTrackings as $t) {
-                                $package = new \sus\bl\Package($t);
-                                $package->read();
+                                $package = new \sus\bl\Package(0);
+                                $package->readByConsecutive($t);
                                 $customer = new \sus\bl\Customer($package->customer->idcustomer);
                                 $customer->read();
-                                $obj->package = new \sus\entities\PackageEntity($t);
+                                $obj->package = new \sus\entities\PackageEntity($package->idpackage);
                                 $obj->state = $state;
                                 try {
                                     $obj->create($_SESSION["user"]);
@@ -285,7 +285,7 @@ try {
                                 }
                                 try {
                                     $template = new gen\bl\TemplateMail(2); //Plantilla de remesa ingresada a bodega
-                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
                                     $mail = new PHPMailer();
                                     $mail->setFrom("info@susencargos.co", "SUSencargos");
                                     $mail->addAddress($customer->user->email, $customer->name);
@@ -303,11 +303,11 @@ try {
                             $obj = new \sus\bl\Tracking(0);
                             $arrTrackings = explode(",", $_POST["trackings"]);
                             foreach ($arrTrackings as $t) {
-                                $package = new \sus\bl\Package($t);
-                                $package->read();
+                                $package = new \sus\bl\Package(0);
+                                $package->readByConsecutive($t);
                                 $customer = new \sus\bl\Customer($package->customer->idcustomer);
                                 $customer->read();
-                                $obj->package = new \sus\entities\PackageEntity($t);
+                                $obj->package = new \sus\entities\PackageEntity($package->idpackage);
                                 $obj->state = $state;
                                 try {
                                     $obj->create($_SESSION["user"]);
@@ -316,7 +316,7 @@ try {
                                 }
                                 try {
                                     $template = new gen\bl\TemplateMail(3); //Plantilla de remesa despachada
-                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
                                     $mail = new PHPMailer();
                                     $mail->setFrom("info@susencargos.co", "SUSencargos");
                                     $mail->addAddress($customer->user->email, $customer->name);
@@ -332,11 +332,11 @@ try {
                         case "deliveryPackage":
                             $obj = new \sus\bl\Tracking(0);
                             $state = new \sus\entities\StateTrackingEntity(4); //Entregado a destinatario
-                            $package = new \sus\bl\Package($_POST["tracking"]);
-                            $package->read();
+                            $package = new \sus\bl\Package(0);
+                            $package->readByConsecutive($_POST["tracking"]);
                             $customer = new \sus\bl\Customer($package->customer->idcustomer);
                             $customer->read();
-                            $obj->package = $package;
+                            $obj->package = new \sus\entities\PackageEntity($package->idpackage);
                             $obj->state = $state;
                             try {
                                 $obj->create($_SESSION["user"]);
@@ -345,7 +345,7 @@ try {
                             }
                             try {
                                 $template = new gen\bl\TemplateMail(4); //Plantilla de remesa entegada a cliente
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->package->idpackage));
+                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
                                 $mail = new PHPMailer();
                                 $mail->setFrom("info@susencargos.co", "SUSencargos");
                                 $mail->addAddress($customer->user->email, $customer->name);

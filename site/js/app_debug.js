@@ -124,6 +124,9 @@ Ext.define('susencargos.model.Package', {
         }, {
             name: 'payType',
             reference: 'susencargos.model.PayType'
+        }, {
+            name: 'consecutive',
+            type: 'int'
         }]
 });
 
@@ -318,7 +321,7 @@ Ext.create('Ext.app.Controller', {
         }
     },
     tracking: function (v, r, c, i, e) {
-        window.open('seguimiento.php?tracking=' + v.getStore().getAt(c).get('idpackage'));
+        window.open('seguimiento.php?tracking=' + v.getStore().getAt(c).get('consecutive'));
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid() && b.up('form').getForm().findField('idreceiver').getValue() != 0) {
@@ -603,7 +606,7 @@ Ext.application({
             columns: [{
                     header: 'Número',
                     filter: 'number',
-                    dataIndex: 'idpackage',
+                    dataIndex: 'consecutive',
                     flex: 1
                 }, {
                     header: 'Fecha',

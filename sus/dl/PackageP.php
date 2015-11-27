@@ -28,6 +28,9 @@ class PackageP extends \gen\dl\LBTObjectP {
      * Inserta una nueva remesa en la base de datos
      */
     public function insert() {
+        $rs = $this->connection->read("MAX(consecutive) AS current", "sus_package", "idpaytype = " . $this->observer->payType->idpaytype);
+        $nextConsecutive = $rs->current + 1;
+        $this->observer->consecutive = $nextConsecutive;
         $this->observer->idpackage = $this->connection->insert("sus_package", array(
             "date" => "'" . $this->observer->date->format("Y-m-d") . "'",
             "idcitysource" => $this->observer->citySource->idcity,
@@ -48,7 +51,8 @@ class PackageP extends \gen\dl\LBTObjectP {
             "reference" => "'" . $this->observer->reference . "'",
             "idpaytype" => $this->observer->payType->idpaytype,
             "idpackagetype" => $this->observer->packageType->idpackagetype,
-            "pod" => "''"
+            "pod" => "''",
+            "consecutive" => $this->observer->consecutive
                 ), $this->user->iduser);
 
         $now = new \DateTime();
@@ -66,35 +70,38 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->read("date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content, observations,
                 weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue, reference, idpaytype, pay_type,
-                idpackagetype, package_type, pod", "vw_sus_package", "idpackage = " . $this->observer->idpackage);
-        $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
-        $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
-        $this->observer->citySource->name = $rs->city_source;
-        $this->observer->cityDestination = new \sus\entities\CityEntity($rs->idcitydestination);
-        $this->observer->cityDestination->name = $rs->city_destination;
-        $this->observer->customer = new \sus\entities\CustomerEntity($rs->idcustomer);
-        $this->observer->customer->name = $rs->customer;
-        $this->observer->customer->address = $rs->customer_address;
-        $this->observer->customer->phone = $rs->customer_phone;
-        $this->observer->customer->taxid = $rs->customer_taxid;
-        $this->observer->nameTo = $rs->nameTo;
-        $this->observer->addressTo = $rs->addressTo;
-        $this->observer->phoneTo = $rs->phoneTo;
-        $this->observer->content = $rs->content;
-        $this->observer->observations = $rs->observations;
-        $this->observer->weight = $rs->weight;
-        $this->observer->volumen = $rs->volumen;
-        $this->observer->amount = $rs->amount;
-        $this->observer->declaredValue = $rs->declaredValue;
-        $this->observer->shippingValue = $rs->shippingValue;
-        $this->observer->managementValue = $rs->managementValue;
-        $this->observer->totalValue = $rs->totalValue;
-        $this->observer->reference = $rs->reference;
-        $this->observer->payType = new \sus\entities\PayTypeEntity($rs->idpaytype);
-        $this->observer->payType->name = $rs->pay_type;
-        $this->observer->packageType = new \sus\entities\PackageTypeEntity($rs->idpackagetype);
-        $this->observer->packageType->name = $rs->package_type;
-        $this->observer->pod = $rs->pod;
+                idpackagetype, package_type, pod, consecutive", "vw_sus_package", "idpackage = " . $this->observer->idpackage);
+        if ($rs != null) {
+            $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
+            $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
+            $this->observer->citySource->name = $rs->city_source;
+            $this->observer->cityDestination = new \sus\entities\CityEntity($rs->idcitydestination);
+            $this->observer->cityDestination->name = $rs->city_destination;
+            $this->observer->customer = new \sus\entities\CustomerEntity($rs->idcustomer);
+            $this->observer->customer->name = $rs->customer;
+            $this->observer->customer->address = $rs->customer_address;
+            $this->observer->customer->phone = $rs->customer_phone;
+            $this->observer->customer->taxid = $rs->customer_taxid;
+            $this->observer->nameTo = $rs->nameTo;
+            $this->observer->addressTo = $rs->addressTo;
+            $this->observer->phoneTo = $rs->phoneTo;
+            $this->observer->content = $rs->content;
+            $this->observer->observations = $rs->observations;
+            $this->observer->weight = $rs->weight;
+            $this->observer->volumen = $rs->volumen;
+            $this->observer->amount = $rs->amount;
+            $this->observer->declaredValue = $rs->declaredValue;
+            $this->observer->shippingValue = $rs->shippingValue;
+            $this->observer->managementValue = $rs->managementValue;
+            $this->observer->totalValue = $rs->totalValue;
+            $this->observer->reference = $rs->reference;
+            $this->observer->payType = new \sus\entities\PayTypeEntity($rs->idpaytype);
+            $this->observer->payType->name = $rs->pay_type;
+            $this->observer->packageType = new \sus\entities\PackageTypeEntity($rs->idpackagetype);
+            $this->observer->packageType->name = $rs->package_type;
+            $this->observer->pod = $rs->pod;
+            $this->observer->consecutive = $rs->consecutive;
+        }
     }
 
     /**
@@ -113,7 +120,7 @@ class PackageP extends \gen\dl\LBTObjectP {
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content,
                 observations, weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue,
-                reference, idpaytype, pay_type, idpackagetype, package_type, pod", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
+                reference, idpaytype, pay_type, idpackagetype, package_type, pod, consecutive", "vw_sus_package", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -145,6 +152,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
             $obj->packageType->name = $row->package_type;
             $obj->pod = $row->pod;
+            $obj->consecutive = $row->consecutive;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -191,7 +199,8 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->readAll(
                 "p.idpackage, p.date, p.idcitysource, p.city_source, p.idcitydestination, p.city_destination, p.idcustomer,
                 p.customer, p.nameTo, p.addressTo, p.phoneTo, p.content, p.observations, p.weight, p.volumen, p.amount, p.declaredValue,
-                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type, pod", "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer", "cu.iduser = $iduser", "p.idpackage DESC", $start, $limit, $this->total
+                p.shippingValue, p.managementValue, p.totalValue, p.reference, p.idpaytype, p.pay_type, p.idpackagetype, p.package_type,
+                p.pod, p.consecutive", "vw_sus_package p JOIN sus_customer cu ON p.idcustomer = cu.idcustomer", "cu.iduser = $iduser", "p.idpackage DESC", $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -220,6 +229,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
             $obj->packageType->name = $row->package_type;
             $obj->pod = $row->pod;
+            $obj->consecutive = $row->consecutive;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
@@ -238,9 +248,8 @@ class PackageP extends \gen\dl\LBTObjectP {
         $rs = $this->connection->readAll(
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,
-                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type, idpackagetype, package_type, pod",
-                "vw_sus_packages_manifest",
-                "idzone = $idzone AND date = '$date'", "idpackage ASC", 0, 1000, $this->total
+                shippingValue, managementValue, totalValue, reference, idpaytype, pay_type, idpackagetype, package_type,
+                pod, consecutive", "vw_sus_packages_manifest", "idzone = $idzone AND date = '$date'", "idpackage ASC", 0, 1000, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\PackageEntity($row->idpackage);
@@ -269,9 +278,50 @@ class PackageP extends \gen\dl\LBTObjectP {
             $obj->packageType = new \sus\entities\PackageTypeEntity($row->idpackagetype);
             $obj->packageType->name = $row->package_type;
             $obj->pod = $row->pod;
+            $obj->consecutive = $row->consecutive;
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
+    }
+
+    /**
+     * Lee una remesa de la base de datos dado por su consecutivo
+     */
+    public function readByConsecutive($consecutive) {
+        $this->observer->consecutive = $consecutive;
+        $rs = $this->connection->read("idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
+                customer, customer_address, customer_phone, customer_taxid, nameTo, addressTo, phoneTo, content, observations,
+                weight, volumen, amount, declaredValue, shippingValue, managementValue, totalValue, reference, idpaytype, pay_type,
+                idpackagetype, package_type, pod", "vw_sus_package", "consecutive = " . $this->observer->consecutive);
+        $this->observer->idpackage = $rs->idpackage;
+        $this->observer->date = \DateTime::createFromFormat("Y-m-d", $rs->date);
+        $this->observer->citySource = new \sus\entities\CityEntity($rs->idcitysource);
+        $this->observer->citySource->name = $rs->city_source;
+        $this->observer->cityDestination = new \sus\entities\CityEntity($rs->idcitydestination);
+        $this->observer->cityDestination->name = $rs->city_destination;
+        $this->observer->customer = new \sus\entities\CustomerEntity($rs->idcustomer);
+        $this->observer->customer->name = $rs->customer;
+        $this->observer->customer->address = $rs->customer_address;
+        $this->observer->customer->phone = $rs->customer_phone;
+        $this->observer->customer->taxid = $rs->customer_taxid;
+        $this->observer->nameTo = $rs->nameTo;
+        $this->observer->addressTo = $rs->addressTo;
+        $this->observer->phoneTo = $rs->phoneTo;
+        $this->observer->content = $rs->content;
+        $this->observer->observations = $rs->observations;
+        $this->observer->weight = $rs->weight;
+        $this->observer->volumen = $rs->volumen;
+        $this->observer->amount = $rs->amount;
+        $this->observer->declaredValue = $rs->declaredValue;
+        $this->observer->shippingValue = $rs->shippingValue;
+        $this->observer->managementValue = $rs->managementValue;
+        $this->observer->totalValue = $rs->totalValue;
+        $this->observer->reference = $rs->reference;
+        $this->observer->payType = new \sus\entities\PayTypeEntity($rs->idpaytype);
+        $this->observer->payType->name = $rs->pay_type;
+        $this->observer->packageType = new \sus\entities\PackageTypeEntity($rs->idpackagetype);
+        $this->observer->packageType->name = $rs->package_type;
+        $this->observer->pod = $rs->pod;
     }
 
     //</editor-fold>

@@ -14,7 +14,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     for ($i = 0; $i < $obj->amount; $i++) {
         $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
         $path = substr($path, 0, strrpos($path, "/"));
-        $path .= "/utils/barcode.php?text=$idpackage-" . ($i + 1);
+        $path .= "/utils/barcode.php?text=$obj->consecutive-" . ($i + 1);
 
         fopen($path, "r");
         if ($i % 2 == 0) {
@@ -78,9 +78,9 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
         $pdf->Write(10, utf8_decode("Remesa:"));
         $pdf->SetXY(40, 100 + (140 * ($i % 2)));
         $pdf->SetFont('Times', 'B', 18);
-        $pdf->Write(10, utf8_decode($idpackage));
+        $pdf->Write(10, utf8_decode($obj->consecutive));
 
-        $pdf->Image("images/label_$idpackage-" . ($i + 1) . ".png", 70, 100 + (140 * ($i % 2)), 60, 10);
+        $pdf->Image("images/label_$obj->consecutive-" . ($i + 1) . ".png", 70, 100 + (140 * ($i % 2)), 60, 10);
 
         $pdf->SetXY(130, 100 + (140 * ($i % 2)));
         $pdf->SetFont('Times', '', 10);

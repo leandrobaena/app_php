@@ -31,6 +31,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property \sus\entities\PayTypeEntity $payType Tipo de pago de la remesa
  * @property \sus\entities\PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
  * @property string $pod Prueba de entrega
+ * @property int $consecutive Consecutivo de la remesa, depende del tipo de pago
  * @author Leandro Baena Torres
  */
 class Package extends \LBTObjectBL {
@@ -64,6 +65,13 @@ class Package extends \LBTObjectBL {
      */
     public function getPackagesToManifest($idzone, $date) {
         return $this->persistence->getPackagesToManifest($idzone, $date);
+    }
+
+    /**
+     * Carga una remesa dado su consecutivo
+     */
+    public function readByConsecutive($consecutive) {
+        return $this->persistence->readByConsecutive($consecutive);
     }
 
     //</editor-fold>

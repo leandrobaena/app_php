@@ -44,7 +44,7 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     $obj->read();
     $path = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 4)) . "://" . $_SERVER["SERVER_NAME"] . $_SERVER["REQUEST_URI"];
     $path = substr($path, 0, strrpos($path, "/"));
-    $path .= "/utils/barcode.php?text=$idpackage";
+    $path .= "/utils/barcode.php?text=$obj->consecutive";
     fopen($path, "r");
     $pdf = new PDF();
     $pdf->AddPage();
@@ -54,14 +54,14 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"]) && $_GET["id"] > 0) {
     
     for ($i = 0; $i < 4; $i++) {
         $pdf->Image("images/logo.png", 5, 5 + ($labelHeight * ($i % 4)), 40, 10);
-        $pdf->Image("images/label_$idpackage.png", 47, 4 + ($labelHeight * ($i % 4)), 40, 10);
+        $pdf->Image("images/label_$obj->consecutive.png", 47, 4 + ($labelHeight * ($i % 4)), 40, 10);
         //Fecha y No. Guía
         $pdf->Rect(90, 5 + ($labelHeight * ($i % 4)), 50, 5, "D");
         $pdf->SetXY(90, 5 + ($labelHeight * ($i % 4)));
         $pdf->Write(5, "Fecha: " . $pdf->fill($obj->date->format("Y-m-d"), 45));
         $pdf->Rect(140, 5 + ($labelHeight * ($i % 4)), 45, 5, "D");
         $pdf->SetXY(140, 5 + ($labelHeight * ($i % 4)));
-        $pdf->Write(5, "Remesa de carga No.: " . $pdf->fill($idpackage, 22));
+        $pdf->Write(5, "Remesa de carga No.: " . $obj->consecutive);
         //Origen y destino
         $pdf->Rect(90, 10 + ($labelHeight * ($i % 4)), 50, 5, "D");
         $pdf->SetXY(90, 10 + ($labelHeight * ($i % 4)));

@@ -5,8 +5,8 @@ require_once (__DIR__ . "/intranet/sus/bl/Package.php");
 $tracking = 0;
 if (isset($_GET["tracking"]) && is_numeric($_GET["tracking"])) {
     $tracking = $_GET["tracking"];
-    $info = new \sus\bl\Tracking($tracking);
-    $steps = $info->readAll("idpackage = $tracking OR reference = $tracking", "date DESC", 0, 100);
+    $info = new \sus\bl\Tracking(0);
+    $steps = $info->readAll("consecutive = $tracking OR reference = '$tracking'", "date DESC", 0, 100);
     $package = new \sus\bl\Package($tracking);
     $package->read();
 }

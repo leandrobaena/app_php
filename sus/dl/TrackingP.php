@@ -57,7 +57,7 @@ class TrackingP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "idtracking, date, idpackage, idstatetracking, state_tracking, reference", "vw_sus_tracking", $filters, $sorters, $start, $limit, $this->total
+                "idtracking, date, idpackage, idstatetracking, state_tracking, reference, consecutive", "vw_sus_tracking", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\TrackingEntity($row->idtracking);

@@ -32,6 +32,7 @@ require_once (__DIR__ . "/PackageTypeEntity.php");
  * @property PayTypeEntity $payType Tipo de pago de la remesa
  * @property PackageTypeEntity $packageType Tipo de envío o embalaje de la remesa
  * @property string $pod Prueba de entrega
+ * @property int $consecutive Consecutivo de la remesa, depende del tipo de pago
  * @author Leandro Baena Torres
  */
 class PackageEntity extends \gen\entities\LBTObject {
@@ -64,6 +65,7 @@ class PackageEntity extends \gen\entities\LBTObject {
         $this->payType = new PayTypeEntity(0);
         $this->packageType = new PackageTypeEntity(0);
         $this->pod = "";
+        $this->consecutive = 0;
     }
 
     //</editor-fold>
@@ -116,7 +118,8 @@ class PackageEntity extends \gen\entities\LBTObject {
                 . "\"reference\":\"$this->reference\","
                 . "\"payType\":$this->payType,"
                 . "\"packageType\":$this->packageType,"
-                . "\"pod\":\"$this->pod\"}";
+                . "\"pod\":\"$this->pod\","
+                . "\"consecutive\":$this->consecutive}";
     }
 
     //</editor-fold>
@@ -227,5 +230,10 @@ class PackageEntity extends \gen\entities\LBTObject {
      */
     private $pod;
 
+    /**
+     * Consecutivo de la remesa, depende del tipo de pago
+     * @var int
+     */
+    private $consecutive;
     //</editor-fold>
 }

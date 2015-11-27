@@ -208,6 +208,9 @@ Ext.define('susencargos.model.Package', {
         }, {
             name: 'pacakgeType',
             reference: 'susencargos.model.PackageType'
+        }, {
+            name: 'consecutive',
+            type: 'int'
         }]
 });
 
@@ -2653,7 +2656,7 @@ Ext.create('Ext.app.Controller', {
                     panel = Ext.widget('listTrackings');
                     content.add(panel);
                 }
-                panel.setTitle('Seguimiento de la guía ' + v.getStore().getAt(c).get('idpackage'));
+                panel.setTitle('Seguimiento de la guía ' + v.getStore().getAt(c).get('idpackage') + ' / Cons: ' + v.getStore().getAt(c).get('consecutive'));
                 Ext.getCmp('contenido').setActiveTab(panel);
             }
         });
@@ -5244,6 +5247,11 @@ Ext.application({
                     filter: 'number',
                     dataIndex: 'idpackage',
                     flex: 1
+                },{
+                    header: 'Consecutivo',
+                    filter: 'number',
+                    dataIndex: 'consecutive',
+                    flex: 2
                 }, {
                     header: 'Fecha',
                     dataIndex: 'date',
