@@ -14,7 +14,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property string $name Nombre de la aplicación
  * @author Leandro Baena Torres
  */
-class Application extends \LBTObjectBL {
+class Application extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

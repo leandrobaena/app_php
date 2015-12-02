@@ -16,7 +16,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property \sus\entities\StateTrackingEntity $state Estado del seguimiento
  * @author Leandro Baena Torres
  */
-class Tracking extends \LBTObjectBL {
+class Tracking extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

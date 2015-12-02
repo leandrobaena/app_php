@@ -19,7 +19,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property \gen\entities\ApplicationEntity $application Aplicación a la que pertenece el módulo
  * @author Leandro Baena Torres
  */
-class Module extends \LBTObjectBL {
+class Module extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

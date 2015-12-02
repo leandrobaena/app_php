@@ -1,5 +1,7 @@
 <?php
 
+namespace gen\bl;
+
 /**
  * Clase raíz de las clases que encapsulan la funcionalidad del sistema o capa
  * de negocios

@@ -18,7 +18,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property \sus\entities\CustomerEntity $customer Cliente al que pertenece el destinatario
  * @author Leandro Baena Torres
  */
-class Receiver extends \LBTObjectBL {
+class Receiver extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

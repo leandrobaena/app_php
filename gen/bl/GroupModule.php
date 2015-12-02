@@ -17,7 +17,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property \gen\entities\LevelAccessEntity $levelAccess Nivel de acceso
  * @author Leandro Baena Torres
  */
-class GroupModule extends \LBTObjectBL {
+class GroupModule extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

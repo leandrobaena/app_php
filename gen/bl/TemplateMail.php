@@ -15,7 +15,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property string $html Contenido de la plantilla de correo
  * @author Leandro Baena Torres
  */
-class TemplateMail extends \LBTObjectBL {
+class TemplateMail extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

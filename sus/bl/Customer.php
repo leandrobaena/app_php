@@ -20,7 +20,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property string $contact Contacto del cliente
  * @author Leandro Baena Torres
  */
-class Customer extends \LBTObjectBL {
+class Customer extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

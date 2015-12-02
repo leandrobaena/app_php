@@ -14,7 +14,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property string $name Nombre de la zona
  * @author Leandro Baena Torres
  */
-class Zone extends \LBTObjectBL {
+class Zone extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

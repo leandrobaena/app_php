@@ -14,7 +14,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property string $name Nombre del tipo de envío
  * @author Leandro Baena Torres
  */
-class PackageType extends \LBTObjectBL {
+class PackageType extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

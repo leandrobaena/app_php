@@ -15,7 +15,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property \sus\entities\ZoneEntity $zone Zona de entrega a la que pertenece la ciudad
  * @author Leandro Baena Torres
  */
-class City extends \LBTObjectBL {
+class City extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

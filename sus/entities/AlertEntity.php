@@ -1,27 +1,31 @@
 <?php
 
-namespace gen\entities;
+namespace sus\entities;
 
-require_once (__DIR__ . "/LBTObject.php");
+require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
 
 /**
- * Nivel de acceso a un recurso del sistema
+ * Mensaje de correo o alerta al celular para notificar un cambio de estado en
+ * una remesa
  *
  * @author Leandro Baena Torres
- * @property int $idlevelaccess Identificador del nivel de acceso
- * @property string $name Nombre del nivel de acceso
+ * @property int $idalert Identificador de la alerta
+ * @property CustomerEntity $customer Cliente al que se le notifica
+ * @property StateTrackingEntity $stateTracking Estado de la remesa que se
+ * notifica
  */
-class LevelAccessEntity extends \gen\entities\LBTObject {
+class AlertEntity extends \gen\entities\LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     /**
-     * Crea una nueva instancia de un nivel de acceso
+     * Crea una nueva instancia de una alerta
      * 
-     * @param $id Identificador del nivel de acceso, 0 si es nuevo
+     * @param $id Identificador de la alerta, 0 si es nueva
      */
     public function __construct($id = 0) {
-        $this->idlevelaccess = $id;
-        $this->name = "";
+        $this->idalert = $id;
+        $this->customer = new CustomerEntity(0);
+        $this->stateTracking = new StateTrackingEntity(0);
     }
 
     //</editor-fold>
@@ -54,21 +58,26 @@ class LevelAccessEntity extends \gen\entities\LBTObject {
      * @return string Objeto en formato JSON
      */
     public function __toString() {
-        return "{\"idlevelaccess\":$this->idlevelaccess,"
-                . "\"name\":\"$this->name\"}";
+        return "{\"idalert\":$this->idalert,"
+                . "\"customer\":$this->customer,"
+                . "\"stateTracking\":$this->stateTracking}";
     }
 
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Atributos">
     /**
-     * @var int Identificador del nivel de acceso
+     * @var int Identificador de la alerta
      */
-    private $idlevelaccess;
+    private $idalert;
 
     /**
-     * @var string Nombre del nivel de acceso
+     * @var CustomerEntity Cliente al que se le notifica
      */
-    private $name;
+    private $customer;
 
+    /**
+     * @var StateTrackingEntity Estado de la remesa que se notifica
+     */
+    private $stateTracking;
     //</editor-fold>
 }

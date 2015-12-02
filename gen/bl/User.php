@@ -19,7 +19,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property bool $logged Si está o no logeado
  * @author Leandro Baena Torres
  */
-class User extends \LBTObjectBL {
+class User extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

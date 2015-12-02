@@ -17,6 +17,7 @@ require_once (__DIR__ . "/../sus/bl/PackageType.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
 require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
+require_once (__DIR__ . "/../sus/bl/Alert.php");
 
 session_start();
 try {
@@ -26,7 +27,7 @@ try {
         $object = "";
         if (isset($_POST["object"])) {
             $object = $_POST["object"];
-            $module = new gen\bl\Module(0);
+            $module = new \gen\bl\Module(0);
 
             if ($object == "groupsModule" || $object == "modules" || $object == "groupApplication") {
                 $object = "apps";
@@ -50,7 +51,7 @@ try {
             if ($idmodule == 0) {
                 echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Configuración no válida\"}}");
             } else {
-                $module = new gen\bl\Module($idmodule);
+                $module = new \gen\bl\Module($idmodule);
                 if ($module->haveAccess($_SESSION["user"]->iduser, 4)) {
                     switch ($_POST["object"]) {
                         case "apps":
@@ -152,7 +153,12 @@ try {
                         case "sellersCustomer":
                             $obj = new \sus\bl\SellerCustomer($_POST["id"]);
                             $obj->delete($_SESSION["user"]);
-                            echo("{\"success\":true,\"msg\":{\"title\":\"Prcentaje de comisión eliminado\",\"body\":\"El porcentaje de comisión ha sido eliminado con \\xe9xito\"}}");
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Porcentaje de comisión eliminado\",\"body\":\"El porcentaje de comisión ha sido eliminado con \\xe9xito\"}}");
+                            break;
+                        case "alerts":
+                            $obj = new \sus\bl\Alert($_POST["id"]);
+                            $obj->delete($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Alerta eliminada\",\"body\":\"La alerta ha sido eliminada con \\xe9xito\"}}");
                             break;
                     }
                 } else {

@@ -15,7 +15,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property bool $active Si el grupo está o no activo
  * @author Leandro Baena Torres
  */
-class Group extends \LBTObjectBL {
+class Group extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

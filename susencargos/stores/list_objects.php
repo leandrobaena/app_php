@@ -18,6 +18,7 @@ require_once (__DIR__ . "/../sus/bl/Tracking.php");
 require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
 require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
+require_once (__DIR__ . "/../sus/bl/Alert.php");
 
 session_start();
 
@@ -189,6 +190,10 @@ try {
             case "sellersCustomer":
                 $obj = new \sus\bl\SellerCustomer(0);
                 $list = $obj->readAll("idseller = " . $_GET["idseller"] . ($filters == "" ? "" : " AND " . $filters), $sorters, $start, $limit);
+                break;
+            case "alerts":
+                $obj = new \sus\bl\Alert(0);
+                $list = $obj->readAll($filters, $sorters, $start, $limit);
                 break;
         }
         echo($list);

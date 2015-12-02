@@ -19,6 +19,7 @@ require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
 require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
+require_once (__DIR__ . "/../sus/bl/Alert.php");
 session_start();
 
 try {
@@ -408,11 +409,18 @@ try {
                             break;
                         case "sellersCustomer":
                             $obj = new \sus\bl\SellerCustomer($_POST["id"]);
-                            $obj->seller = new sus\bl\Seller($_POST["idseller"]);
-                            $obj->customer = new sus\bl\Customer($_POST["idcustomer"]);
+                            $obj->seller = new \sus\entities\SellerEntity($_POST["idseller"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
                             $obj->percent = $_POST["percent"];
                             $obj->create($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Porcentaje de comisión insertado\",\"body\":\"El porcentaje de comisión fue insertado con éxito\"}}");
+                            break;
+                        case "alerts":
+                            $obj = new \sus\bl\Alert($_POST["id"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->stateTracking = new sus\entities\StateTrackingEntity($_POST["idstatetracking"]);
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Alerta insertada\",\"body\":\"La alerta fue insertada con éxito\"}}");
                             break;
                     }
                 } else {
@@ -575,11 +583,18 @@ try {
                             break;
                         case "sellersCustomer":
                             $obj = new \sus\bl\SellerCustomer($_POST["id"]);
-                            $obj->seller = new sus\bl\Seller($_POST["idseller"]);
-                            $obj->customer = new sus\bl\Customer($_POST["idcustomer"]);
+                            $obj->seller = new \sus\entities\SellerEntity($_POST["idseller"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
                             $obj->percent = $_POST["percent"];
                             $obj->update($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Porcentaje de comisión actualizado\",\"body\":\"El porcentaje de comisión fue actualizado con éxito\"}}");
+                            break;
+                        case "alerts":
+                            $obj = new \sus\bl\Alert($_POST["id"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->stateTracking = new sus\entities\StateTrackingEntity($_POST["idstatetracking"]);
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Alerta insertada\",\"body\":\"La alerta fue insertada con éxito\"}}");
                             break;
                     }
                 } else {

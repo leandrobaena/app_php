@@ -16,7 +16,7 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property float $percent Porcentaje
  * @author Leandro Baena Torres
  */
-class SellerCustomer extends \LBTObjectBL {
+class SellerCustomer extends \gen\bl\LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {

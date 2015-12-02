@@ -14,7 +14,7 @@ require_once(__DIR__ . "/LBTObjectBL.php");
  * @property string $name Nombre del nivel de acceso
  * @author Leandro Baena Torres
  */
-class LevelAccess extends \LBTObjectBL {
+class LevelAccess extends LBTObjectBL {
 
     // <editor-fold defaultstate="collapsed" desc="Constructores">
     public function __construct($id) {
