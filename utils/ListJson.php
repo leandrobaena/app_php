@@ -6,6 +6,8 @@ namespace utils;
  * Lista especializada para el manejo de objetos que se exportan en formato JSON
  *
  * @property array $records Listado de registros
+ * @property int $total Cantidad total de registros que se traerían sin aplicar
+ * límites
  * @author Leandro Baena Torres
  */
 class ListJson {

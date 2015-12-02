@@ -183,16 +183,20 @@ try {
                             $obj->create($_SESSION["user"]);
 
                             try {
-                                $customer = new \sus\bl\Customer($_POST["idcustomer"]);
-                                $customer->read();
-                                $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
-                                $mail = new PHPMailer();
-                                $mail->setFrom("info@susencargos.co", "SUSencargos");
-                                $mail->addAddress($customer->user->email, $customer->name);
-                                $mail->Subject = utf8_decode("Remesa creada en el sistema");
-                                $mail->msgHTML($message);
-                                $mail->send();
+                                $alert = new sus\bl\Alert(0);
+                                $alerts = $alert->readAll("idcustomer = " . $obj->customer->idcustomer . " AND idstatetracking = 1", "", 0, 10);
+                                if ($alerts->total > 0) {
+                                    $customer = new \sus\bl\Customer($_POST["idcustomer"]);
+                                    $customer->read();
+                                    $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
+                                    $mail = new PHPMailer();
+                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                    $mail->addAddress($customer->user->email, $customer->name);
+                                    $mail->Subject = utf8_decode("Remesa creada en el sistema");
+                                    $mail->msgHTML($message);
+                                    $mail->send();
+                                }
                             } catch (Exception $ex) {
                                 
                             }
@@ -240,14 +244,18 @@ try {
                             $obj->create($_SESSION["user"]);
 
                             try {
-                                $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
-                                $mail = new PHPMailer();
-                                $mail->setFrom("info@susencargos.co", "SUSencargos");
-                                $mail->addAddress($customer->user->email, $customer->name);
-                                $mail->Subject = utf8_decode("Remesa creada en el sistema");
-                                $mail->msgHTML($message);
-                                $mail->send();
+                                $alert = new sus\bl\Alert(0);
+                                $alerts = $alert->readAll("idcustomer = " . $obj->customer->idcustomer . " AND idstatetracking = 1", "", 0, 10);
+                                if ($alerts->total > 0) {
+                                    $template = new gen\bl\TemplateMail(1); //Plantilla de remesa ingresada al sistema
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $obj->consecutive));
+                                    $mail = new PHPMailer();
+                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                    $mail->addAddress($customer->user->email, $customer->name);
+                                    $mail->Subject = utf8_decode("Remesa creada en el sistema");
+                                    $mail->msgHTML($message);
+                                    $mail->send();
+                                }
                             } catch (Exception $ex) {
                                 
                             }
@@ -285,14 +293,18 @@ try {
                                     
                                 }
                                 try {
-                                    $template = new gen\bl\TemplateMail(2); //Plantilla de remesa ingresada a bodega
-                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
-                                    $mail = new PHPMailer();
-                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
-                                    $mail->addAddress($customer->user->email, $customer->name);
-                                    $mail->Subject = utf8_decode("Remesa ingresada a nuestras bodegas");
-                                    $mail->msgHTML($message);
-                                    $mail->send();
+                                    $alert = new sus\bl\Alert(0);
+                                    $alerts = $alert->readAll("idcustomer = " . $customer->idcustomer . " AND idstatetracking = 2", "", 0, 10);
+                                    if ($alerts->total > 0) {
+                                        $template = new gen\bl\TemplateMail(2); //Plantilla de remesa ingresada a bodega
+                                        $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
+                                        $mail = new PHPMailer();
+                                        $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                        $mail->addAddress($customer->user->email, $customer->name);
+                                        $mail->Subject = utf8_decode("Remesa ingresada a nuestras bodegas");
+                                        $mail->msgHTML($message);
+                                        $mail->send();
+                                    }
                                 } catch (Exception $ex) {
                                     
                                 }
@@ -316,14 +328,18 @@ try {
                                     
                                 }
                                 try {
-                                    $template = new gen\bl\TemplateMail(3); //Plantilla de remesa despachada
-                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
-                                    $mail = new PHPMailer();
-                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
-                                    $mail->addAddress($customer->user->email, $customer->name);
-                                    $mail->Subject = utf8_decode("Remesa despachada a destino");
-                                    $mail->msgHTML($message);
-                                    $mail->send();
+                                    $alert = new sus\bl\Alert(0);
+                                    $alerts = $alert->readAll("idcustomer = " . $customer->idcustomer . " AND idstatetracking = 3", "", 0, 10);
+                                    if ($alerts->total > 0) {
+                                        $template = new gen\bl\TemplateMail(3); //Plantilla de remesa despachada
+                                        $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
+                                        $mail = new PHPMailer();
+                                        $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                        $mail->addAddress($customer->user->email, $customer->name);
+                                        $mail->Subject = utf8_decode("Remesa despachada a destino");
+                                        $mail->msgHTML($message);
+                                        $mail->send();
+                                    }
                                 } catch (Exception $ex) {
                                     
                                 }
@@ -345,14 +361,18 @@ try {
                                 
                             }
                             try {
-                                $template = new gen\bl\TemplateMail(4); //Plantilla de remesa entegada a cliente
-                                $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
-                                $mail = new PHPMailer();
-                                $mail->setFrom("info@susencargos.co", "SUSencargos");
-                                $mail->addAddress($customer->user->email, $customer->name);
-                                $mail->Subject = utf8_decode("Remesa entregada a destinatario");
-                                $mail->msgHTML($message);
-                                $mail->send();
+                                $alert = new sus\bl\Alert(0);
+                                $alerts = $alert->readAll("idcustomer = " . $customer->idcustomer . " AND idstatetracking = 4", "", 0, 10);
+                                if ($alerts->total > 0) {
+                                    $template = new gen\bl\TemplateMail(4); //Plantilla de remesa entegada a cliente
+                                    $message = $template->merge(array("customer" => $customer->name, "idpackage" => $package->consecutive));
+                                    $mail = new PHPMailer();
+                                    $mail->setFrom("info@susencargos.co", "SUSencargos");
+                                    $mail->addAddress($customer->user->email, $customer->name);
+                                    $mail->Subject = utf8_decode("Remesa entregada a destinatario");
+                                    $mail->msgHTML($message);
+                                    $mail->send();
+                                }
                             } catch (Exception $ex) {
                                 
                             }
