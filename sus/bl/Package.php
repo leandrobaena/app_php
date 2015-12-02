@@ -61,10 +61,12 @@ class Package extends \LBTObjectBL {
      * 
      * @param int $idzone Identificador de la zona
      * @param string $date Fecha que se quiere consultar
-     * @return \utils\ListJson
+     * @param string $cities Ciudades en las cuales se están buscando las
+     * remesas para el reporte
+     * @return \utils\ListJson Listado de remesas para la planilla de vuelo
      */
-    public function getPackagesToManifest($idzone, $date) {
-        return $this->persistence->getPackagesToManifest($idzone, $date);
+    public function getPackagesToManifest($idzone, $date, $cities) {
+        return $this->persistence->getPackagesToManifest($idzone, $date, $cities);
     }
 
     /**

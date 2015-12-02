@@ -121,9 +121,9 @@ try {
                 echo("{\"success\":true,\"msg\":{\"title\":\"Reporte generado\",\"body\":\"reports/listado_clientes.xlsx\"}}");
                 break;
             case "flightManifest":
-                //Consulta las zonas
+                //Consulta las zonas de las ciudades determinadas
                 $obj = new \sus\bl\Zone(0);
-                $zones = $obj->readAll("", "", 0, 100);
+                $zones = $obj->readByCities($_POST["cities"]);
 
                 $objPHPExcel->getProperties()->setTitle("Planilla de vuelo")
                         ->setDescription("Planilla de vuelo");
@@ -137,7 +137,7 @@ try {
                     $objPHPExcel->getActiveSheet()->setTitle($zones->records[$i]->name);
 
                     $package = new sus\bl\Package(0);
-                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone, $_POST["date"]);
+                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone, $_POST["date"], $_POST["cities"]);
 
                     $today = new DateTime();
 

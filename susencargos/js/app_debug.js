@@ -652,7 +652,13 @@ Ext.create('Ext.app.Controller', {
         });
     },
     rptFlightManifest: function () {
-        Ext.widget('formFlightManifest');
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function(){
+                Ext.widget('formFlightManifest');
+            }
+        })
     },
     rptBilling: function () {
         Ext.getStore('CustomerL').load({
@@ -3361,11 +3367,20 @@ Ext.create('Ext.app.Controller', {
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid()) {
+            var arrCities = b.up('form').getForm().findField('cities').getValueRecords();
+            var cities = "";
+            arrCities.forEach(function(e){
+                if(cities !== ""){
+                    cities += ",";
+                }
+                cities += e.get('idcity');
+            });
             Ext.Ajax.request({
                 url: 'stores/reports.php',
                 params: {
                     object: 'flightManifest',
-                    date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(), 'Y-m-d')
+                    date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(), 'Y-m-d'),
+                    cities: cities
                 },
                 success: function (response) {
                     var d = Ext.JSON.decode(response.responseText);
@@ -5981,6 +5996,19 @@ Ext.application({
                     anchor: '90%',
                     fieldLabel: '* Fecha del envío',
                     format: 'Y-m-d'
+                },{
+                    xtype: 'tagfield',
+                    name: 'cities',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Ciudades destino',
+                    store: 'CityL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    valueField: 'idcity',
+                    displayField: 'name',
+                    queryMode: 'local'
                 }],
             buttons: [{
                     text: 'Generar',

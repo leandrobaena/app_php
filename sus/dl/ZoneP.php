@@ -62,6 +62,26 @@ class ZoneP extends \gen\dl\LBTObjectP {
     }
 
     /**
+     * Trae todos las zonas a las que pertenecen las ciudades determinadas
+     * 
+     * @param string $cities Ciudades a las que se les consulta las zonas a las
+     * que pertenecen
+     * @return \utils\ListJson Listado de zonas
+     */
+    public function readByCities($cities) {
+        $list = array();
+        $rs = $this->connection->readAll(
+                "DISTINCT z.idzone, z.name", "sus_zone z JOIN sus_city c ON z.idzone = c.idzone", "c.idcity IN ($cities)", "z.name", 0, 10000, $this->total
+        );
+        foreach ($rs as $row) {
+            $obj = new \sus\entities\ZoneEntity($row->idzone);
+            $obj->name = $row->name;
+            array_push($list, $obj);
+        }
+        return new \utils\ListJson($list, $this->total);
+    }
+    
+    /**
      * Actualiza una zona en la base de datos
      */
     public function update() {

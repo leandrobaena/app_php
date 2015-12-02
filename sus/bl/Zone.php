@@ -24,6 +24,18 @@ class Zone extends \LBTObjectBL {
     }
 
     // </editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Métodos">
+    /**
+     * Trae todos las zonas a las que pertenecen las ciudades determinadas
+     * 
+     * @param string $cities Ciudades a las que se les consulta las zonas a las
+     * que pertenecen
+     * @return \utils\ListJson Listado de zonas
+     */
+    public function readByCities($cities) {
+        return $this->persistence->readByCities($cities);
+    }
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Propiedades">
     /**
      * Trae un atributo
