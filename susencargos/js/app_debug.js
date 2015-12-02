@@ -358,6 +358,21 @@ Ext.define('susencargos.model.SellerCustomer', {
             type: 'float'
         }]
 });
+
+Ext.define('susencargos.model.Alert', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idalert',
+            type: 'int',
+            defaultValue: 0
+        }, {
+            name: 'customer',
+            reference: 'susencargos.model.Customer'
+        }, {
+            name: 'stateTracking',
+            reference: 'susencargos.model.StateTracking'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -496,6 +511,7 @@ Ext.create('Ext.app.Controller', {
         'menu menuitem[action=packageTypes]': {click: 'packageTypes'},
         'menu menuitem[action=templatesMail]': {click: 'templatesMail'},
         'menu menuitem[action=sellers]': {click: 'sellers'},
+        'menu menuitem[action=alerts]': {click: 'alerts'},
         /*Operaciones*/
         'menu menuitem[action=packages]': {click: 'packages'},
         'menu menuitem[action=enterPackage]': {click: 'enterPackage'},
@@ -545,6 +561,9 @@ Ext.create('Ext.app.Controller', {
     },
     sellers: function () {
         this.openGrid('listSellers');
+    },
+    alerts: function () {
+        this.openGrid('listAlerts');
     },
     packages: function () {
         this.openGrid('listPackages');
@@ -655,7 +674,7 @@ Ext.create('Ext.app.Controller', {
         Ext.getStore('CityL').load({
             start: 0,
             limit: 10000,
-            callback: function(){
+            callback: function () {
                 Ext.widget('formFlightManifest');
             }
         })
@@ -3369,8 +3388,8 @@ Ext.create('Ext.app.Controller', {
         if (b.up('form').getForm().isValid()) {
             var arrCities = b.up('form').getForm().findField('cities').getValueRecords();
             var cities = "";
-            arrCities.forEach(function(e){
-                if(cities !== ""){
+            arrCities.forEach(function (e) {
+                if (cities !== "") {
                     cities += ",";
                 }
                 cities += e.get('idcity');
@@ -3703,6 +3722,140 @@ Ext.create('Ext.app.Controller', {
         });
     }
 });
+
+Ext.create('Ext.app.Controller', {
+    control: {
+        'listAlerts button[action=insert]': {click: 'insert'},
+        'listAlerts button[action=clean]': {click: 'cleanFilters'},
+        'listAlerts': {itemdblclick: 'editDbl'},
+        'listAlerts actioncolumn[action=edit]': {click: 'edit'},
+        'listAlerts actioncolumn[action=remove]': {click: 'remove'},
+        'formAlert button[action=cancel]': {click: 'cancel'},
+        'formAlert button[action=save]': {click: 'save'}
+    },
+    insert: function (b, e) {
+        Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                Ext.getStore('StateTrackingL').load({
+                    callback: function () {
+                        Ext.widget('formAlert').down('form').loadRecord(Ext.create('susencargos.model.Alert'));
+                    }
+                });
+            }
+        });
+    },
+    cleanFilters: function (b, e) {
+        b.up('grid').filters.clearFilters();
+    },
+    cancel: function (b, e) {
+        b.up('window').close();
+    },
+    edit: function (v, r, c, i, e) {
+        Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                Ext.getStore('StateTrackingL').load({
+                    callback: function () {
+                        var form = Ext.widget('formAlert');
+                        form.down('form').loadRecord(v.getStore().getAt(c));
+                        form.down('form').getForm().findField('idcustomer').setValue(v.getStore().getAt(c).get('customer').idcustomer);
+                        form.down('form').getForm().findField('idstatetracking').setValue(v.getStore().getAt(c).get('stateTracking').idstatetracking);
+                    }
+                });
+            }
+        });
+    },
+    editDbl: function (g, r) {
+        Ext.getStore('CustomerL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                Ext.getStore('StateTrackingL').load({
+                    callback: function () {
+                        var form = Ext.widget('formSeller');
+                        form.down('form').loadRecord(r);
+                        form.down('form').getForm().findField('idcustomer').setValue(r.get('customer').idcustomer);
+                        form.down('form').getForm().findField('idstatetracking').setValue(r.get('stateTracking').idstatetracking);
+                    }
+                });
+            }
+        });
+    },
+    save: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idalert').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Alert').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    remove: function (v, r, c, i, e) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getStore().getAt(c).get('idalert'),
+                        object: 'alerts'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Alert').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Aplicación">
@@ -3863,6 +4016,12 @@ Ext.application({
             object: 'statesTracking'
         });
 
+        Ext.create('susencargos.store.MainStoreLocal', {
+            storeId: 'StateTrackingL',
+            model: 'susencargos.model.StateTracking',
+            object: 'statesTracking'
+        });
+
         Ext.create('susencargos.store.MainStoreRemote', {
             storeId: 'Package',
             model: 'susencargos.model.Package',
@@ -3975,6 +4134,12 @@ Ext.application({
             storeId: 'SellerCustomer',
             model: 'susencargos.model.SellerCustomer',
             object: 'sellersCustomer'
+        });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'Alert',
+            model: 'susencargos.model.Alert',
+            object: 'alerts'
         });
         //</editor-fold>
 
@@ -5262,7 +5427,7 @@ Ext.application({
                     filter: 'number',
                     dataIndex: 'idpackage',
                     flex: 1
-                },{
+                }, {
                     header: 'Consecutivo',
                     filter: 'number',
                     dataIndex: 'consecutive',
@@ -5996,7 +6161,7 @@ Ext.application({
                     anchor: '90%',
                     fieldLabel: '* Fecha del envío',
                     format: 'Y-m-d'
-                },{
+                }, {
                     xtype: 'tagfield',
                     name: 'cities',
                     value: '',
@@ -6130,6 +6295,181 @@ Ext.application({
                     allowBlank: false,
                     anchor: '90%',
                     fieldLabel: '* Nombre'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+
+        Ext.define('susencargos.view.sellerCustomer.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'customer',
+            alias: 'widget.listSellerCustomer',
+            title: 'Listado comisiones',
+            store: 'SellerCustomer',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idsellercustomer'
+                }, {
+                    header: 'Cliente',
+                    dataIndex: 'customer',
+                    renderer: function (v) {
+                        return v.name;
+                    },
+                    flex: 3
+                }, {
+                    header: 'Comisión (%)',
+                    dataIndex: 'percent',
+                    flex: 1
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.sellerCustomer.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formSellerCustomer',
+            title: 'Editar comisión',
+            object: 'sellersCustomer',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idsellercustomer',
+                    value: 0
+                }, {
+                    xtype: 'hiddenfield',
+                    name: 'idseller',
+                    value: 0
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: '* Cliente',
+                    store: 'CustomerL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idcustomer',
+                    displayField: 'name',
+                    autoLoadOnValue: true,
+                    name: 'idcustomer',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'numberfield',
+                    hideTrigger: true,
+                    name: 'percent',
+                    value: 0,
+                    anchor: '90%',
+                    allowBlank: false,
+                    fieldLabel: '* Comisión (%)'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        //</editor-fold>
+        //<editor-fold defaultstate="collapsed" desc="View Alertas">
+        Ext.define('susencargos.view.alert.Grid', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'alert',
+            alias: 'widget.listAlerts',
+            title: 'Listado alertas',
+            store: 'Alert',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idalert'
+                }, {
+                    header: 'Cliente',
+                    filter: 'string',
+                    dataIndex: 'customer',
+                    renderer: function (value) {
+                        return value.name;
+                    },
+                    flex: 3
+                }, {
+                    header: 'Estado remesa',
+                    filter: 'string',
+                    dataIndex: 'stateTracking',
+                    renderer: function (value) {
+                        return value.name;
+                    },
+                    flex: 3
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.alert.Form', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formAlert',
+            title: 'Editar alerta',
+            object: 'alerts',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idalert',
+                    value: 0
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: '* Cliente',
+                    store: 'CustomerL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idcustomer',
+                    displayField: 'name',
+                    autoLoadOnValue: true,
+                    name: 'idcustomer',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: '* Estado remesa',
+                    store: 'StateTrackingL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    valueField: 'idstatetracking',
+                    displayField: 'name',
+                    autoLoadOnValue: true,
+                    name: 'idstatetracking',
+                    anchor: '90%',
+                    queryMode: 'local'
                 }],
             buttons: [{
                     text: 'Guardar',

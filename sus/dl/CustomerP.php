@@ -47,6 +47,8 @@ class CustomerP extends \gen\dl\LBTObjectP {
             "iduser" => $this->observer->user->iduser,
             "contact" => "'" . $this->observer->contact . "'"
                 ), $this->user->iduser);
+
+        $this->connection->nonQuery("INSERT INTO sus_alert (idcustomer, idstatetracking) SELECT " . $this->observer->idcustomer . ", idstatetracking FROM sus_state_tracking");
     }
 
     /**
