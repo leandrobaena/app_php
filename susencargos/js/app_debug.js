@@ -3386,20 +3386,29 @@ Ext.create('Ext.app.Controller', {
     },
     save: function (b, e) {
         if (b.up('form').getForm().isValid()) {
-            var arrCities = b.up('form').getForm().findField('cities').getValueRecords();
-            var cities = "";
-            arrCities.forEach(function (e) {
-                if (cities !== "") {
-                    cities += ",";
+            var arrCitiesDestination = b.up('form').getForm().findField('citiesDestination').getValueRecords();
+            var citiesDestination = "";
+            arrCitiesDestination.forEach(function (e) {
+                if (citiesDestination !== "") {
+                    citiesDestination += ",";
                 }
-                cities += e.get('idcity');
+                citiesDestination += e.get('idcity');
+            });
+            var arrCitiesSource = b.up('form').getForm().findField('citiesSource').getValueRecords();
+            var citiesSource = "";
+            arrCitiesSource.forEach(function (e) {
+                if (citiesSource !== "") {
+                    citiesSource += ",";
+                }
+                citiesSource += e.get('idcity');
             });
             Ext.Ajax.request({
                 url: 'stores/reports.php',
                 params: {
                     object: 'flightManifest',
                     date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(), 'Y-m-d'),
-                    cities: cities
+                    citiesDestination: citiesDestination,
+                    citiesSource: citiesSource
                 },
                 success: function (response) {
                     var d = Ext.JSON.decode(response.responseText);
@@ -6163,11 +6172,22 @@ Ext.application({
                     format: 'Y-m-d'
                 }, {
                     xtype: 'tagfield',
-                    name: 'cities',
+                    name: 'citiesSource',
                     value: '',
-                    allowBlank: false,
                     anchor: '90%',
-                    fieldLabel: '* Ciudades destino',
+                    fieldLabel: 'Ciudades origen',
+                    store: 'CityL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    valueField: 'idcity',
+                    displayField: 'name',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'tagfield',
+                    name: 'citiesDestination',
+                    value: '',
+                    anchor: '90%',
+                    fieldLabel: 'Ciudades destino',
                     store: 'CityL',
                     typeAhead: true,
                     forceSelection: true,

@@ -123,8 +123,11 @@ try {
             case "flightManifest":
                 //Consulta las zonas de las ciudades determinadas
                 $obj = new \sus\bl\Zone(0);
-                $zones = $obj->readByCities($_POST["cities"]);
-
+                if($_POST["citiesDestination"] != ""){
+                    $zones = $obj->readByCities($_POST["citiesDestination"]);
+                } else {
+                    $zones = $obj->readAll("", "", 0, 1000);
+                }
                 $objPHPExcel->getProperties()->setTitle("Planilla de vuelo")
                         ->setDescription("Planilla de vuelo");
 
@@ -137,7 +140,7 @@ try {
                     $objPHPExcel->getActiveSheet()->setTitle($zones->records[$i]->name);
 
                     $package = new sus\bl\Package(0);
-                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone, $_POST["date"], $_POST["cities"]);
+                    $packages = $package->getPackagesToManifest($zones->records[$i]->idzone, $_POST["date"], $_POST["citiesSource"], $_POST["citiesDestination"]);
 
                     $today = new DateTime();
 
