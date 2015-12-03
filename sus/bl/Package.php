@@ -59,7 +59,6 @@ class Package extends \gen\bl\LBTObjectBL {
      * Trae todos los paquetes que estén en estado creado y en bodega, que
      * pertenezcan a la zona determinada para armar la planilla de vuelo
      * 
-     * @param int $idzone Identificador de la zona
      * @param string $date Fecha que se quiere consultar
      * @param string $citiesSource Ciudades origen de las cuales se están
      * buscando las remesas para el reporte
@@ -67,8 +66,8 @@ class Package extends \gen\bl\LBTObjectBL {
      * buscando las remesas para el reporte
      * @return \utils\ListJson Listado de remesas para la planilla de vuelo
      */
-    public function getPackagesToManifest($idzone, $date, $citiesSource, $citiesDestination) {
-        return $this->persistence->getPackagesToManifest($idzone, $date, $citiesSource, $citiesDestination);
+    public function getPackagesToManifest($date, $citiesSource, $citiesDestination) {
+        return $this->persistence->getPackagesToManifest($date, $citiesSource, $citiesDestination);
     }
 
     /**
