@@ -128,9 +128,7 @@ try {
                 $objPHPExcel->getActiveSheet()->setTitle("Planilla de vuelo");
 
                 $package = new sus\bl\Package(0);
-                $packages = $package->getPackagesToManifest($_POST["date"], $_POST["citiesSource"], $_POST["citiesDestination"]);
-
-                $today = new DateTime();
+                $packages = $package->getPackagesToManifest($_POST["date"], $_POST["citiesSource"], $_POST["destinationBy"], $_POST["citiesDestination"], $_POST["zones"]);
 
                 $objPHPExcel->getActiveSheet()
                         ->setCellValue("A1", "SUSEncargos Logística")

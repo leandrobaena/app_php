@@ -242,13 +242,21 @@ class PackageP extends \gen\dl\LBTObjectP {
      * @param string $date Fecha que se quiere consultar
      * @param string $citiesSource Ciudades origen de las cuales se están
      * buscando las remesas para el reporte
+     * @param string $destinationBy Se filtra por las ciudades o las rutas
+     * destino
      * @param string $citiesDestination Ciudades destino en las cuales se están
+     * buscando las remesas para el reporte
+     * @param string $zones Rutas destino en las cuales se están
      * buscando las remesas para el reporte
      * @return \utils\ListJson Listado de remesas para la planilla de vuelo
      */
-    public function getPackagesToManifest($date, $citiesSource, $citiesDestination) {
+    public function getPackagesToManifest($date, $citiesSource, $destinationBy, $citiesDestination, $zones) {
         $list = array();
-        $where = "date = '$date'" . ($citiesDestination != "" ? " AND idcitydestination IN ($citiesDestination)" : "") . ($citiesSource != "" ? " AND idcitysource IN ($citiesSource)" : "");
+        if($destinationBy == "c"){
+            $where = "date = '$date'" . ($citiesDestination != "" ? " AND idcitydestination IN ($citiesDestination)" : "") . ($citiesSource != "" ? " AND idcitysource IN ($citiesSource)" : "");
+        } else {
+            $where = "date = '$date'" . ($zones != "" ? " AND idzone IN ($zones)" : "") . ($citiesSource != "" ? " AND idcitysource IN ($citiesSource)" : "");
+        }
         $rs = $this->connection->readAll(
                 "idpackage, date, idcitysource, city_source, idcitydestination, city_destination, idcustomer,
                 customer, nameTo, addressTo, phoneTo, content, observations, weight, volumen, amount, declaredValue,

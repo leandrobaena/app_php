@@ -62,12 +62,16 @@ class Package extends \gen\bl\LBTObjectBL {
      * @param string $date Fecha que se quiere consultar
      * @param string $citiesSource Ciudades origen de las cuales se están
      * buscando las remesas para el reporte
+     * @param string $destinationBy Se filtra por las ciudades o las rutas
+     * destino
      * @param string $citiesDestination Ciudades destino en las cuales se están
+     * buscando las remesas para el reporte
+     * @param string $zones Rutas destino en las cuales se están
      * buscando las remesas para el reporte
      * @return \utils\ListJson Listado de remesas para la planilla de vuelo
      */
-    public function getPackagesToManifest($date, $citiesSource, $citiesDestination) {
-        return $this->persistence->getPackagesToManifest($date, $citiesSource, $citiesDestination);
+    public function getPackagesToManifest($date, $citiesSource, $destinationBy, $citiesDestination, $zones) {
+        return $this->persistence->getPackagesToManifest($date, $citiesSource, $destinationBy, $citiesDestination, $zones);
     }
 
     /**

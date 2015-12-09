@@ -675,9 +675,13 @@ Ext.create('Ext.app.Controller', {
             start: 0,
             limit: 10000,
             callback: function () {
-                Ext.widget('formFlightManifest');
+                Ext.getStore('ZoneL').load({
+                    callback: function () {
+                        Ext.widget('formFlightManifest');
+                    }
+                });
             }
-        })
+        });
     },
     rptBilling: function () {
         Ext.getStore('CustomerL').load({
@@ -3402,13 +3406,27 @@ Ext.create('Ext.app.Controller', {
                 }
                 citiesSource += e.get('idcity');
             });
+            var arrZones = b.up('form').getForm().findField('zones').getValueRecords();
+            var zones = "";
+            arrZones.forEach(function (e) {
+                if (zones !== "") {
+                    zones += ",";
+                }
+                zones += e.get('idzone');
+            });
+            var destinationBy = 'c';
+            if(Ext.getCmp('fZones').getValue()){
+                destinationBy = 'z';
+            }
             Ext.Ajax.request({
                 url: 'stores/reports.php',
                 params: {
                     object: 'flightManifest',
                     date: Ext.Date.format(b.up('form').getForm().findField('date').getValue(), 'Y-m-d'),
                     citiesDestination: citiesDestination,
-                    citiesSource: citiesSource
+                    citiesSource: citiesSource,
+                    zones: zones,
+                    destinationBy: destinationBy
                 },
                 success: function (response) {
                     var d = Ext.JSON.decode(response.responseText);
@@ -6183,6 +6201,32 @@ Ext.application({
                     displayField: 'name',
                     queryMode: 'local'
                 }, {
+                    xtype: 'fieldcontainer',
+                    fieldLabel: 'Seleccionar destino',
+                    defaultType: 'radiofield',
+                    defaults: {
+                        flex: 1
+                    },
+                    layout: 'hbox',
+                    items: [{
+                            boxLabel: 'Por municipios',
+                            name: 'destinationBy',
+                            checked: true,
+                            id: 'fCities',
+                            handler: function(b){
+                                b.up('form').getForm().findField('citiesDestination').setVisible(false);
+                                b.up('form').getForm().findField('zones').setVisible(true);
+                            }
+                        }, {
+                            boxLabel: 'Por rutas',
+                            name: 'destinationBy',
+                            id: 'fZones',
+                            handler: function(b){
+                                b.up('form').getForm().findField('citiesDestination').setVisible(true);
+                                b.up('form').getForm().findField('zones').setVisible(false);
+                            }
+                        }]
+                }, {
                     xtype: 'tagfield',
                     name: 'citiesDestination',
                     value: '',
@@ -6192,6 +6236,19 @@ Ext.application({
                     typeAhead: true,
                     forceSelection: true,
                     valueField: 'idcity',
+                    displayField: 'name',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'tagfield',
+                    name: 'zones',
+                    value: '',
+                    hidden: true,
+                    anchor: '90%',
+                    fieldLabel: 'Rutas',
+                    store: 'ZoneL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    valueField: 'idzone',
                     displayField: 'name',
                     queryMode: 'local'
                 }],
@@ -6242,8 +6299,7 @@ Ext.application({
                     vtype: 'daterange',
                     startDateField: 'startdt',
                     altFormats: 'Y-m-d',
-                    format: 'Y-m-d',
-                    submitFormat: 'Y-m-d',
+                    format: 'Y-m-d', submitFormat: 'Y-m-d',
                     allowBlank: false,
                     fieldLabel: '* Fecha fin'
                 }],
@@ -6253,8 +6309,7 @@ Ext.application({
                 }, {
                     text: 'Cancelar',
                     action: 'cancel'
-                }]
-        });
+                }]});
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Vendedores">
         Ext.define('susencargos.view.seller.Grid', {
@@ -6262,15 +6317,12 @@ Ext.application({
             iconCls: 'seller',
             alias: 'widget.listSellers',
             title: 'Listado vendedores',
-            store: 'Seller',
-            columns: [{
+            store: 'Seller', columns: [{
                     header: 'ID',
                     filter: 'number',
                     dataIndex: 'idseller'
                 }, {
-                    header: 'Nombre',
-                    filter: 'string',
-                    dataIndex: 'name',
+                    header: 'Nombre', filter: 'string', dataIndex: 'name',
                     flex: 3
                 }, {
                     xtype: 'actioncolumn',
@@ -6306,8 +6358,7 @@ Ext.application({
             object: 'sellers',
             fields: [{
                     xtype: 'hiddenfield',
-                    name: 'idseller',
-                    value: 0
+                    name: 'idseller', value: 0
                 }, {
                     xtype: 'textfield',
                     name: 'name',
@@ -6320,9 +6371,7 @@ Ext.application({
                     text: 'Guardar',
                     action: 'save'
                 }, {
-                    text: 'Cancelar',
-                    action: 'cancel'
-                }]
+                    text: 'Cancelar', action: 'cancel'}]
         });
 
         Ext.define('susencargos.view.sellerCustomer.Grid', {
@@ -6364,7 +6413,6 @@ Ext.application({
                     iconCls: 'remove'
                 }]
         });
-
         Ext.define('susencargos.view.sellerCustomer.Form', {
             extend: 'susencargos.view.MainForm',
             alias: 'widget.formSellerCustomer',
@@ -6391,9 +6439,7 @@ Ext.application({
                     name: 'idcustomer',
                     anchor: '90%',
                     queryMode: 'local'
-                }, {
-                    xtype: 'numberfield',
-                    hideTrigger: true,
+                }, {xtype: 'numberfield', hideTrigger: true,
                     name: 'percent',
                     value: 0,
                     anchor: '90%',
@@ -6411,8 +6457,7 @@ Ext.application({
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Alertas">
         Ext.define('susencargos.view.alert.Grid', {
-            extend: 'susencargos.view.MainGrid',
-            iconCls: 'alert',
+            extend: 'susencargos.view.MainGrid', iconCls: 'alert',
             alias: 'widget.listAlerts',
             title: 'Listado alertas',
             store: 'Alert',
@@ -6449,8 +6494,7 @@ Ext.application({
                     width: 20,
                     action: 'remove',
                     tooltip: 'Eliminar',
-                    icon: 'css/remove.png',
-                    stopSelection: false,
+                    icon: 'css/remove.png', stopSelection: false,
                     iconCls: 'remove'
                 }]
         });
@@ -6462,8 +6506,7 @@ Ext.application({
             object: 'alerts',
             fields: [{
                     xtype: 'hiddenfield',
-                    name: 'idalert',
-                    value: 0
+                    name: 'idalert', value: 0
                 }, {
                     xtype: 'combo',
                     fieldLabel: '* Cliente',
@@ -6501,14 +6544,12 @@ Ext.application({
         });
 
         Ext.define('susencargos.view.sellerCustomer.Grid', {
-            extend: 'susencargos.view.MainGrid',
-            iconCls: 'customer',
+            extend: 'susencargos.view.MainGrid', iconCls: 'customer',
             alias: 'widget.listSellerCustomer',
             title: 'Listado comisiones',
             store: 'SellerCustomer',
             columns: [{
-                    header: 'ID',
-                    filter: 'number',
+                    header: 'ID', filter: 'number',
                     dataIndex: 'idsellercustomer'
                 }, {
                     header: 'Cliente',
@@ -6539,7 +6580,6 @@ Ext.application({
                     iconCls: 'remove'
                 }]
         });
-
         Ext.define('susencargos.view.sellerCustomer.Form', {
             extend: 'susencargos.view.MainForm',
             alias: 'widget.formSellerCustomer',
@@ -6585,11 +6625,9 @@ Ext.application({
         });
         //</editor-fold>
         //<editor-fold defaultstate="collapsed" desc="View Viewport principal">
-        Ext.create('Ext.container.Viewport', {
-            layout: 'border',
+        Ext.create('Ext.container.Viewport', {layout: 'border',
             items: [{
-                    tbar: {
-                        defaults: {
+                    tbar: {defaults: {
                             scale: 'medium'
                         },
                         loader: {
