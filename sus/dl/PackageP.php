@@ -162,6 +162,16 @@ class PackageP extends \gen\dl\LBTObjectP {
      * Actualiza una remesa en la base de datos
      */
     public function update() {
+        $rs = $this->connection->read("consecutive, idpaytype", "sus_package", "idpackage = " . $this->observer->idpackage);
+        $currentConsecutive = $rs->consecutive;
+        $currentIdPayType = $rs->idpaytype;
+        if($currentIdPayType != $this->observer->payType->idpaytype){
+            $rs = $this->connection->read("MAX(consecutive) AS current", "sus_package", "idpaytype = " . $this->observer->payType->idpaytype);
+            $nextConsecutive = $rs->current + 1;
+        } else {
+            $nextConsecutive = $currentConsecutive;
+        }
+        
         $this->connection->update(
                 "sus_package", array(
             "date" => "'" . $this->observer->date->format("Y-m-d") . "'",
@@ -182,6 +192,7 @@ class PackageP extends \gen\dl\LBTObjectP {
             "totalValue" => $this->observer->totalValue,
             "reference" => "'" . $this->observer->reference . "'",
             "idpaytype" => $this->observer->payType->idpaytype,
+            "consecutive" => $nextConsecutive,
             "idpackagetype" => $this->observer->packageType->idpackagetype,
             "pod" => "'" . $this->observer->pod . "'"
                 ), array("idpackage" => $this->observer->idpackage), $this->user->iduser
