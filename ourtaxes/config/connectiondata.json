@@ -1,0 +1,19 @@
+{
+    "mysql":{
+        "server": "127.0.0.1",
+        "user": "root",
+        "password": "Santi693",
+        "database": "renta"
+    },
+    "mssql": {
+        "server": "Leandro-PC",
+        "user": "sa",
+        "password": "santi693",
+        "database": "goban"
+    },
+    "oracle": {
+        "server": "localhost/XE",
+        "user": "goban",
+        "password": "goban"
+    }
+}
