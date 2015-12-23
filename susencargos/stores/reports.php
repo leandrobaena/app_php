@@ -212,6 +212,46 @@ try {
                 echo("{\"success\":true,\"msg\":{\"title\":\"Reporte de facturación generado\",\"body\":\"reports/facturacion.xlsx\"}}");
 
                 break;
+            case "billingByTrackings":
+                $package = new sus\bl\Package(0);
+                $packages = $package->readAll("consecutive IN (" . $_POST["trackings"] . ")", "idpackage DESC", 0, 10000);
+                $objPHPExcel->getProperties()->setTitle("Reporte facturación")
+                        ->setDescription("Reporte facturación");
+                $objPHPExcel->getActiveSheet()->setTitle("Facturación");
+
+                $objPHPExcel->getActiveSheet()
+                        ->setCellValue("A1", "No. Remesa")
+                        ->setCellValue("B1", "Referencia")
+                        ->setCellValue("C1", "Origen")
+                        ->setCellValue("D1", "Destino")
+                        ->setCellValue("E1", "Cantidad")
+                        ->setCellValue("F1", "Peso")
+                        ->setCellValue("G1", "Valor flete")
+                        ->setCellValue("H1", "Valor declarado")
+                        ->setCellValue("I1", "Valor manejo")
+                        ->setCellValue("J1", "Valor total")
+                        ->setCellValue("K1", "Tipo de pago")
+                        ->getStyle("A1:K1")->getFont()->setBold(true);
+                for ($j = 0; $j < count($packages->records); $j++) {
+                    $objPHPExcel->getActiveSheet()
+                            ->setCellValue("A" . ($j + 2), $packages->records[$j]->consecutive)
+                            ->setCellValue("B" . ($j + 2), $packages->records[$j]->reference)
+                            ->setCellValue("C" . ($j + 2), $packages->records[$j]->citySource->name)
+                            ->setCellValue("D" . ($j + 2), $packages->records[$j]->cityDestination->name)
+                            ->setCellValue("E" . ($j + 2), $packages->records[$j]->amount)
+                            ->setCellValue("F" . ($j + 2), $packages->records[$j]->weight)
+                            ->setCellValue("G" . ($j + 2), $packages->records[$j]->shippingValue)
+                            ->setCellValue("H" . ($j + 2), $packages->records[$j]->declaredValue)
+                            ->setCellValue("I" . ($j + 2), $packages->records[$j]->managementValue)
+                            ->setCellValue("J" . ($j + 2), $packages->records[$j]->totalValue)
+                            ->setCellValue("K" . ($j + 2), $packages->records[$j]->payType->name);
+                }
+
+                $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+                $objWriter->save(__DIR__ . "/../reports/facturacion_por_remesas.xlsx");
+                echo("{\"success\":true,\"msg\":{\"title\":\"Reporte de facturación generado\",\"body\":\"reports/facturacion_por_remesas.xlsx\"}}");
+
+                break;
         }
     } else {
         echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"Datos inválidos\"}}");
