@@ -214,7 +214,7 @@ try {
                 break;
             case "billingByTrackings":
                 $package = new sus\bl\Package(0);
-                $packages = $package->readAll("consecutive IN (" . $_POST["trackings"] . ")", "idpackage DESC", 0, 10000);
+                $packages = $package->readAll("consecutive IN (" . $_POST["trackings"] . ") OR reference IN (" . $_POST["trackings"] . ")", "idpackage DESC", 0, 10000);
                 $objPHPExcel->getProperties()->setTitle("Reporte facturación")
                         ->setDescription("Reporte facturación");
                 $objPHPExcel->getActiveSheet()->setTitle("Facturación");
@@ -222,29 +222,33 @@ try {
                 $objPHPExcel->getActiveSheet()
                         ->setCellValue("A1", "No. Remesa")
                         ->setCellValue("B1", "Referencia")
-                        ->setCellValue("C1", "Origen")
-                        ->setCellValue("D1", "Destino")
-                        ->setCellValue("E1", "Cantidad")
-                        ->setCellValue("F1", "Peso")
-                        ->setCellValue("G1", "Valor flete")
-                        ->setCellValue("H1", "Valor declarado")
-                        ->setCellValue("I1", "Valor manejo")
-                        ->setCellValue("J1", "Valor total")
-                        ->setCellValue("K1", "Tipo de pago")
+                        ->setCellValue("C1", "Fecha")
+                        ->setCellValue("D1", "Cliente")
+                        ->setCellValue("E1", "Origen")
+                        ->setCellValue("F1", "Destino")
+                        ->setCellValue("G1", "Cantidad")
+                        ->setCellValue("H1", "Peso")
+                        ->setCellValue("I1", "Valor flete")
+                        ->setCellValue("J1", "Valor declarado")
+                        ->setCellValue("K1", "Valor manejo")
+                        ->setCellValue("L1", "Valor total")
+                        ->setCellValue("M1", "Tipo de pago")
                         ->getStyle("A1:K1")->getFont()->setBold(true);
                 for ($j = 0; $j < count($packages->records); $j++) {
                     $objPHPExcel->getActiveSheet()
                             ->setCellValue("A" . ($j + 2), $packages->records[$j]->consecutive)
                             ->setCellValue("B" . ($j + 2), $packages->records[$j]->reference)
-                            ->setCellValue("C" . ($j + 2), $packages->records[$j]->citySource->name)
-                            ->setCellValue("D" . ($j + 2), $packages->records[$j]->cityDestination->name)
-                            ->setCellValue("E" . ($j + 2), $packages->records[$j]->amount)
-                            ->setCellValue("F" . ($j + 2), $packages->records[$j]->weight)
-                            ->setCellValue("G" . ($j + 2), $packages->records[$j]->shippingValue)
-                            ->setCellValue("H" . ($j + 2), $packages->records[$j]->declaredValue)
-                            ->setCellValue("I" . ($j + 2), $packages->records[$j]->managementValue)
-                            ->setCellValue("J" . ($j + 2), $packages->records[$j]->totalValue)
-                            ->setCellValue("K" . ($j + 2), $packages->records[$j]->payType->name);
+                            ->setCellValue("C" . ($j + 2), $packages->records[$j]->date->format("Y-m-d"))
+                            ->setCellValue("D" . ($j + 2), $packages->records[$j]->customer->name)
+                            ->setCellValue("E" . ($j + 2), $packages->records[$j]->citySource->name)
+                            ->setCellValue("F" . ($j + 2), $packages->records[$j]->cityDestination->name)
+                            ->setCellValue("G" . ($j + 2), $packages->records[$j]->amount)
+                            ->setCellValue("H" . ($j + 2), $packages->records[$j]->weight)
+                            ->setCellValue("I" . ($j + 2), $packages->records[$j]->shippingValue)
+                            ->setCellValue("J" . ($j + 2), $packages->records[$j]->declaredValue)
+                            ->setCellValue("K" . ($j + 2), $packages->records[$j]->managementValue)
+                            ->setCellValue("L" . ($j + 2), $packages->records[$j]->totalValue)
+                            ->setCellValue("M" . ($j + 2), $packages->records[$j]->payType->name);
                 }
 
                 $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');

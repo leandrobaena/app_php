@@ -2761,7 +2761,7 @@ Ext.create('Ext.app.Controller', {
                             callback: function () {
                                 Ext.getStore('PackageTypeL').load({
                                     callback: function () {
-                                        var form = Ext.widget('formCity');
+                                        var form = Ext.widget('formPackage');
                                         form.down('form').loadRecord(r);
                                         form.down('form').getForm().findField('idcitysource').setValue(r.get('citySource').idcity);
                                         form.down('form').getForm().findField('idcitydestination').setValue(r.get('cityDestination').idcity);
