@@ -53,6 +53,27 @@ require_once(__DIR__ . "/../../gen/bl/LBTObjectBL.php");
  * @property float $privateDebits Deudas con particulares
  * @property float $debits Total de deudas
  * @property float $totalEquity Total de patrimonio líquido positivo
+ * @property float $wages Salarios
+ * @property float $severance Cesantías e interese de cesantías
+ * @property float $otherEarnings Otros ingresos por asuntos laborales
+ * @property float $provisionServices Prestación de servicios
+ * @property float $employee Total recibido como empleado
+ * @property float $pensionIncome Ingresos recibidos por pensión
+ * @property float $incomeCompensation Ingresos recibidos por indemnizaciones
+ * @property float $incomePensionCompensation Ingresos recibidos por pensiones e indemnizaciones
+ * @property float $fee Honorarios
+ * @property float $interestFinancialIncome Intereses y rendimientos financieros
+ * @property float $dividendsShares Dividendos y participaciones
+ * @property float $royalties Regalías por derechos de autor
+ * @property float $leasing Arrendamientos de bienes muebles e inmuebles
+ * @property float $saleFixedAssets Precios de venta de activos fijos (que habían sido poseídos por menos de 2 años)
+ * @property float $netSales Ventas netas (ventas menos devoluciones en ventas)  de productos agrícolas o ganaderos
+ * @property float $politicalCampaignDonations Donaciones recibdas para campaña política
+ * @property float $conjugal Gananciales
+ * @property float $withdrawals Retiros de los dineros enviados en años anteriores a los fondos voluntarios de pensiones
+ * @property float $otherIncome Otros ingresos
+ * @property float $abroad Obtenidos en el exterior
+ * @property float $totalRentalIncome Total ingresos no constitutivos de renta ni ganancia ocasional
  * @author Leandro Baena Torres
  */
 class Rent extends \gen\bl\LBTObjectBL {

@@ -58,8 +58,25 @@ class RentP extends \gen\dl\LBTObjectP {
             "intangibles" => $this->observer->intangibles,
             "bankDebits" => $this->observer->bankDebits,
             "taxesToPay" => $this->observer->taxesToPay,
-            "privateDebits" => $this->observer->privateDebits
-            ),$this->user->iduser);
+            "privateDebits" => $this->observer->privateDebits,
+            "wages" => $this->observer->wages,
+            "severance" => $this->observer->severance,
+            "otherEarnings" => $this->observer->otherEarnings,
+            "provisionServices" => $this->observer->provisionServices,
+            "pensionIncome" => $this->observer->pensionIncome,
+            "incomeCompensation" => $this->observer->incomeCompensation,
+            "fee" => $this->observer->fee,
+            "interestFinancialIncome" => $this->observer->interestFinancialIncome,
+            "dividendsShares" => $this->observer->dividendsShares,
+            "royalties" => $this->observer->royalties,
+            "leasing" => $this->observer->leasing,
+            "saleFixedAssets" => $this->observer->saleFixedAssets,
+            "netSales" => $this->observer->netSales,
+            "politicalCampaignDonations" => $this->observer->politicalCampaignDonations,
+            "conjugal" => $this->observer->conjugal,
+            "withdrawals" => $this->observer->withdrawals,
+            "abroad" => $this->observer->abroad
+                ), $this->user->iduser);
     }
 
     /**
@@ -72,7 +89,10 @@ class RentP extends \gen\dl\LBTObjectP {
                 . "goats, swine, crops, realState, vehicles, furniture, machinery,"
                 . "accountReceivableCustomers, accountReceivableFamily, advancedTax, socialBenefits, cooperativesContributions,"
                 . "voluntaryPensionContributions, probateRights, intangibles, bankDebits, taxesToPay,"
-                . "privateDebits",
+                . "privateDebits, wages, severance, otherEarnings, provisionServices,"
+                . "pensionIncome, incomeCompensation, fee, interestFinancialIncome, dividendsShares,"
+                . "royalties, leasing, saleFixedAssets, netSales, politicalCampaignDonations,"
+                . "conjugal, withdrawals, abroad",
                 "ren_rent", "idrent = " . $this->observer->idrent);
         $this->observer->taxid = $rs->taxid;
         $this->observer->firstName = $rs->firstName;
@@ -116,6 +136,27 @@ class RentP extends \gen\dl\LBTObjectP {
         $this->observer->privateDebits = $rs->privateDebits;
         $this->observer->calculateDebits();
         $this->observer->calculateTotalEquity();
+        $this->observer->wages = $rs->wages;
+        $this->observer->severance = $rs->severance;
+        $this->observer->otherEarnings = $rs->otherEarnings;
+        $this->observer->provisionServices = $rs->provisionServices;
+        $this->observer->calculateEmployee();
+        $this->observer->pensionIncome = $rs->pensionIncome;
+        $this->observer->incomeCompensation = $rs->incomeCompensation;
+        $this->observer->calculateIncomePensionCompensation();
+        $this->observer->fee = $rs->fee;
+        $this->observer->interestFinancialIncome = $rs->interestFinancialIncome;
+        $this->observer->dividendsShares = $rs->dividendsShares;
+        $this->observer->royalties = $rs->royalties;
+        $this->observer->leasing = $rs->leasing;
+        $this->observer->saleFixedAssets = $rs->saleFixedAssets;
+        $this->observer->netSales = $rs->netSales;
+        $this->observer->politicalCampaignDonations = $rs->politicalCampaignDonations;
+        $this->observer->conjugal = $rs->conjugal;
+        $this->observer->withdrawals = $rs->withdrawals;
+        $this->observer->calculateOtherIncome();
+        $this->observer->abroad = $rs->abroad;
+        $this->observer->calculateTotalRentalIncome();
     }
 
     /**
@@ -137,7 +178,11 @@ class RentP extends \gen\dl\LBTObjectP {
                 . "cattle, goats, swine, crops, realState,"
                 . "vehicles, furniture, machinery, accountReceivableCustomers, accountReceivableFamily,"
                 . "advancedTax, socialBenefits, cooperativesContributions, voluntaryPensionContributions, probateRights,"
-                . "intangibles, bankDebits, taxesToPay, privateDebits",
+                . "intangibles, bankDebits, taxesToPay, privateDebits, wages,"
+                . "severance, otherEarnings, provisionServices, pensionIncome, incomeCompensation,"
+                . "fee, interestFinancialIncome, dividendsShares, royalties, leasing,"
+                . "saleFixedAssets, netSales, politicalCampaignDonations, conjugal, withdrawals,"
+                . "abroad",
                 "ren_rent", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
@@ -184,13 +229,34 @@ class RentP extends \gen\dl\LBTObjectP {
             $obj->privateDebits = $row->privateDebits;
             $obj->calculateDebits();
             $obj->calculateTotalEquity();
+            $obj->wages = $row->wages;
+            $obj->severance = $row->severance;
+            $obj->otherEarnings = $row->otherEarnings;
+            $obj->provisionServices = $row->provisionServices;
+            $obj->calculateEmployee();
+            $obj->pensionIncome = $row->pensionIncome;
+            $obj->incomeCompensation = $row->incomeCompensation;
+            $obj->calculateIncomePensionCompensation();
+            $obj->fee = $row->fee;
+            $obj->interestFinancialIncome = $row->interestFinancialIncome;
+            $obj->dividendsShares = $row->dividendsShares;
+            $obj->royalties = $row->royalties;
+            $obj->leasing = $row->leasing;
+            $obj->saleFixedAssets = $row->saleFixedAssets;
+            $obj->netSales = $row->netSales;
+            $obj->politicalCampaignDonations = $row->politicalCampaignDonations;
+            $obj->conjugal = $row->conjugal;
+            $obj->withdrawals = $row->withdrawals;
+            $obj->calculateOtherIncome();
+            $obj->abroad = $row->abroad;
+            $obj->calculateTotalRentalIncome();
             array_push($list, $obj);
         }
         return new \utils\ListJson($list, $this->total);
     }
 
     /**
-     * Actualiza una zona en la base de datos
+     * Actualiza una declaración de renta en la base de datos
      */
     public function update() {
         $this->connection->update(
@@ -227,9 +293,25 @@ class RentP extends \gen\dl\LBTObjectP {
             "intangibles" => $this->observer->intangibles,
             "bankDebits" => $this->observer->bankDebits,
             "taxesToPay" => $this->observer->taxesToPay,
-            "privateDebits" => $this->observer->privateDebits
-                ),
-                array("idrent" => $this->observer->idrent), $this->user->iduser
+            "privateDebits" => $this->observer->privateDebits,
+            "wages" => $this->observer->wages,
+            "severance" => $this->observer->severance,
+            "otherEarnings" => $this->observer->otherEarnings,
+            "provisionServices" => $this->observer->provisionServices,
+            "pensionIncome" => $this->observer->pensionIncome,
+            "incomeCompensation" => $this->observer->incomeCompensation,
+            "fee" => $this->observer->fee,
+            "interestFinancialIncome" => $this->observer->interestFinancialIncome,
+            "dividendsShares" => $this->observer->dividendsShares,
+            "royalties" => $this->observer->royalties,
+            "leasing" => $this->observer->leasing,
+            "saleFixedAssets" => $this->observer->saleFixedAssets,
+            "netSales" => $this->observer->netSales,
+            "politicalCampaignDonations" => $this->observer->politicalCampaignDonations,
+            "conjugal" => $this->observer->conjugal,
+            "withdrawals" => $this->observer->withdrawals,
+            "abroad" => $this->observer->abroad
+                ), array("idrent" => $this->observer->idrent), $this->user->iduser
         );
     }
 

@@ -1,0 +1,208 @@
+﻿.application{
+    background-color:#004A8F;
+    background-image:url(bg.png);
+    -moz-background-size:100% 100%;
+    -o-background-size:100% 100%;
+    -webkit-background-size:100% 100%;
+    background-size:100% 100%;
+    -moz-border-image:url(bg.png) 0;
+    width:100%;height:100%
+}
+
+.app{
+    background-image:url(app.png)!important;
+}
+
+.password{
+    background-image:url(password.png)!important;
+}
+
+.insert{
+    background-image:url(insert.png)!important;
+}
+
+.edit{
+    background-image:url(edit.png)!important;
+}
+
+.view{
+    background-image:url(view.png)!important;
+}
+
+.list{
+    background-image:url(list.png)!important;
+}
+
+.remove{
+    background-image:url(remove.png)!important;
+}
+
+.clean{
+    background-image:url(clean.png)!important;
+}
+
+.logout{
+    background-image:url(logout.png)!important;
+}
+
+.config{
+    background-image:url(config.png)!important;
+}
+
+.typeLocker{
+    background-image:url(typeLocker.png)!important;
+}
+
+.typeID{
+    background-image:url(typeID.png)!important;
+}
+
+.user{
+    background-image:url(user.png)!important;
+}
+
+.group{
+    background-image:url(group.png)!important;
+}
+
+.apps{
+    background-image:url(apps.png)!important;
+}
+
+.module{
+    background-image:url(module.png)!important;
+}
+
+.levelAccess{
+    background-image:url(level_access.png)!important;
+}
+
+.money{
+    background-image:url(money.png)!important;
+}
+
+.ops{
+    background-image:url(ops.png)!important;
+}
+
+.enterPackage{
+    background-image:url(enterPackage.png)!important
+}
+
+.city{
+    background-image:url(city.png)!important
+}
+
+.typePackage{
+    background-image:url(typePackage.png)!important
+}
+
+.report{
+    background-image:url(report.png)!important
+}
+
+.template{
+    background-image:url(template.png)!important
+}
+
+.fieldTemplate{
+    background-image:url(fieldTemplate.png)!important
+}
+
+.stateTracking{
+    background-image:url(stateTracking.png)!important
+}
+
+.cms{
+    background-image:url(cms.png)!important
+}
+
+.typeResource{
+    background-image:url(typeResource.png)!important
+}
+
+.resource{
+    background-image:url(resource.png)!important
+}
+
+.page{
+    background-image:url(page.png)!important
+}
+
+.wareHouse{
+    background-image:url(wareHouse.png)!important
+}
+
+.customer{
+    background-image:url(customer.png)!important
+}
+
+.importantField{
+    background-color:#BA0707;
+    font-size:14px
+}
+
+.importantField label{
+    color:#FFF
+}
+
+.zone{
+    background-image:url(zone.png)!important
+}
+
+.package{
+    background-image:url(package.png)!important
+}
+
+.rotule{
+    background-image:url(rotule.png)!important
+}
+
+.label{
+    background-image:url(label.png)!important;
+    display: block !important;
+}
+
+.tracking{
+    background-image:url(tracking.png)!important
+}
+
+.receivePackage{
+    background-image:url(receivePackage.png)!important
+}
+
+.packageType{
+    background-image:url(packageType.png)!important
+}
+
+.dispatchPackage{
+    background-image:url(dispatchPackage.png)!important
+}
+
+.deliveryPackage{
+    background-image:url(deliveryPackage.png)!important
+}
+
+.manifest{
+    background-image:url(manifest.png)!important
+}
+
+.receiver{
+    background-image:url(receiver.png)!important
+}
+
+.billing{
+    background-image:url(billing.png)!important
+}
+
+.seller{
+    background-image:url(seller.png)!important
+}
+
+.alert{
+    background-image:url(alert.png)!important
+}
+
+.changesMoney {
+    background-image:url(changesMoney.png)!important
+}

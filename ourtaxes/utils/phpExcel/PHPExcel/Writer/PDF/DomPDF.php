@@ -27,7 +27,7 @@
 
 
 /**  Require DomPDF library */
-$pdfRendererClassFile = PHPExcel_Settings::getPdfRendererPath() . '/dompdf_config.inc.php';
+$pdfRendererClassFile = PHPExcel_Settings::getPdfRendererPath() . '/autoload.inc.php';
 if (file_exists($pdfRendererClassFile)) {
     require_once $pdfRendererClassFile;
 } else {
@@ -101,7 +101,7 @@ class PHPExcel_Writer_PDF_DomPDF extends PHPExcel_Writer_PDF_Core implements PHP
         $orientation = ($orientation == 'L') ? 'landscape' : 'portrait';
 
         //  Create PDF
-        $pdf = new DOMPDF();
+        $pdf = new \Dompdf\Dompdf();
         $pdf->set_paper(strtolower($paperSize), $orientation);
 
         $pdf->load_html(

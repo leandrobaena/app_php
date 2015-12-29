@@ -51,14 +51,35 @@ require_once (__DIR__ . "/../../gen/entities/LBTObject.php");
  * @property float $privateDebits Deudas con particulares
  * @property float $debits Total de deudas
  * @property float $totalEquity Total de patrimonio líquido positivo
+ * @property float $wages Salarios
+ * @property float $severance Cesantías e interese de cesantías
+ * @property float $otherEarnings Otros ingresos por asuntos laborales
+ * @property float $provisionServices Prestación de servicios
+ * @property float $employee Total recibido como empleado
+ * @property float $pensionIncome Ingresos recibidos por pensión
+ * @property float $incomeCompensation Ingresos recibidos por indemnizaciones
+ * @property float $incomePensionCompensation Ingresos recibidos por pensiones e indemnizaciones
+ * @property float $fee Honorarios
+ * @property float $interestFinancialIncome Intereses y rendimientos financieros
+ * @property float $dividendsShares Dividendos y participaciones
+ * @property float $royalties Regalías por derechos de autor
+ * @property float $leasing Arrendamientos de bienes muebles e inmuebles
+ * @property float $saleFixedAssets Precios de venta de activos fijos (que habían sido poseídos por menos de 2 años)
+ * @property float $netSales Ventas netas (ventas menos devoluciones en ventas)  de productos agrícolas o ganaderos
+ * @property float $politicalCampaignDonations Donaciones recibdas para campaña política
+ * @property float $conjugal Gananciales
+ * @property float $withdrawals Retiros de los dineros enviados en años anteriores a los fondos voluntarios de pensiones
+ * @property float $otherIncome Otros ingresos
+ * @property float $abroad Obtenidos en el exterior
+ * @property float $totalRentalIncome Total ingresos no constitutivos de renta ni ganancia ocasional
  */
 class RentEntity extends \gen\entities\LBTObject {
 
     //<editor-fold defaultstate="collapsed" desc="Constructores">
     /**
-     * Crea una nueva instancia de un nivel de acceso
+     * Crea una nueva instancia de una declaración
      * 
-     * @param $id Identificador del nivel de acceso, 0 si es nuevo
+     * @param $id Identificador de la declaración, 0 si es nueva
      */
     public function __construct($id = 0) {
         $this->idrent = $id;
@@ -104,6 +125,27 @@ class RentEntity extends \gen\entities\LBTObject {
         $this->privateDebits = 0;
         $this->calculateDebits();
         $this->calculateTotalEquity();
+        $this->wages = 0;
+        $this->severance = 0;
+        $this->otherEarnings = 0;
+        $this->provisionServices = 0;
+        $this->calculateEmployee();
+        $this->pensionIncome = 0;
+        $this->incomeCompensation = 0;
+        $this->calculateIncomePensionCompensation();
+        $this->fee = 0;
+        $this->interestFinancialIncome = 0;
+        $this->dividendsShares = 0;
+        $this->royalties = 0;
+        $this->leasing = 0;
+        $this->saleFixedAssets = 0;
+        $this->netSales = 0;
+        $this->politicalCampaignDonations = 0;
+        $this->conjugal = 0;
+        $this->withdrawals = 0;
+        $this->calculateOtherIncome();
+        $this->abroad = 0;
+        $this->calculateTotalRentalIncome();
     }
 
     //</editor-fold>
@@ -214,6 +256,50 @@ class RentEntity extends \gen\entities\LBTObject {
     }
 
     /**
+     * Calcula total recibido como empleado
+     */
+    public function calculateEmployee() {
+        $this->employee = $this->wages +
+                $this->severance +
+                $this->otherEarnings +
+                $this->provisionServices;
+    }
+
+    /**
+     * Calcula el total de los ingresos por pensión e indemnizaciones
+     */
+    public function calculateIncomePensionCompensation() {
+        $this->incomePensionCompensation = $this->pensionIncome +
+                $this->incomeCompensation;
+    }
+
+    /**
+     * Calcula el total de los otros ingresos
+     */
+    public function calculateOtherIncome() {
+        $this->otherIncome = $this->royalties +
+                $this->leasing +
+                $this->saleFixedAssets +
+                $this->netSales +
+                $this->politicalCampaignDonations +
+                $this->conjugal +
+                $this->withdrawals;
+    }
+
+    /**
+     * Calcula el total de los ingresos 
+     */
+    public function calculateTotalRentalIncome() {
+        $this->totalRentalIncome = $this->employee +
+                $this->incomePensionCompensation +
+                $this->fee +
+                $this->interestFinancialIncome +
+                $this-> dividendsShares +
+                $this->otherIncome +
+                $this->abroad;
+    }
+
+    /**
      * Expresa el objeto como un string en formato JSON
      *
      * @return string Objeto en formato JSON
@@ -261,7 +347,28 @@ class RentEntity extends \gen\entities\LBTObject {
                 . "\"taxesToPay\":$this->taxesToPay,"
                 . "\"privateDebits\":$this->privateDebits,"
                 . "\"debits\":$this->debits,"
-                . "\"totalEquity\":$this->totalEquity}";
+                . "\"totalEquity\":$this->totalEquity,"
+                . "\"wages\":$this->wages,"
+                . "\"severance\":$this->severance,"
+                . "\"otherEarnings\":$this->otherEarnings,"
+                . "\"provisionServices\":$this->provisionServices,"
+                . "\"employee\":$this->employee,"
+                . "\"pensionIncome\":$this->pensionIncome,"
+                . "\"incomeCompensation\":$this->incomeCompensation,"
+                . "\"incomePensionCompensation\":$this->incomePensionCompensation,"
+                . "\"fee\":$this->fee,"
+                . "\"interestFinancialIncome\":$this->interestFinancialIncome,"
+                . "\"dividendsShares\":$this->dividendsShares,"
+                . "\"royalties\":$this->royalties,"
+                . "\"leasing\":$this->leasing,"
+                . "\"saleFixedAssets\":$this->saleFixedAssets,"
+                . "\"netSales\":$this->netSales,"
+                . "\"politicalCampaignDonations\":$this->politicalCampaignDonations,"
+                . "\"conjugal\":$this->conjugal,"
+                . "\"withdrawals\":$this->withdrawals,"
+                . "\"otherIncome\":$this->dividendsShares,"
+                . "\"abroad\":$this->abroad,"
+                . "\"totalRentalIncome\":$this->totalRentalIncome}";
     }
 
     //</editor-fold>
@@ -480,6 +587,111 @@ class RentEntity extends \gen\entities\LBTObject {
      * @var float Total de patrimonio líquido positivo
      */
     private $totalEquity;
+
+    /**
+     * @var float Salarios
+     */
+    private $wages;
+
+    /**
+     * @var float Cesantías e interese de cesantías
+     */
+    private $severance;
+
+    /**
+     * @var float Otros ingresos por asuntos laborales
+     */
+    private $otherEarnings;
+
+    /**
+     * @var float Prestación de servicios
+     */
+    private $provisionServices;
+
+    /**
+     * @var float Total recibido como empleado
+     */
+    private $employee;
+
+    /**
+     * @var float Ingresos recibidos por pensión
+     */
+    private $pensionIncome;
+
+    /**
+     * @var float Ingresos recibidos por indemnizaciones
+     */
+    private $incomeCompensation;
+
+    /**
+     * @var float Ingresos recibidos por pensiones e indemnizaciones
+     */
+    private $incomePensionCompensation;
+
+    /**
+     * @var float Honorarios
+     */
+    private $fee;
+
+    /**
+     * @var float Intereses y rendimientos financieros
+     */
+    private $interestFinancialIncome;
+
+    /**
+     * @var float Dividendos y participaciones
+     */
+    private $dividendsShares;
+
+    /**
+     * @var float Regalías por derechos de autor
+     */
+    private $royalties;
+
+    /**
+     * @var float Arrendamientos de bienes muebles e inmuebles
+     */
+    private $leasing;
+
+    /**
+     * @var float Precios de venta de activos fijos (que habían sido poseídos por menos de 2 años)
+     */
+    private $saleFixedAssets;
+
+    /**
+     * @var float Ventas netas (ventas menos devoluciones en ventas)  de productos agrícolas o ganaderos
+     */
+    private $netSales;
+
+    /**
+     * @var float Donaciones recibdas para campaña política
+     */
+    private $politicalCampaignDonations;
+
+    /**
+     * @var float Gananciales
+     */
+    private $conjugal;
+
+    /**
+     * @var float Retiros de los dineros enviados en años anteriores a los fondos voluntarios de pensiones
+     */
+    private $withdrawals;
+
+    /**
+     * @var float Otros ingresos
+     */
+    private $otherIncome;
+
+    /**
+     * @var float Ingresos obtenidos en el exterior
+     */
+    private $abroad;
+
+    /**
+     * @var float Total ingresos no constitutivos de renta ni ganancia ocasional
+     */
+    private $totalRentalIncome;
 
     //</editor-fold>
 }

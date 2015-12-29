@@ -186,6 +186,90 @@ if (isset($_GET["id"]) && is_numeric($_GET["id"])) {
                 <div class="col-xs-6"><input type="text" name="totalEquity" value="<?php echo($rent->totalEquity); ?>" placeholder="Total patrimonio l&iacute;quido positivo" readonly="readonly" /></div>
             </div>
             <div class="row">
+                <div class="col-xs-6">Salarios:</div>
+                <div class="col-xs-6"><input type="text" name="wages" value="<?php echo($rent->wages); ?>" placeholder="Salarios" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Cesantías e interese de cesantías:</div>
+                <div class="col-xs-6"><input type="text" name="severance" value="<?php echo($rent->severance); ?>" placeholder="Cesantías e interese de cesantías" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Otros ingresos por asuntos laborales:</div>
+                <div class="col-xs-6"><input type="text" name="otherEarnings" value="<?php echo($rent->otherEarnings); ?>" placeholder="Otros ingresos por asuntos laborales" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Prestación de servicios:</div>
+                <div class="col-xs-6"><input type="text" name="provisionServices" value="<?php echo($rent->provisionServices); ?>" placeholder="Prestación de servicios" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Total recibido como empleado:</div>
+                <div class="col-xs-6"><input type="text" name="employee" value="<?php echo($rent->employee); ?>" placeholder="Total recibido como empleado" readonly="readonly" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Ingreso por pensiones:</div>
+                <div class="col-xs-6"><input type="text" name="pensionIncome" value="<?php echo($rent->pensionIncome); ?>" placeholder="Ingreso por pensiones" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Ingreso por indemnizaciones:</div>
+                <div class="col-xs-6"><input type="text" name="incomeCompensation" value="<?php echo($rent->incomeCompensation); ?>" placeholder="Ingreso por indemnizaciones" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Total ingresos por pensi&oacute;n e indemnizaciones:</div>
+                <div class="col-xs-6"><input type="text" name="incomePensionCompensation" value="<?php echo($rent->incomePensionCompensation); ?>" placeholder="Total ingresos por pensi&oacute;n e indemnizaciones" readonly="readonly" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Honorarios:</div>
+                <div class="col-xs-6"><input type="text" name="fee" value="<?php echo($rent->fee); ?>" placeholder="Honorarios" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Intereses y rendimientos financieros:</div>
+                <div class="col-xs-6"><input type="text" name="interestFinancialIncome" value="<?php echo($rent->interestFinancialIncome); ?>" placeholder="Intereses y rendimientos financieros" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Dividendos y participaciones:</div>
+                <div class="col-xs-6"><input type="text" name="dividendsShares" value="<?php echo($rent->dividendsShares); ?>" placeholder="Dividendos y participaciones" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Regal&iacute;as por derechos de autor:</div>
+                <div class="col-xs-6"><input type="text" name="royalties" value="<?php echo($rent->royalties); ?>" placeholder="Regal&iacute;as por derechos de autor" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Arrendamientos de bienes muebles e inmuebles:</div>
+                <div class="col-xs-6"><input type="text" name="leasing" value="<?php echo($rent->leasing); ?>" placeholder="Arrendamientos de bienes muebles e inmuebles" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Precios de venta de activos fijos (que hab&iacute;an sido pose&iacute;dos por menos de 2 a&ntilde;os):</div>
+                <div class="col-xs-6"><input type="text" name="saleFixedAssets" value="<?php echo($rent->saleFixedAssets); ?>" placeholder="Precios de venta de activos fijos (que hab&iacute;an sido pose&iacute;dos por menos de 2 a&ntilde;os)" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Ventas netas (ventas menos devoluciones en ventas) de productos agr&iacute;colas o ganaderos:</div>
+                <div class="col-xs-6"><input type="text" name="netSales" value="<?php echo($rent->netSales); ?>" placeholder="Ventas netas (ventas menos devoluciones en ventas) de productos agr&iacute;colas o ganaderos" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Donaciones recibdas para campa&ntilde;a pol&iacute;tica:</div>
+                <div class="col-xs-6"><input type="text" name="politicalCampaignDonations" value="<?php echo($rent->politicalCampaignDonations); ?>" placeholder="Donaciones recibdas para campa&ntilde;a pol&iacute;tica" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Gananciales:</div>
+                <div class="col-xs-6"><input type="text" name="conjugal" value="<?php echo($rent->conjugal); ?>" placeholder="Gananciales" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Retiros de los dineros enviados en a&ntilde;os anteriores a los fondos voluntarios de pensiones:</div>
+                <div class="col-xs-6"><input type="text" name="withdrawals" value="<?php echo($rent->withdrawals); ?>" placeholder="Retiros de los dineros enviados en a&ntilde;os anteriores a los fondos voluntarios de pensiones" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Total de otros ingresos:</div>
+                <div class="col-xs-6"><input type="text" name="otherIncome" value="<?php echo($rent->otherIncome); ?>" placeholder="Total de otros ingresos" readonly="readonly" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Obtenidos en el exterior:</div>
+                <div class="col-xs-6"><input type="text" name="abroad" value="<?php echo($rent->abroad); ?>" placeholder="Obtenidos en el exterior" /></div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6">Total ingresos recibidos por concepto de renta:</div>
+                <div class="col-xs-6"><input type="text" name="totalRentalIncome" value="<?php echo($rent->totalRentalIncome); ?>" placeholder="Total ingresos recibidos por concepto de renta" readonly="readonly" /></div>
+            </div>
+            <div class="row">
                 <div class="col-xs-6"><input type="button" value="Cancelar" onclick="window.location = 'index.php'" class="btn btn-info"/></div>
                 <div class="col-xs-6"><input type="submit" value="Guardar" class="btn btn-danger" /></div>
             </div>
