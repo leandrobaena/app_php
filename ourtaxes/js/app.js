@@ -775,8 +775,6 @@ Ext.application({
             border: false,
             frame: false,
             bodyStyle: "background: none repeat scroll 0 0 rgba(0, 0, 0, 0);",
-            //title: 'Editar destinatario',
-            //object: 'receiversCustomer',
             items: [{
                     xtype: 'textfield',
                     anchor: '95%',
@@ -832,7 +830,148 @@ Ext.application({
                 }]
         });
         Ext.widget('formRegister');
+        Ext.define('apps.view.login.FormLogin', {
+            extend: 'apps.view.MainForm',
+            object: 'login.php',
+            alias: 'widget.formLogin',
+            border: false,
+            frame: false,
+            bodyStyle: "background: none repeat scroll 0 0 rgba(0, 0, 0, 0);",
+            items: [{
+                    xtype: 'textfield',
+                    anchor: '95%',
+                    allowBlank: false,
+                    fieldLabel: '<b>Correo</b>',
+                    blankText: 'Debe ingresar su correo electrónico',
+                    vtype: 'email',
+                    name: 'email',
+                    msgTarget: 'side',
+                    enableKeyEvents: true,
+                    listeners: {
+                        keypress: function (a, c, b) {
+                            if (c.getKey() === Ext.EventObject.ENTER) {
+                                a.up('form').getForm().findField('password').focus(true);
+                            }
+                        }
+                    }
+                }, {
+                    xtype: 'textfield',
+                    anchor: '95%',
+                    inputType: 'password',
+                    allowBlank: false,
+                    minLength: 5,
+                    enforceMaxLength: true,
+                    maxLength: 50,
+                    fieldLabel: '<b>Contrase\xf1a</b>',
+                    blankText: 'Debe ingresar su contrase\xf1a',
+                    name: 'password',
+                    maxLengthText: 'La contrase\xf1a debe ser de m\xe1ximo 50 caracteres',
+                    msgTarget: 'side'
+                }],
+            buttons: [{
+                    text: 'Iniciar sesión',
+                    action: 'login'
+                }]
+        });
+        Ext.widget('formLogin');
         //</editor-fold>
     }
 });
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="Funciones adicionales">
+function openLogin() {
+    Ext.create('Ext.window.Window', {
+        title: 'Iniciar sesión',
+        iconCls: 'edit',
+        alias: 'widget.formChangePass',
+        width: 600,
+        modal: true,
+        layout: 'fit',
+        autoShow: true,
+        items: [{
+                xtype: 'form',
+                url: 'login.php',
+                defaults: {
+                    labelAlign: 'right'
+                },
+                frame: true,
+                items: [{
+                        xtype: 'textfield',
+                        anchor: '95%',
+                        allowBlank: false,
+                        fieldLabel: '<b>Correo</b>',
+                        blankText: 'Debe ingresar su correo electrónico',
+                        vtype: 'email',
+                        name: 'login',
+                        msgTarget: 'side',
+                        enableKeyEvents: true,
+                        listeners: {
+                            keypress: function (a, c, b) {
+                                if (c.getKey() === Ext.EventObject.ENTER) {
+                                    a.up('form').getForm().findField('password').focus(true);
+                                }
+                            }
+                        }
+                    }, {
+                        xtype: 'textfield',
+                        anchor: '95%',
+                        inputType: 'password',
+                        allowBlank: false,
+                        minLength: 5,
+                        enforceMaxLength: true,
+                        maxLength: 50,
+                        fieldLabel: '<b>Contrase\xf1a</b>',
+                        blankText: 'Debe ingresar su contrase\xf1a',
+                        name: 'password',
+                        maxLengthText: 'La contrase\xf1a debe ser de m\xe1ximo 50 caracteres',
+                        msgTarget: 'side'
+                    }],
+                buttons: [{
+                        text: 'Iniciar sesión',
+                        handler: function (bu, ev) {
+                            if (bu.up('form').getForm().isValid()) {
+                                bu.up('form').getForm().submit({
+                                    waitMsg: 'Guardando ...',
+                                    success: function (t, p, o) {
+                                        var d = Ext.JSON.decode(p.response.responseText);
+                                        Ext.MessageBox.show({
+                                            title: d.msg.title,
+                                            msg: d.msg.body,
+                                            buttons: Ext.Msg.OK,
+                                            icon: Ext.Msg.INFO,
+                                            fn: function(){
+                                                window.location = 'index.php';
+                                            }
+                                        });
+                                    },
+                                    failure: function (t, p) {
+                                        var d = Ext.JSON.decode(p.response.responseText);
+                                        Ext.MessageBox.show({
+                                            title: d.msg.title,
+                                            msg: d.msg.body,
+                                            buttons: Ext.Msg.OK,
+                                            icon: Ext.Msg.ERROR
+                                        });
+                                    }
+                                });
+                            } else {
+                                Ext.MessageBox.show({
+                                    title: 'Error',
+                                    msg: 'Ingrese los datos correctos',
+                                    buttons: Ext.Msg.OK,
+                                    icon: Ext.Msg.ERROR
+                                });
+                            }
+                        }
+                    }, {
+                        text: 'Cancelar',
+                        handler: function (bu, ev) {
+                            bu.up('window').close();
+                        }
+                    }],
+                bbar: ['* Campos obligatorios']
+            }]
+    });
+}
 //</editor-fold>

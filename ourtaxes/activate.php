@@ -1,5 +1,4 @@
 <?php
-
 require_once (__DIR__ . "/gen/bl/User.php");
 require_once (__DIR__ . "/gen/bl/TemplateMail.php");
 require_once (__DIR__ . "/utils/phpmailer/PHPMailerAutoload.php");
@@ -12,10 +11,22 @@ $iduser = $values[0];
 $email = $values[1];
 $user = new \gen\bl\User($iduser);
 $user->read();
-if ($user->email == $email){
+if ($user->email == $email) {
     $user->active = true;
     $user->update(new gen\entities\UserEntity(1));
     $error = false;
+    try {
+        $template = new gen\bl\TemplateMail(2); //Plantilla de usuario activado
+        $message = $template->merge(array("name" => $user->name));
+        $mail = new PHPMailer();
+        $mail->setFrom("info@ourtaxes.com", "Our Taxes");
+        $mail->addAddress($user->email, $user->name);
+        $mail->Subject = utf8_decode("Usuario activado en el sistema");
+        $mail->msgHTML($message);
+        $mail->send();
+    } catch (Exception $ex) {
+        
+    }
 } else {
     $error = true;
 }
@@ -40,14 +51,14 @@ if ($user->email == $email){
                             <nav>
                                 <ul class="list-inline">
                                     <li><a href="index.php">Inicio</a></li>
-                                    <li><a href="profile.php">Perfil</li>
-                                    <li><a href="reports.php">Reportes</li>
-                                    <li><a href="account.php">Cuenta</li>
+                                    <li><a href="profile.php">Perfil</a></li>
+                                    <li><a href="reports.php">Reportes</a></li>
+                                    <li><a href="account.php">Cuenta</a></li>
                                 </ul>
                             </nav>
                         </div>
                         <?php if (!isset($_SESSION["user"])) { ?>
-                            <div class="col-xs-6"><a href="cover.php">Iniciar sesi&oacute;n</a></div> <?php } else {
+                            <div class="col-xs-6"><a href="javascript:openLogin()">Iniciar sesi&oacute;n</a></div> <?php } else {
                             ?>
                             <div class="col-xs-6"><?php echo($_SESSION["user"]->name); ?>&nbsp;<a href="logout.php">Cerrar sesi&oacute;n</a></div> <?php }
                         ?>
@@ -56,12 +67,11 @@ if ($user->email == $email){
             </div>
             <div class="row">
                 <div class="col-xs-12">
-                    <p><?php 
-                    if($error){?>
-                        Lo sentimos, no se puede activar el usuario
-                    <?php } else { ?>
-                        Bienvenido, su usuario se encuentra activo, lo invitamos a iniciar sesi&oacute;n ahora mismo
-                    <?php } ?></p>
+                    <p><?php if ($error) { ?>
+                            Lo sentimos, no se puede activar el usuario
+                        <?php } else { ?>
+                            Bienvenido, su usuario se encuentra activo, lo invitamos a iniciar sesi&oacute;n ahora mismo
+                        <?php } ?></p>
                 </div>
             </div>
         </div>

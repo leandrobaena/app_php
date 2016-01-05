@@ -1,3 +1,10 @@
+<?php
+
+require_once (__DIR__ . "/gen/bl/User.php");
+
+session_start();
+
+?>
 <!DOCTYPE html>
 <html>
     <head>
@@ -23,14 +30,14 @@
                             <nav>
                                 <ul class="list-inline">
                                     <li><a href="index.php">Inicio</a></li>
-                                    <li><a href="profile.php">Perfil</li>
-                                    <li><a href="reports.php">Reportes</li>
-                                    <li><a href="account.php">Cuenta</li>
+                                    <li><a href="profile.php">Perfil</a></li>
+                                    <li><a href="reports.php">Reportes</a></li>
+                                    <li><a href="account.php">Cuenta</a></li>
                                 </ul>
                             </nav>
                         </div>
                         <?php if (!isset($_SESSION["user"])) { ?>
-                            <div class="col-xs-6"><a href="cover.php">Iniciar sesi&oacute;n</a></div> <?php } else {
+                            <div class="col-xs-6"><a href="javascript:openLogin()">Iniciar sesi&oacute;n</a></div> <?php } else {
                             ?>
                             <div class="col-xs-6"><?php echo($_SESSION["user"]->name); ?>&nbsp;<a href="logout.php">Cerrar sesi&oacute;n</a></div> <?php }
                         ?>
