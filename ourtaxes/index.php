@@ -5,6 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Our Taxes</title>
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="admin/js/extjs/build/packages/ext-theme-crisp/build/resources/ext-theme-crisp-all.css" />
+        <script src="admin/js/extjs/build/ext-all.js"></script>
+        <script src="admin/js/extjs/build/ext-charts.js"></script>
+        <script src="admin/js/extjs/build/ext-locale-es.js"></script>
+        <script src="js/app.js"></script>
     </head>
     <body>
         <div class="container-fluid">
@@ -73,6 +78,7 @@
                     </section>
                 </div>
             </div>
+            <?php if (!isset($_SESSION["user"])) { ?>
             <div class="row form-group">
                 <section class="register">
                     <h1>Queremos conocerte...</h1>
@@ -80,26 +86,11 @@
                         identificar&aacute;s con nosotros y podr&aacute;s realizar todas
                         tus declaraciones.</p>
                     <div class="col-xs-6"><img src="imgRegister.png" /></div>
-                    <div class="col-xs-6">
-                        <div class="row">
-                            <div class="col-xs-6">Nombre:</div>
-                            <div class="col-xs-6"><input type="text" name="name" class="form-control"/></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">Correo:</div>
-                            <div class="col-xs-6"><input type="email" name="email" class="form-control"/></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">Contrase&ntilde;a:</div>
-                            <div class="col-xs-6"><input type="email" name="email" class="form-control"/></div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">&nbsp;</div>
-                            <div class="col-xs-6"><input type="button" value="Siguiente" class="btn btn-default"/></div>
-                        </div>
+                    <div class="col-xs-6" id="formRegister">
                     </div>
                 </section>
             </div>
+            <?php } ?>
         </div>
     </body>
 </html>

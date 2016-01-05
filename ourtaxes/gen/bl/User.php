@@ -130,6 +130,16 @@ class User extends LBTObjectBL {
         $this->persistence->user = $user;
         $this->persistence->deleteGroup($idgroup);
     }
+
+    /**
+     * Valida que el email no se encuentre actualmente en uso
+     * 
+     * @param string $email Email a validar
+     * @return boolean Si el email actualmente existe o no
+     */
+    public function emailAlready($email) {
+        return $this->persistence->emailAlready($email);
+    }
     // </editor-fold>
 }
 

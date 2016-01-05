@@ -43,12 +43,14 @@ class UserP extends \gen\dl\LBTObjectP {
      */
     public function read() {
         $rs = $this->connection->read("login, name, active, email, lastLogin, logged", "gen_user", "iduser = " . $this->observer->iduser);
-        $this->observer->login = $rs->login;
-        $this->observer->name = $rs->name;
-        $this->observer->active = $rs->active == 1;
-        $this->observer->email = $rs->email;
-        $this->observer->lastLogin = new \DateTime($rs->lastLogin);
-        $this->observer->logged = $rs->logged == 1;
+        if ($rs != null) {
+            $this->observer->login = $rs->login;
+            $this->observer->name = $rs->name;
+            $this->observer->active = $rs->active == 1;
+            $this->observer->email = $rs->email;
+            $this->observer->lastLogin = new \DateTime($rs->lastLogin);
+            $this->observer->logged = $rs->logged == 1;
+        }
     }
 
     /**
@@ -205,6 +207,17 @@ class UserP extends \gen\dl\LBTObjectP {
      */
     public function deleteGroup($idgroup) {
         $this->connection->delete("gen_user_group", array("iduser" => $this->observer->iduser, "idgroup" => $idgroup), $this->user->iduser);
+    }
+
+    /**
+     * Valida que el email no se encuentre actualmente en uso
+     * 
+     * @param string $email Email a validar
+     * @return boolean Si el email actualmente existe o no
+     */
+    public function emailAlready($email) {
+        $rs = $this->connection->read("email", "gen_user", "email = '$email'");
+        return ($rs != null);
     }
 
     //</editor-fold>
