@@ -20,6 +20,7 @@ require_once (__DIR__ . "/../utils/phpmailer/PHPMailerAutoload.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
 require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
 require_once (__DIR__ . "/../sus/bl/Alert.php");
+require_once (__DIR__ . "/../sus/bl/Rate.php");
 session_start();
 
 try {
@@ -39,7 +40,7 @@ try {
         if ($object == "packagesCustomer" || $object == "receiversCustomer") {
             $object = "enterPackage";
         }
-        if ($object == "receivers") {
+        if ($object == "receivers" || $object == "rates") {
             $object = "customers";
         }
         if ($object == "sellersCustomer") {
@@ -442,6 +443,16 @@ try {
                             $obj->create($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Alerta insertada\",\"body\":\"La alerta fue insertada con éxito\"}}");
                             break;
+                        case "rates":
+                            $obj = new \sus\bl\Rate($_POST["id"]);
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->shippingValue = $_POST["shippingValue"];
+                            $obj->managementValue = $_POST["managementValue"];
+                            $obj->validity = DateTime::createFromFormat("Y-m-d", $_POST["validity"]);
+                            $obj->create($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Tarifa insertada\",\"body\":\"La tarifa fue insertada con éxito\"}}");
+                            break;
                     }
                 } else {
                     echo("{\"success\":false,\"msg\":{\"title\":\"Error\",\"body\":\"No tiene privilegios para efectuar esta acción\"}}");
@@ -615,6 +626,16 @@ try {
                             $obj->stateTracking = new sus\entities\StateTrackingEntity($_POST["idstatetracking"]);
                             $obj->update($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Alerta insertada\",\"body\":\"La alerta fue insertada con éxito\"}}");
+                            break;
+                        case "rates":
+                            $obj = new \sus\bl\Rate($_POST["id"]);
+                            $obj->city = new \sus\entities\CityEntity($_POST["idcity"]);
+                            $obj->customer = new \sus\entities\CustomerEntity($_POST["idcustomer"]);
+                            $obj->shippingValue = $_POST["shippingValue"];
+                            $obj->managementValue = $_POST["managementValue"];
+                            $obj->validity = DateTime::createFromFormat("Y-m-d", $_POST["validity"]);
+                            $obj->update($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Tarifa actualizada\",\"body\":\"La tarifa fue actualizada con éxito\"}}");
                             break;
                     }
                 } else {

@@ -66,7 +66,7 @@ class RateEntity extends \gen\entities\LBTObject {
         . "\"city\":$this->city,"
         . "\"customer\":$this->customer,"
         . "\"shippingValue\":$this->shippingValue,"
-        . "\"managementValue\":$this->managementValue}"
+        . "\"managementValue\":$this->managementValue,"
         . "\"validity\":\"" . $this->validity->format("Y-m-d") . "\"}";
     }
 

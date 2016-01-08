@@ -19,7 +19,7 @@ if (!isset($_SESSION["user"])) {//Valida usuario
         <script src="js/extjs/build/ext-charts.js"></script>
         <script src="js/extjs/build/ext-locale-es.js"></script>
         <script src="js/tinymce.min.js"></script>
-        <script src="js/app.js?v=1.1"></script>
+        <script src="js/app.js?v=1.2"></script>
     </head>
     <body class="application">
     </body>

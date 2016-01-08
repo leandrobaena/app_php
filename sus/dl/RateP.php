@@ -31,7 +31,7 @@ class RateP extends \gen\dl\LBTObjectP {
             "idcustomer" => $this->observer->customer->idcustomer,
             "shippingValue" => $this->observer->shippingValue,
             "managementValue" => $this->observer->managementValue,
-            "validity" => $this->observer->validity
+            "validity" => "'" . $this->observer->validity->format("Y-m-d") . "'"
                 ), $this->user->iduser);
     }
 
@@ -39,9 +39,11 @@ class RateP extends \gen\dl\LBTObjectP {
      * Lee una tarifa de la base de datos
      */
     public function read() {
-        $rs = $this->connection->read("idcity, idcustomer, shippingValue, managementValue, validity", "sus_rate", "idrate = " . $this->observer->idrate);
+        $rs = $this->connection->read("idcity, city, idcustomer, customer, shippingValue, managementValue, validity", "vw_sus_rate", "idrate = " . $this->observer->idrate);
         $this->observer->city = new \sus\entities\CityEntity($rs->idcity);
+        $this->observer->city->name = $rs->city;
         $this->observer->customer = new \sus\entities\CustomerEntity($rs->idcustomer);
+        $this->observer->customer->name = $rs->customer;
         $this->observer->shippingValue = $rs->shippingValue;
         $this->observer->managementValue = $rs->managementValue;
         $this->observer->validity = \DateTime::createFromFormat("Y-m-d", $rs->validity);
@@ -60,12 +62,14 @@ class RateP extends \gen\dl\LBTObjectP {
     public function readAll($filters, $sorters, $start, $limit) {
         $list = array();
         $rs = $this->connection->readAll(
-                "idrate, idcity, idcustomer, shippingValue, managementValue, validity", "sus_rate", $filters, $sorters, $start, $limit, $this->total
+                "idrate, idcity, city, idcustomer, customer, shippingValue, managementValue, validity", "vw_sus_rate", $filters, $sorters, $start, $limit, $this->total
         );
         foreach ($rs as $row) {
             $obj = new \sus\entities\RateEntity($row->idrate);
             $obj->city = new \sus\entities\CityEntity($row->idcity);
+            $obj->city->name = $row->city;
             $obj->customer = new \sus\entities\CustomerEntity($row->idcustomer);
+            $obj->customer->name = $row->customer;
             $obj->shippingValue = $row->shippingValue;
             $obj->managementValue = $row->managementValue;
             $obj->validity = \DateTime::createFromFormat("Y-m-d", $row->validity);
@@ -84,7 +88,7 @@ class RateP extends \gen\dl\LBTObjectP {
             "idcustomer" => $this->observer->customer->idcustomer,
             "shippingValue" => $this->observer->shippingValue,
             "managementValue" => $this->observer->managementValue,
-            "validity" => $this->observer->validity
+            "validity" => "'" . $this->observer->validity->format("Y-m-d") . "'"
                 ), array("idrate" => $this->observer->idrate), $this->user->iduser
         );
     }

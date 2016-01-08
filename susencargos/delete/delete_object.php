@@ -18,6 +18,7 @@ require_once (__DIR__ . "/../sus/bl/Receiver.php");
 require_once (__DIR__ . "/../sus/bl/Seller.php");
 require_once (__DIR__ . "/../sus/bl/SellerCustomer.php");
 require_once (__DIR__ . "/../sus/bl/Alert.php");
+require_once (__DIR__ . "/../sus/bl/Rate.php");
 
 session_start();
 try {
@@ -38,7 +39,7 @@ try {
             if ($object == "groupUser") {
                 $object = "users";
             }
-            if ($object == "receivers") {
+            if ($object == "receivers" || $object == "rates") {
                 $object = "customers";
             }
             if ($object == "receiversCustomer") {
@@ -159,6 +160,11 @@ try {
                             $obj = new \sus\bl\Alert($_POST["id"]);
                             $obj->delete($_SESSION["user"]);
                             echo("{\"success\":true,\"msg\":{\"title\":\"Alerta eliminada\",\"body\":\"La alerta ha sido eliminada con \\xe9xito\"}}");
+                            break;
+                        case "rates":
+                            $obj = new \sus\bl\Rate($_POST["id"]);
+                            $obj->delete($_SESSION["user"]);
+                            echo("{\"success\":true,\"msg\":{\"title\":\"Tarifa eliminada\",\"body\":\"La tarifa ha sido eliminada con \\xe9xito\"}}");
                             break;
                     }
                 } else {

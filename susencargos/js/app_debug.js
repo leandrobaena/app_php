@@ -373,6 +373,31 @@ Ext.define('susencargos.model.Alert', {
             reference: 'susencargos.model.StateTracking'
         }]
 });
+
+Ext.define('susencargos.model.Rate', {
+    extend: 'Ext.data.Model',
+    fields: [{
+            name: 'idrate',
+            type: 'int',
+            defaultValue: 0
+        }, {
+            name: 'city',
+            reference: 'susencargos.model.City'
+        }, {
+            name: 'customer',
+            reference: 'susencargos.model.Customer'
+        }, {
+            name: 'shippingValue',
+            type: 'float'
+        }, {
+            name: 'managementValue',
+            type: 'float'
+        }, {
+            name: 'validity',
+            type: 'date',
+            dateFormat: 'Y-m-d'
+        }]
+});
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="MainStoreRemote">
@@ -2018,6 +2043,7 @@ Ext.create('Ext.app.Controller', {
         'listCustomers': {itemdblclick: 'editDbl'},
         'listCustomers actioncolumn[action=edit]': {click: 'edit'},
         'listCustomers actioncolumn[action=receivers]': {click: 'receivers'},
+        'listCustomers actioncolumn[action=rates]': {click: 'rates'},
         'listCustomers actioncolumn[action=remove]': {click: 'remove'},
         'formCustomer button[action=changePass]': {click: 'changePass'},
         'formCustomer button[action=cancel]': {click: 'cancel'},
@@ -2028,7 +2054,14 @@ Ext.create('Ext.app.Controller', {
         'listReceivers actioncolumn[action=edit]': {click: 'editReceiver'},
         'listReceivers actioncolumn[action=remove]': {click: 'removeReceiver'},
         'formReceiver button[action=cancel]': {click: 'cancel'},
-        'formReceiver button[action=save]': {click: 'saveReceiver'}
+        'formReceiver button[action=save]': {click: 'saveReceiver'},
+        'listRates button[action=insert]': {click: 'insertRate'},
+        'listRates button[action=clean]': {click: 'cleanFilters'},
+        'listRates': {itemdblclick: 'editDblRate'},
+        'listRates actioncolumn[action=edit]': {click: 'editRate'},
+        'listRates actioncolumn[action=remove]': {click: 'removeRate'},
+        'formRate button[action=cancel]': {click: 'cancel'},
+        'formRate button[action=save]': {click: 'saveRate'}
     },
     insert: function (b, e) {
         Ext.getStore('CityL').load({
@@ -2354,6 +2387,131 @@ Ext.create('Ext.app.Controller', {
                             icon: Ext.Msg.INFO,
                             fn: function () {
                                 Ext.getStore('Receiver').load();
+                            }
+                        });
+                    },
+                    failed: function (t, p, o) {
+                        Ext.MessageBox.show({
+                            title: p.response.result.msg.title,
+                            msg: p.response.result.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO
+                        });
+                    }
+                });
+            }
+        });
+    },
+    rates: function (v, r, c, i, e) {
+        Ext.getStore('Rate').getProxy().setExtraParam('idcustomer', v.getStore().getAt(c).get('idcustomer'));
+        Ext.getStore('Rate').load();
+        var opened = false;
+        var content = Ext.getCmp('contenido');
+        var panel = null;
+        Ext.each(content.items.items, function (n, i, s) {
+            if (n.alias == 'widget.listRates') {
+                opened = true;
+                panel = n;
+            }
+        });
+        if (!opened) {
+            panel = Ext.widget('listRates');
+            content.add(panel);
+        }
+        panel.setTitle('Listado tarifas del cliente ' + v.getStore().getAt(c).get('name'));
+        Ext.getCmp('contenido').setActiveTab(panel);
+    },
+    insertRate: function (b, e) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formRate');
+                form.down('form').loadRecord(Ext.create('susencargos.model.Rate'));
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Rate').getProxy().extraParams.idcustomer);
+            }
+        });
+    },
+    editDblRate: function (g, r) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formRate');
+                form.down('form').getForm().loadRecord(r);
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Rate').getProxy().extraParams.idcustomer);
+                form.down('form').getForm().findField('idcity').setValue(r.get('city').idcity);
+            }
+        });
+    },
+    editRate: function (v, r, c, i, e) {
+        Ext.getStore('CityL').load({
+            start: 0,
+            limit: 10000,
+            callback: function () {
+                var form = Ext.widget('formRate');
+                form.down('form').getForm().loadRecord(v.getStore().getAt(c));
+                form.down('form').getForm().findField('idcustomer').setValue(Ext.getStore('Rate').getProxy().extraParams.idcustomer);
+                form.down('form').getForm().findField('idcity').setValue(v.getStore().getAt(c).get('city').idcity);
+            }
+        });
+    },
+    saveRate: function (b, e) {
+        if (b.up('form').getForm().isValid()) {
+            b.up('form').getForm().findField('id').setValue(b.up('form').getForm().findField('idrate').getValue());
+            b.up('form').getForm().submit({
+                waitMsg: 'Guardando ...',
+                success: function (t, p, o) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.INFO,
+                        fn: function () {
+                            Ext.getStore('Rate').load();
+                        }
+                    });
+                    b.up('window').close();
+                },
+                failure: function (t, p) {
+                    var d = Ext.JSON.decode(p.response.responseText);
+                    Ext.MessageBox.show({
+                        title: d.msg.title,
+                        msg: d.msg.body,
+                        buttons: Ext.Msg.OK,
+                        icon: Ext.Msg.ERROR
+                    });
+                    b.up('window').close();
+                }
+            });
+        } else {
+            Ext.MessageBox.show({
+                title: 'Error',
+                msg: 'Ingrese los datos correctos',
+                buttons: Ext.Msg.OK,
+                icon: Ext.Msg.ERROR
+            });
+        }
+    },
+    removeRate: function (v, c, dr, dp) {
+        Ext.MessageBox.confirm('Eliminar registro', '¿Desea eliminar el registro?', function (o) {
+            if (o == 'yes') {
+                Ext.Ajax.request({
+                    url: 'delete/delete_object.php',
+                    params: {
+                        id: v.getSelectionModel().getLastSelected().get('idrate'),
+                        object: 'rates'
+                    },
+                    success: function (response) {
+                        var d = Ext.JSON.decode(response.responseText);
+                        Ext.MessageBox.show({
+                            title: d.msg.title,
+                            msg: d.msg.body,
+                            buttons: Ext.Msg.OK,
+                            icon: Ext.Msg.INFO,
+                            fn: function () {
+                                Ext.getStore('Rate').load();
                             }
                         });
                     },
@@ -4293,6 +4451,12 @@ Ext.application({
             model: 'susencargos.model.Alert',
             object: 'alerts'
         });
+
+        Ext.create('susencargos.store.MainStoreRemote', {
+            storeId: 'Rate',
+            model: 'susencargos.model.Rate',
+            object: 'rates'
+        });
         //</editor-fold>
 
         //<editor-fold defaultstate="collapsed" desc="View Genericas">
@@ -5155,6 +5319,14 @@ Ext.application({
                 }, {
                     xtype: 'actioncolumn',
                     width: 20,
+                    action: 'rates',
+                    tooltip: 'Tarifas',
+                    icon: 'css/rate.png',
+                    stopSelection: false,
+                    iconCls: 'rate'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
                     action: 'receivers',
                     tooltip: 'Destinatarios',
                     icon: 'css/receiver.png',
@@ -5354,6 +5526,121 @@ Ext.application({
                     name: 'idcity',
                     anchor: '90%',
                     queryMode: 'local'
+                }],
+            buttons: [{
+                    text: 'Guardar',
+                    action: 'save'
+                }, {
+                    text: 'Cancelar',
+                    action: 'cancel'
+                }]
+        });
+        
+        Ext.define('susencargos.view.customer.GridRates', {
+            extend: 'susencargos.view.MainGrid',
+            iconCls: 'receiver',
+            alias: 'widget.listRates',
+            title: 'Listado tarifas',
+            store: 'Rate',
+            columns: [{
+                    header: 'ID',
+                    filter: 'number',
+                    dataIndex: 'idrate'
+                }, {
+                    header: 'Ciudad',
+                    dataIndex: 'city',
+                    flex: 2,
+                    renderer: function (value) {
+                        return value.name;
+                    }
+                }, {
+                    header: 'Flete',
+                    filter: 'number',
+                    dataIndex: 'shippingValue',
+                    flex: 1
+                }, {
+                    header: 'Cargo por manejo',
+                    filter: 'number',
+                    dataIndex: 'managementValue',
+                    flex: 1
+                }, {
+                    header: 'Vigencia desde',
+                    filter: {
+                        type: 'date',
+                        fields: {lt: {text: 'Antes de'}, gt: {text: 'Depu\xe9s de '}, eq: {text: 'El d\xeda'}}, dateFormat: 'Y-m-d H:i:s'
+                    },
+                    dataIndex: 'validity',
+                    flex: 1,
+                    renderer: Ext.util.Format.dateRenderer('Y-m-d')
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'edit',
+                    tooltip: 'Editar',
+                    icon: 'css/edit.png',
+                    stopSelection: false,
+                    iconCls: 'edit'
+                }, {
+                    xtype: 'actioncolumn',
+                    width: 20,
+                    action: 'remove',
+                    tooltip: 'Eliminar',
+                    icon: 'css/remove.png',
+                    stopSelection: false,
+                    iconCls: 'remove'
+                }]
+        });
+
+        Ext.define('susencargos.view.customer.FormRate', {
+            extend: 'susencargos.view.MainForm',
+            alias: 'widget.formRate',
+            title: 'Editar tarifa',
+            object: 'rates',
+            fields: [{
+                    xtype: 'hiddenfield',
+                    name: 'idrate',
+                    value: 0
+                }, {
+                    xtype: 'hiddenfield',
+                    name: 'idcustomer',
+                    value: 0
+                }, {
+                    xtype: 'combo',
+                    fieldLabel: 'Ciudad',
+                    store: 'CityL',
+                    typeAhead: true,
+                    forceSelection: true,
+                    allowBlank: false,
+                    autoLoadOnValue: true,
+                    valueField: 'idcity',
+                    displayField: 'name',
+                    name: 'idcity',
+                    anchor: '90%',
+                    queryMode: 'local'
+                }, {
+                    xtype: 'numberfield',
+                    name: 'shippingValue',
+                    value: '',
+                    hideTrigger: true,
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Flete'
+                }, {
+                    xtype: 'numberfield',
+                    name: 'managementValue',
+                    value: '',
+                    hideTrigger: true,
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Cargo por manejo'
+                }, {
+                    xtype: 'datefield',
+                    name: 'validity',
+                    value: '',
+                    allowBlank: false,
+                    anchor: '90%',
+                    fieldLabel: '* Vigencia',
+                    format: 'Y-m-d'
                 }],
             buttons: [{
                     text: 'Guardar',
